@@ -20,19 +20,21 @@ aaplot_table_list.c  esim8.c    og_internal.h
 aaplot_window.c      esim9.c    og_main.c
 }}}
   * .dat -files are point-data for (projection of ) 'Aalto-Vase'
-see: http://www.iittalahomeshopping.com/WebRoot/iittala/Shops/iittala/4680/EBC8/CD64/5826/CE4C/5274/EB19/D9BC/005100AaltoMalja160Punainen.jpg
-
+see: 
+http://tbn0.google.com/images?q=tbn:cQxcwxmAlbqg9M:http://www.iittalahomeshopping.com/WebRoot/iittala/Shops/iittala/4680/EBC8/CD64/5826/CE4C/5274/EB19/D9BC/005100AaltoMalja160Punainen.jpg
   * aaplot -files are this project
   * aapo.todo is my own todo (finnish)
+  * esim -files are examples (_esim_ erkki means example) (names will change)
   * Makefile makefile
-  * esim -files are examples (_esim_erkki means example) (names will change)
-  * og and openglut* -files are ripped and modded from openglut see http://openglut.sourceforge.net/
+  * og and openglut -files are ripped and modded from openglut see http://openglut.sourceforge.net/
 
-
-= How to use ?=
+----
+= How to use? =
+{{{
 make all
 or
 make esim1
-or some other esim*
+(or some other esim*)
+}}}
 
 One of examples (esim6.c) uses gsl, it is not compiled with 'make all'. see: http://www.gnu.org/software/gsl/
