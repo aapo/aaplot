@@ -1,0 +1,36 @@
+#Help needed
+= Welcome to Join =
+
+If you want join the project you are welcome. (This why aaplot is OS.)
+
+= Small help tasks / Ideas =
+How I generate RGB-colors, so they are not all approx (0.5 , 0.5 , 0.5)?
+
+First version:
+{{{
+void getColors(float *red, float *green, float *blue){
+int r=rand ();
+int g=rand ();
+int b=rand ();
+
+*red=(r+0.0)/RAND_MAX;
+*green=(g+0.0)/RAND_MAX;
+*blue=(b+0.0)/RAND_MAX;
+}
+}}}
+
+
+Second version: (little test-tweaking)
+{{{
+void getColors(float *red, float *green, float *blue){
+int r=rand ();
+int g=rand ();
+int b=rand ();
+
+*red=(r+0.0)/RAND_MAX;
+*green=(g+0.0)/RAND_MAX;
+*blue = *red+*green;
+if (*blue >1.0)
+   *blue=*blue-1.0;
+}
+}}}
