@@ -1,10 +1,13 @@
 #Help needed
 = Welcome to Join =
 
-If you want join the project you are welcome. (This why aaplot is OS.)
+If you want join the project you are welcome. (That's why aaplot is OS.)
 
-= Small help tasks / Ideas =
-How I generate RGB-colors, so they are not all approx (0.5 , 0.5 , 0.5)?
+But there are some small problems and you can help to solve them without seeing any sources of aaplot.
+
+= Small problems =
+== RGB-color generating ==
+How I generate RGB-colors, so they are not all approx [0.5 , 0.5 , 0.5]?
 
 First version:
 {{{
