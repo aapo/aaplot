@@ -1,0 +1,65 @@
+#How to use aaplot
+
+= Basic =
+Write c-file, include aaplot
+{{{
+#include "aaplot.c"
+}}}
+Compile 
+{{{
+gcc -lpng -lGL -lGLU
+}}}
+
+-lpng means libpng, which is used to screenshooting. (aaplot can be compiled without it)
+
+-lGL and -lGLU are mandatory
+
+= API for version 0.2=
+in aaplot_defaults.c are limits of the _drawing cube_.
+{{{
+double lower_x_limit = -10.0;
+double upper_x_limit = 10.0;
+
+double lower_y_limit = -5.0;
+double upper_y_limit = 5.0;
+
+double lower_z_limit = -3.0;
+double upper_z_limit = 3.0;
+}}}
+You can change the values in your code.
+== addRFunction ==
+void addRFunction(int win,double (`*`func_ptr)(double),double size, double step, char `*`title)   
+
+win
+ Windows number. First window is 0.
+
+func_ptr
+ Pointer to function, which is like
+  double some_function(double x) {return x+1;}
+
+size
+ Size of plots.
+
+step
+ Stepping of x. Let say first value of x is A, then second value is A+step. And all values are A+(step `*` n), where n is integer.
+
+title
+ Title of functions. Will be written in 'legend' in same color than function itself. (legend is info box, which lists all functions)
+
+
+=== Example ===
+{{{
+#include "aaplot.c"
+double f(double x) {
+return x*x;
+}
+
+int main()
+{
+addRFunction(0,&f,3.0,0.01,"x * x");
+drawAll(); 
+return 0;
+}
+
+}}}
+----
