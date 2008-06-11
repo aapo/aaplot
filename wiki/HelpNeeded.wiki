@@ -55,3 +55,82 @@ if (*blue >1.0)
    *blue=*blue-1.0;
 }
 }}}
+
+
+Third version: (this is almost good)
+{{{
+/*
+Because random number generator is NOT initialized, this gives same numbers each time when program runs.
+I try generate three numbers [0,1], that all is not approx 0,5.
+First I randomize red and green, and if they are 'too middle' I fix blues value.
+
+The point is:
+ red   = random value [0,1]
+ green = random value [0,1]
+
+There are 4 'slots' which red and green might be.
+  0    low     mid=0.5     hig    1
+R |     |         |         |     |
+G |     |         |         |     |
+
+
+case 1:
+  0    low     mid=0.5     hig    1
+R |     |    X    |         |     |
+G |     |    X    |         |     |
+B |     |         |         |  X  |
+
+case 2:
+  0    low     mid=0.5     hig    1
+R |     |         |    X    |     |
+G |     |         |    X    |     |
+B |  X  |         |         |     |
+
+case 3:
+  0    low     mid=0.5     hig    1
+R |     |         |    X    |     |
+G |     |    X    |         |     |
+B |  X  |         |         |  X  |
+
+case 4:
+  0    low     mid=0.5     hig    1
+R |     |    X    |         |     |
+G |     |         |    X    |     |
+B |  X  |         |         |  X  |
+
+*/
+void getColors(float *red, float *green, float *blue){
+int r=rand ();
+*red=(r+0.0)/RAND_MAX;
+int g=rand ();
+*green=(g+0.0)/RAND_MAX;
+
+float low = 0.2;
+float mid = 0.5;
+float hig = 1-low;
+if (*red>low && *red<mid && *green>low && *green<mid)
+   {
+   *blue=(rand()+0.0)/RAND_MAX / (1/low) + hig;
+   }
+else if (*red>mid && *red<hig && *green>mid && *green<hig)
+   {
+   *blue=(rand()+0.0)/RAND_MAX / (1/low);
+   }
+else if (*red>low && *red<hig && *green>low && *green<hig)
+   {
+   *blue=(rand()+0.0)/RAND_MAX / 2.0;
+   int b=rand (); /*toss a coin */
+   if (b<RAND_MAX/2)
+      *blue=*blue*2 / (1/low);
+   else 
+      *blue=*blue*2 / (1/low) + hig;
+   }
+else
+   {
+   int b=rand ();
+   *blue=(b+0.0)/RAND_MAX;
+   }
+
+//printf("%lf,%lf,%lf\n",*red,*green,*blue);
+}
+}}}
