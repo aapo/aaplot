@@ -134,3 +134,22 @@ else
 //printf("%lf,%lf,%lf\n",*red,*green,*blue);
 }
 }}}
+
+== How to set Lights, so surfaces looks clear ==
+Code looks like this, but I'm not pleased with it. Do I need more lightsources?
+{{{
+GLfloat pos[4] = {0., -5., 0., 1.};
+GLfloat white[4] = {1., 1., 1., 1.};
+GLfloat black[4] = {0., 0., 0., 0.};
+   
+glEnable (GL_LIGHTING);
+glEnable (GL_COLOR_MATERIAL);
+glColorMaterial (GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
+glEnable (GL_LIGHT1);
+glLightfv (GL_LIGHT1, GL_POSITION, pos);
+glLightfv (GL_LIGHT1, GL_DIFFUSE, white);
+glLightfv (GL_LIGHT1, GL_SPECULAR, black);
+   
+glMaterialfv (GL_FRONT, GL_SPECULAR, black);
+}}}
