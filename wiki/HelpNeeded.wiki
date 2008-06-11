@@ -1,9 +1,27 @@
 #Help needed
 = Welcome to Join =
 
-If you want join the project you are welcome. (That's why aaplot is OS.)
+If you want join the project you are welcome. (That's why aaplot is OSS.)
 
-But there are some small problems and you can help to solve them without seeing any sources of aaplot.
+If you have bazaar installed on your system, you can get latest sources:
+{{{
+bzr branch http://lauta.dyndns.org/aaplot
+}}}
+In Ubuntu you need libglu1-mesa-dev package (for gl.h and glu.h)
+{{{
+sudo apt-get install libglu1-mesa-dev
+}}}
+
+If you want take screenshots, you need libpng. In Ubuntu:
+{{{
+sudo apt-get install libpng
+}}}
+
+If you do NOT install/have libpng, you must make two changes:
+  * In aaplot_defaults.c comment the first line #define AAPLOT_SCREENSHOT
+  * In Makefile remove -lpng from LDFLAGS=
+
+*But there are some small problems and you can help to solve them without seeing any sources of aaplot.*
 
 = Small problems =
 == RGB-color generating ==
