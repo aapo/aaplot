@@ -7,14 +7,16 @@ Write c-file, include aaplot
 }}}
 Compile 
 {{{
-gcc -lpng -lGL -lGLU
+gcc -lpng -lGL -lGLU -lXpm
 }}}
 
 -lpng means libpng, which is used to screenshooting. (aaplot can be compiled without it)
 
--lGL and -lGLU are mandatory
+-lXpm means libXpm, which is used to change application-icon (aaplot can be compiled without it)
 
-= API for version 0.2=
+-lGL and -lGLU are mandatory 
+
+= API for version 0.3=
 in aaplot_defaults.c are limits of the _drawing cube_.
 {{{
 double lower_x_limit = -10.0;
@@ -27,8 +29,9 @@ double lower_z_limit = -3.0;
 double upper_z_limit = 3.0;
 }}}
 You can change the values in your code.
+
 == addRFunction ==
-void addRFunction(int win,double (`*`func_ptr)(double),double size, double step, char `*`title)   
+int addRFunction(int win,double (`*`func_ptr)(double), double step, char `*`title)   
 
 win
  Windows number. First window is 0.
@@ -37,15 +40,14 @@ func_ptr
  Pointer to function, which is like
   double some_function(double x) {return x+1;}
 
-size
- Size of plots.
-
 step
  Stepping of x. Let say first value of x is A, then second value is A+step. And all values are A+(step `*` n), where n is integer.
 
 title
- Title of functions. Will be written in 'legend' in same color than function itself. (legend is info box, which lists all functions)
+ Title of function. Will be written in 'legend' in same color than function itself. (legend is info box, which lists all functions)
 
+returning int
+ ID_number of just added function. Its properties are changed with this id number. This id is very own. Even functions are in different windows they can't have same id number. Additional function can't have same id number which is used any table (and vica versa) 
 
 === Example ===
 {{{
@@ -56,10 +58,162 @@ return x*x;
 
 int main()
 {
-addRFunction(0,&f,3.0,0.01,"x * x");
+addRFunction(0,&f,0.01,"x * x");
 drawAll(); 
 return 0;
 }
 
 }}}
-----
+
+== addR2Function ==
+int addR2Function(int win,double (`*`func_ptr)(double), double x_step, double z_step, char `*`title)
+
+win
+ Windows number. First window is 0.
+
+func_ptr
+ Pointer to function, which is like
+  double some_function(double x,double z) {return x+z+1;}
+
+x_step
+ Stepping of x. Let say first value of x is A, then second value is A+step. And all values are A+(step `*` n), where n is integer.
+
+z_step
+ Stepping of z.
+
+title
+ Title of function. Will be written in 'legend' in same color than function itself. (legend is info box, which lists all functions)
+
+returning int
+ ID_number of just added function. Its properties are changed with this id number. This id is very own. Even functions are in different windows they can't have same id number. Additional function can't have same id number which is used any table (and vica versa) 
+
+
+=== Example ===
+{{{
+#include "aaplot.c"
+double g(double x,double z) {
+return x*z;
+}
+
+int main()
+{
+addR2Function(0,&f,0.01,0.01,"x * z");
+drawAll(); 
+return 0;
+}
+
+}}}
+
+
+== addRCurve ==
+int addRCurve(int win,void (*curve_ptr)(double,double*,double*,double*), double step, double lower, double upper,char *title)
+
+win
+ Windows number. First window is 0.
+
+curve_ptr
+ Pointer to curve, which is like
+  double some_function(double t, double *x, double *y, double *z)  {*x=t;  *y=t;  *z=t;}
+
+step
+ Stepping of t. Let say first value of x is A, then second value is A+step. And all values are A+(step `*` n), where n is integer.
+
+lower
+ First value of t.
+
+upper
+ Last value of t.
+
+ Title of curves. Will be written in 'legend' in same color than function itself. (legend is info box, which lists all functions)
+
+returning int
+ ID_number of just added curves. Its properties are changed with this id number. This id is very own. Even curves/functions are in different windows they can't have same id number. Additional curves can't have same id number which is used any table (and vica versa) 
+
+
+=== Example ===
+{{{
+#include "aaplot.c"
+void circle(double t, double *x, double *y, double *z) {
+*x= cos(t);
+*y= sin(t);
+*z= 0;
+}
+
+int main(){
+addRCurve(0,&circle,0.01, 0, 2*M_PI,"Circle");
+drawAll();
+return 0;
+}
+
+
+}}}
+
+TÄHÄN kohtaan taulukot
+
+== Parameterized functions ==
+int addRFunctionWithP(int win,double (*func_ptr)(double,double*),double *para, double step, char *title)
+
+int addR2FunctionWithP(int win,double (*func_ptr)(double,double,double*),double *para, double x_step, double z_step, char *title)
+
+int addRCurveWithP(int win,void (*curve_ptr)(double,double*,double*,double*,double*), double *para, double step, double lower, double upper,char *title)
+
+func_ptr / curve_ptr
+ is now pointing different kind of function. There are one double* more 
+
+para
+ array of parameters
+
+=== Example ===
+{{{
+#include "aaplot.c"
+void circle_with_radius(double t, double *x, double *y, double *z, double *p) {
+*x= p[0] * cos(t);
+*y= p[0] * sin(t);
+*z= 0;
+}
+
+int main(){
+double p1[1];
+p1[0]= 1.25; 
+
+addRCurveWithP(0,&circle_with_radius,p1,0.01, 0, 2*M_PI,"Circle");
+drawAll();
+return 0;
+}
+
+
+}}}
+
+= Changing values =
+Anything that returns id number to you is called entity and can be target of attribute-changing-functions.
+
+== changeEntityPlotSize ==
+void changeEntityPlotSize (int id, float size)
+
+id
+ id number of function, curve or table
+
+size
+ new plot/point size 
+
+==changeEntityColor ==
+void changeEntityColor(int id, float red, float green, float blue)
+
+id
+ id number of function, curve or table
+
+red,green,blue
+ all in range [0,1]. They together is RGB-value. RGB-color-system is additive, which means it behaves like mixing light. see:
+  0,0,0 = BLACK
+  1,0,0 = RED
+  0,1,0 = GREEN
+  0,0,1 = BLUE
+  1,1,1 = WHITE
+
+example
+int id = addRCurveWithP(0,&circle_with_radius,p1,0.01, 0, 2*M_PI,"Circle");
+
+changeEntityColor(id, 0.5, 0.5, 0.5);
+changeEntityPlotSize(id, 3.5);
+
+ 
