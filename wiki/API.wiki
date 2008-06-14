@@ -106,14 +106,14 @@ return 0;
 
 
 == addRCurve ==
-int addRCurve(int win,void (*curve_ptr)(double,double*,double*,double*), double step, double lower, double upper,char *title)
+int addRCurve(int win,void (`*`curve_ptr)(double,double`*`,double`*`,double`*`), double step, double lower, double upper,char `*`title)
 
 win
  Windows number. First window is 0.
 
 curve_ptr
  Pointer to curve, which is like
-  double some_function(double t, double *x, double *y, double *z)  {*x=t;  *y=t;  *z=t;}
+  double some_function(double t, double `*`x, double `*`y, double `*`z)  {`*`x=t;  `*`y=t;  `*`z=t;}
 
 step
  Stepping of t. Let say first value of x is A, then second value is A+step. And all values are A+(step `*` n), where n is integer.
@@ -147,18 +147,18 @@ return 0;
 
 
 }}}
+== Tables==
 
-TÄHÄN kohtaan taulukot
 
 == Parameterized functions ==
-int addRFunctionWithP(int win,double (*func_ptr)(double,double*),double *para, double step, char *title)
+int addRFunctionWithP(int win,double (`*`func_ptr)(double,double`*`),double `*`para, double step, char `*`title)
 
-int addR2FunctionWithP(int win,double (*func_ptr)(double,double,double*),double *para, double x_step, double z_step, char *title)
+int addR2FunctionWithP(int win,double (`*`func_ptr)(double,double,double`*`),double `*`para, double x_step, double z_step, char `*`title)
 
-int addRCurveWithP(int win,void (*curve_ptr)(double,double*,double*,double*,double*), double *para, double step, double lower, double upper,char *title)
+int addRCurveWithP(int win,void (`*`curve_ptr)(double,double`*`,double`*`,double`*`,double`*`), double `*`para, double step, double lower, double upper,char `*`title)
 
 func_ptr / curve_ptr
- is now pointing different kind of function. There are one double* more 
+ is now pointing different kind of function. There are one double`*` more 
 
 para
  array of parameters
@@ -211,9 +211,11 @@ red,green,blue
   1,1,1 = WHITE
 
 example
+{{{
 int id = addRCurveWithP(0,&circle_with_radius,p1,0.01, 0, 2*M_PI,"Circle");
 
 changeEntityColor(id, 0.5, 0.5, 0.5);
 changeEntityPlotSize(id, 3.5);
+}}}
 
  
