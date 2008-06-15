@@ -14,29 +14,30 @@ Fourth released version 0.4 <-- Current
 = What is in aaplot.0.4.tar.gz? =
 There are files:
 {{{
-aalto2.dat           example_many_curves.c  og_main.c
-aalto.dat            example_rings.c        og_menu.c
-aaplot.c             example1.c             og_state.c
-aaplot_defaults.c    example1P.c            og_structure.c
-aaplot_func_list.c   example2.c             og_window.c
-aaplot_helper.c      example2P.c            og_callbacks.c         openglut_exp.h
-aaplot_point_list.c  example3.c             og_cursor.c            openglut_ext.h
-aaplot_screenshot.c  example3P.c            og_display.c           openglut.h
-aaplot_table_list.c  example4.c             og_font.c              openglut_std.h
-aaplot_window.c      example5.c             og_font_data.c         
-                     example_gsl.c          og_font_helper.c
-Makefile             example_butterflies.c  og_init.c
-                                            og_internal.h
-
+aalto2.dat            example_many_curves.c   og_main.c          openglut_exp.h   
+aalto.dat             example_rings.c         og_menu.c          openglut_ext.h
+aaplot.c              example1.c              og_state.c         openglut.h
+aaplot_defaults.c     example1P.c             og_structure.c     openglut_std.h
+aaplot_func_list.c    example2.c              og_window.c
+aaplot_helper.c       example2P.c             og_callbacks.c        
+aaplot_point_list.c   example3.c              og_cursor.c           
+aaplot_screenshot.c   example3P.c             og_display.c          
+aaplot_table_list.c   example4.c              og_font.c          Makefile        
+aaplot_window.c       example5.c              og_font_data.c     aaplot_icon.xpm 
+                      example6.c              og_font_helper.c
+                      example7.c              og_init.c
+                      example_gsl.c           og_internal.h
+                      example_butterflies.c      
 }}}
   * .dat -files are point-data for (projection of ) 'Aalto-Vase'
 see: 
 http://tbn0.google.com/images?q=tbn:cQxcwxmAlbqg9M:http://www.iittalahomeshopping.com/WebRoot/iittala/Shops/iittala/4680/EBC8/CD64/5826/CE4C/5274/EB19/D9BC/005100AaltoMalja160Punainen.jpg
-  * aaplot`*` -files are this project
-  * Makefile makefile
+  * aaplot`*`.c -files are this project
   * example`*` -files are examples
-  * og`*` and openglut`*` -files are ripped and modded from openglut see http://openglut.sourceforge.net/
-
+  * og`*` and openglut`*` -files are ripped and modded from openglut see 
+http://openglut.sourceforge.net/
+ * Makefile makefile
+ * aaplot_icon.xpm icon for applications
 ----
 = How to use? =
 {{{
@@ -59,7 +60,7 @@ make example1
   * example2P: R2->R, with parameters
   * example3P: R->R3, with parameters
 
-nothing new:
+examples with nothing new:
   * example_butterflies: four parameterized curves
   * example_many_curves: just many (>20) curves, 
   * example_rings: three rings
