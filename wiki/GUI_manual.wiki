@@ -3,18 +3,25 @@
 = GUI - Manual =
 
 == With mouse ==
-Left mouse button + moving mouse
- Pan (eg. move) the whole view.
-
-
 Right mouse button
- moving left <-> right
-  Y-axis stay in place and zx-plane rotates
- moving up <-> down
-  X-axis stay in place and zy-plane rotates
+ Opens the Menu. Menu entries can be clicked with left or right button.
+
+=== Menu ===
+ * Toggle Move/Rotate -mode
+ * Change cursor to crosshair
+ * Prints manual (to console at this moment)
+ * Close all gl-windows.
+
+Left mouse button + moving mouse
+ * If you are _movingmode_ it will pan (eg. move) the whole view.
+ * If you are _rotatingmode_ it rotates the view.   
+  moving left <-> right
+   Y-axis stay in place and zx-plane rotates
+  moving up <-> down
+   X-axis stay in place and zy-plane rotates
 
 Middle mouse button
- none
+ Marks one point to coordinate. (This works correct only if view is not rotated)
 
 Mouse wheel
  Zooming in and out.
@@ -24,3 +31,4 @@ Mouse wheel
   * 3 and 4 :  Y-axis stay in place and zx-plane rotates
   * 5 and 6 :  Z-axis stay in place and xy-plane rotates
   * z       :  Take screenshot
+  * ESC     :  Close window
