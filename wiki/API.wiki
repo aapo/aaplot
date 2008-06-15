@@ -125,7 +125,7 @@ upper
  Last value of t.
 
 title
- Title of curves. Will be written in 'legend' in same color than function itself. (legend is info box, which lists all functions)
+ Title of curve. Will be written in 'legend' in same color than function itself. (legend is info box, which lists all functions)
 
 returning int
  ID_number of just added curves. Its properties are changed with this id number. This id is very own. Even curves/functions are in different windows they can't have same id number. Additional curves can't have same id number which is used any table (and vica versa) 
