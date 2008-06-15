@@ -1,14 +1,10 @@
 #summary The latest releasing info.
 
 = History =
-
-First  released version 0.1
-
-Second released version 0.2
-
-Third  released version 0.3
-
-Fourth released version 0.4 <-- Current
+  * version 0.1
+  * version 0.2
+  * version 0.3
+  * version 0.4    <---- Current
 
 
 = What is in aaplot.0.4.tar.gz? =
