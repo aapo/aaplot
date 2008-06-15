@@ -27,8 +27,12 @@ Mouse wheel
  Zooming in and out.
 
 == With Keyboard ==
-  * 1 and 2 :  X-axis stay in place and zy-plane rotates
-  * 3 and 4 :  Y-axis stay in place and zx-plane rotates
-  * 5 and 6 :  Z-axis stay in place and xy-plane rotates
-  * z       :  Take screenshot
-  * ESC     :  Close window
+|| 1 and 2 || X-axis stay in place and zy-plane rotates ||
+|| 3 and 4 || Y-axis stay in place and zx-plane rotates ||
+|| 5 and 6 || Z-axis stay in place and xy-plane rotates ||
+|| z || Take screenshot ||
+|| UP/DOWN || Scales y-axis ||
+|| LEFT/RIGHT || Scales x-axis ||
+|| Shitt + UP/DOWN || Scales z-axis||
+|| ESC || Close all windows||
+ 
