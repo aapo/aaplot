@@ -124,6 +124,7 @@ lower
 upper
  Last value of t.
 
+title
  Title of curves. Will be written in 'legend' in same color than function itself. (legend is info box, which lists all functions)
 
 returning int
