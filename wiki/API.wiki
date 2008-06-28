@@ -373,7 +373,7 @@ changeEntityTitle(id, "Circle!");
 When you close last graphical window, the main program continues and can ask if user choosed (clicked) some points.
 
 ==getClickedPointsFromWindow==
-double *getClickedPointsFromWindow(int win, int *n) 
+double `*`getClickedPointsFromWindow(int win, int `*`n) 
 
 win
  Asked window.
@@ -382,7 +382,7 @@ n
  Returns how many clicked points.
 
 returning double[]
- First and second values is coordinates of the first point. Generally: point j = (table[i],table[i+1]), i=2j, j<=n.
+ First and second values is coordinates of the first point. Generally: `point j = (table[i],table[i+1]), i=2j, j<=n.`
 
 NOTE:
  Size of returned array is 2*n.
