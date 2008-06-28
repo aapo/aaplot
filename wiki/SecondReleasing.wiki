@@ -1,4 +1,7 @@
 #Info about second releasing (version 0.2)
+----
+= THIS PAGE IS ONLY HISTORY =
+----
 
 = History =
 
