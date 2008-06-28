@@ -326,6 +326,7 @@ red,green,blue
 
 ==changeEntityXStepping==
 Not for tables.
+
 void changeEntityXStepping(int id, double x_step) 
 
 id
@@ -336,6 +337,7 @@ x_step
 
 ==changeEntityZStepping==
 Not for tables.
+
 Changing z_step of R->R function means nothing
 
 void changeEntityXStepping(int id, double z_step) 
@@ -362,6 +364,51 @@ int id = addRCurveWithP(0,&circle_with_radius,p1,0.01, 0, 2*M_PI,"Circle");
 
 changeEntityColor(id, 0.5, 0.5, 0.5);
 changeEntityPlotSize(id, 3.5);
+changeEntityXStepping(id, 0.0001);
+changeEntityTitle(id, "Circle!");
 }}}
 
  
+=After GUI=
+When you close last graphical window, the main program continues and can ask if user choosed (clicked) some points.
+
+==getClickedPointsFromWindow==
+double *getClickedPointsFromWindow(int win, int *n) 
+
+win
+ Asked window.
+
+n
+ Returns how many clicked points.
+
+returning double[]
+ First and second values is coordinates of the first point. Generally: point j = (table[i],table[i+1]), i=2j, j<=n.
+
+NOTE:
+ Size of returned array is 2*n.
+
+=== Example ===
+{{{
+#include "aaplot.h"
+
+double my_func(double x) {
+return 2*x*x + 4*x - 2;
+}
+
+int main(){
+addRFunction(0,&my_func,0.001,"parabola");
+drawAll(); /*main programs pauses till all windows are closed*/
+
+int n;
+double *points = getClickedPointsFromWindow(0,&n);
+
+printf("Selected points:\n");
+int i;
+for (i=0;i<2*n;i=i+2)
+  {
+  printf("(%lf,%lf)\n",points[i],points[i+1]);
+  }
+return 0;
+}
+
+}}}
