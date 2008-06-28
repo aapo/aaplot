@@ -18,7 +18,7 @@ sudo apt-get install libpng3
 }}}
 
 If you do NOT install/have libpng, you must make two changes:
-  * In aaplot_defaults.c comment the first line #define AAPLOT_SCREENSHOT
+  * In aaplot.h comment the line #define AAPLOT_SCREENSHOT
   * In Makefile remove -lpng from LDFLAGS=
 
 
@@ -27,135 +27,9 @@ aaplot has very cool icon and you need libXpm. In Ubuntu:
 sudo apt-get install libxpm-dev
 }}}
 
-*But there are some small problems and you can help to solve them without seeing any sources of aaplot.*
+If you do NOT install/have libxpm-dev, you must make two changes:
+  * In aaplot.h comment the line #define AAPLOT_ICON
+  * In Makefile remove -lXpm from LDFLAGS=
 
-= Small problems =
-== RGB-color generating ==
-How I generate RGB-colors, so they are not all approx [0.5 , 0.5 , 0.5]?
-
-First version:
-{{{
-void getColors(float *red, float *green, float *blue){
-int r=rand ();
-int g=rand ();
-int b=rand ();
-
-*red=(r+0.0)/RAND_MAX;
-*green=(g+0.0)/RAND_MAX;
-*blue=(b+0.0)/RAND_MAX;
-}
-}}}
-
-
-Second version: (little test-tweaking)
-{{{
-void getColors(float *red, float *green, float *blue){
-int r=rand ();
-int g=rand ();
-int b=rand ();
-
-*red=(r+0.0)/RAND_MAX;
-*green=(g+0.0)/RAND_MAX;
-*blue = *red+*green;
-if (*blue >1.0)
-   *blue=*blue-1.0;
-}
-}}}
-
-
-Third version: (this is almost good)
-{{{
-/*
-Because random number generator is NOT initialized, this gives same numbers each time when program runs.
-I try generate three numbers [0,1], that all is not approx 0,5.
-First I randomize red and green, and if they are 'too middle' I fix blues value.
-
-The point is:
- red   = random value [0,1]
- green = random value [0,1]
-
-There are 4 'slots' which red and green might be.
-  0    low     mid=0.5     hig    1
-R |     |         |         |     |
-G |     |         |         |     |
-
-
-case 1:
-  0    low     mid=0.5     hig    1
-R |     |    X    |         |     |
-G |     |    X    |         |     |
-B |     |         |         |  X  |
-
-case 2:
-  0    low     mid=0.5     hig    1
-R |     |         |    X    |     |
-G |     |         |    X    |     |
-B |  X  |         |         |     |
-
-case 3:
-  0    low     mid=0.5     hig    1
-R |     |         |    X    |     |
-G |     |    X    |         |     |
-B |  X  |         |         |  X  |
-
-case 4:
-  0    low     mid=0.5     hig    1
-R |     |    X    |         |     |
-G |     |         |    X    |     |
-B |  X  |         |         |  X  |
-
-*/
-void getColors(float *red, float *green, float *blue){
-int r=rand ();
-*red=(r+0.0)/RAND_MAX;
-int g=rand ();
-*green=(g+0.0)/RAND_MAX;
-
-float low = 0.2;
-float mid = 0.5;
-float hig = 1-low;
-if (*red>low && *red<mid && *green>low && *green<mid)
-   {
-   *blue=(rand()+0.0)/RAND_MAX / (1/low) + hig;
-   }
-else if (*red>mid && *red<hig && *green>mid && *green<hig)
-   {
-   *blue=(rand()+0.0)/RAND_MAX / (1/low);
-   }
-else if (*red>low && *red<hig && *green>low && *green<hig)
-   {
-   *blue=(rand()+0.0)/RAND_MAX / 2.0;
-   int b=rand (); /*toss a coin */
-   if (b<RAND_MAX/2)
-      *blue=*blue*2 / (1/low);
-   else 
-      *blue=*blue*2 / (1/low) + hig;
-   }
-else
-   {
-   int b=rand ();
-   *blue=(b+0.0)/RAND_MAX;
-   }
-
-//printf("%lf,%lf,%lf\n",*red,*green,*blue);
-}
-}}}
-
-== How to set Lights, so surfaces looks clear ==
-Code looks like this, but I'm not pleased with it. Do I need more lightsources?
-{{{
-GLfloat pos[4] = {0., -5., 0., 1.};
-GLfloat white[4] = {1., 1., 1., 1.};
-GLfloat black[4] = {0., 0., 0., 0.};
-   
-glEnable (GL_LIGHTING);
-glEnable (GL_COLOR_MATERIAL);
-glColorMaterial (GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-
-glEnable (GL_LIGHT1);
-glLightfv (GL_LIGHT1, GL_POSITION, pos);
-glLightfv (GL_LIGHT1, GL_DIFFUSE, white);
-glLightfv (GL_LIGHT1, GL_SPECULAR, black);
-   
-glMaterialfv (GL_FRONT, GL_SPECULAR, black);
-}}}
+=Small tasks==
+There are some small problems and you can help to solve them without seeing any sources of aaplot. You find them in issues. They have titled 'discuss'.
