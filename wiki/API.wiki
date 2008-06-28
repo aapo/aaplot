@@ -149,7 +149,118 @@ return 0;
 
 }}}
 == Tables==
+== addTableDataFile ==
+int addTableDataFile(int win,char `*`filename , `*`title)
 
+win
+ Windows number. First window is 0.
+
+filename
+ Name of the file. Fileformat is like
+ {{{
+ 26 2
+ 0.0 -4.0
+ 1.0 -3.6
+ 2.0 -3.6
+ 3.0 -4.0
+ 3.7 -3.7
+ 4.0 -3.0
+ 3.6 -1.0
+ 3.6  0.3
+ 4.0  1.0
+ 4.0  2.0
+ 2.8  4.0
+ 2.3  4.3
+ 1.0  4.0
+-1.0  3.3
+-2.7  3.5
+-3.8  3.2
+-4.0  2.2
+-3.5  1.2
+-3.7  0.0
+-4.0 -1.2
+-4.1 -3.0
+-3.8 -3.7
+-3.0 -4.0
+-2.0 -3.6
+-1.0 -3.6
+ 0.0 -4.0
+ }}}
+ First is number of points, second is how many dimension. (version 0.5 supports only 2 dimensional tables)
+
+title
+ Title of point set. Will be written in 'legend' in same color than points. (legend is info box, which lists all functions)
+
+returning int
+ ID_number of just added function. Its properties are changed with this id number. This id is very own. Even functions are in different windows they can't have same id number. Additional function can't have same id number which is used any table (and vica versa) 
+
+
+== addTableDataArrays ==
+int addTableDataArrays(int win,int number_of_points,double *x,double *x,  char `*`title)
+
+win
+ Windows number. First window is 0.
+
+number_of_points
+ How many points there are or you want to draw,
+
+x,y
+ Can be double[]. First point is (x[0],y[0]) and point number i is (x[i],y[i]).
+
+title
+ Title of point set. Will be written in 'legend' in same color than points itself. (legend is info box, which lists all functions)
+
+returning int
+ ID_number of just added function. Its properties are changed with this id number. This id is very own. Even functions are in different windows they can't have same id number. Additional function can't have same id number which is used any table (and vica versa) 
+
+=== Example ===
+{{{
+#include "aaplot.h"
+int main(){
+/* you must have aalto.dat */
+addTableDataFile(0,"aalto.dat" , "aalto26");
+drawAll();
+}}}
+
+=== Example2 ===
+{{{
+#include "aaplot.h"
+int main(){
+int number_of_points = 10;
+double *x,*y;
+x= malloc(number_of_points*sizeof(double));
+y= malloc(number_of_points*sizeof(double));
+
+/*Some values*/
+int i=0;
+for (i=0;i<number_of_points;i++)
+  {
+  x[i]=i*cos(i);
+  y[i]=i*sin(i);
+  }
+addTableDataArrays(0,number_of_points,x,y, "some_test_data");
+drawAll();
+}}}
+
+
+=== Example3 ===
+{{{
+#include "aaplot.h"
+int main(){
+#define number_of_points 10
+double x[number_of_points];
+double y[number_of_points];
+
+/*Some values*/
+int i=0;
+for (i=0;i<number_of_points;i++)
+  {
+  x[i]=i*cos(i);
+  y[i]=i*sin(i);
+  }
+addTableDataArrays(0,number_of_points,x,y, "some_test_data");
+drawAll();
+}}}
 
 == Parameterized functions ==
 int addRFunctionWithP(int win,double (`*`func_ptr)(double,double`*`),double `*`para, double step, char `*`title)
@@ -204,12 +315,46 @@ id
  id number of function, curve or table
 
 red,green,blue
- all in range [0,1]. They together is RGB-value. RGB-color-system is additive, which means it behaves like mixing light. see:
+ all in range [0,1]. They together is RGB-value. RGB-color-system is additive, which means it behaves like mixing light:
+{{{
   0,0,0 = BLACK
   1,0,0 = RED
   0,1,0 = GREEN
   0,0,1 = BLUE
   1,1,1 = WHITE
+}}}
+
+==changeEntityXStepping==
+Not for tables.
+void changeEntityXStepping(int id, double x_step) 
+
+id
+ id number of function or curve
+
+x_step
+ New x stepping.
+
+==changeEntityZStepping==
+Not for tables.
+Changing z_step of R->R function means nothing
+
+void changeEntityXStepping(int id, double z_step) 
+
+id
+ id number of function or curve
+
+z_step
+ New z stepping.
+
+==changeEntityTitle==
+void changeEntityTitle(int id, char *title)
+
+id
+ id number of function, curve or table
+
+title
+ New title of entity.
+
 
 example
 {{{
