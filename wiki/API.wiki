@@ -7,7 +7,7 @@ Write c-file, include aaplot
 }}}
 Compile 
 {{{
-gcc -lpng -lGL -lXpm
+gcc -lpng -lXpm -lGL
 }}}
 
 -lpng means libpng, which is used to screenshooting. (aaplot can be compiled without it)
