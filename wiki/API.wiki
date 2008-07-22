@@ -244,7 +244,16 @@ filename
 -1.0 -3.6
  0.0 -4.0
  }}}
- First is number of points, second is how many dimension. (version 0.5 supports only 2 dimensional tables)
+ Or
+ {{{
+ 6 3
+ 0.0 -4.0 -3.0
+ 1.0 -3.6 -2.0
+ 2.0 -3.6 -1.0
+ 3.0 -4.0 0.0
+ 3.7 -3.7 1.0
+ 4.0 -3.0 2.0
+ First is number of points, second is how many dimension. (2 or 3 dimension)
 
 title
  Title of point set. Will be written in 'legend' in same color than points. (legend is info box, which lists all functions)
