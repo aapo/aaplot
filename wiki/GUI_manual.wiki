@@ -10,10 +10,19 @@ Right mouse button
  * Toggle Move/Rotate -mode
  * Change cursor to crosshair
  * Prints manual (to console at this moment)
+ * Reset view back to normal
+ * Hiding/Unhiding coordinateplanes (XY,YZ,XZ)
  * Close all gl-windows.
+ * With every function/table
+   * Change title
+   * Change point size
+   * Change stepping (both if have two steppings)
+   * direction (e.g. f(z)=x)
+   * New color (pick next random color)
+   * Hide/Unhide
 
 Left mouse button + moving mouse
- * If you are _movingmode_ it will pan (eg. move) the whole view.
+ * If you are _movingmode_ it will pan (i.e. move) the whole view.
  * If you are _rotatingmode_ it rotates the view.   
   moving left <-> right
    Y-axis stay in place and zx-plane rotates
@@ -35,4 +44,9 @@ Mouse wheel
 || LEFT/RIGHT || Scales x-axis ||
 || Shitt + UP/DOWN || Scales z-axis||
 || ESC || Close all windows||
- 
+||  a/d : increase x-boundaries ||
+||  w/s : increase y-boundaries ||
+||  q/e : increase z-boundaries ||
+||  A/D : decrease x-boundaries ||
+||  W/S : decrease y-boundaries ||
+||  Q/E : decrease z-boundaries ||
