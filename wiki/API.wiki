@@ -384,29 +384,52 @@ red,green,blue
   1,1,1 = WHITE
 }}}
 
-==changeEntityXStepping==
+==toggleHidden==
+void toggleHidden(int id)
+
+id
+ id number of function, curve or table
+
+==changeDirection==
+
+void changeDirection(int id, int d)
+
+id
+ id number of function, curve or table
+
+d
+ New direction:
+||d \ type ||R2->R        ||3dTable   || R->R      ||2dTable||
+||1||f(x,y)=z     ||xyz   ||f(x)=y      ||XY||
+||2||f(x,z)=y     ||xzy   ||f(x)=z      ||XZ||
+||3||f(y,x)=z     ||yxz   ||f(y)=x      ||YX||
+||4||f(y,z)=x     ||yzx   ||f(y)=z      ||YZ||
+||5||f(z,x)=y     ||zxy   ||f(z)=x      ||ZX||
+||6||f(z,y)=x     ||zyx   ||f(z)=y      ||ZY||
+
+==changeEntityStepping0==
 Not for tables.
 
-void changeEntityXStepping(int id, double x_step) 
+void changeEntityStepping0(int id, double step_0) 
 
 id
  id number of function or curve
 
-x_step
- New x stepping.
+step_0
+ New value of first stepping.
 
-==changeEntityZStepping==
+==changeEntityStepping1==
 Not for tables.
 
-Changing z_step of R->R function means nothing
+Changing step_1 of R->R function means nothing
 
-void changeEntityXStepping(int id, double z_step) 
+void changeEntityStepping1(int id, double step_1) 
 
 id
  id number of function or curve
 
-z_step
- New z stepping.
+step_1
+ New value of second stepping.
 
 ==changeEntityTitle==
 void changeEntityTitle(int id, char *title)
@@ -424,7 +447,7 @@ int id = addRCurveWithP(0,&circle_with_radius,p1,0.01, 0, 2*M_PI,"Circle");
 
 changeEntityColor(id, 0.5, 0.5, 0.5);
 changeEntityPlotSize(id, 3.5);
-changeEntityXStepping(id, 0.0001);
+changeEntityStepping0(id, 0.0001);
 changeEntityTitle(id, "Circle!");
 }}}
 
