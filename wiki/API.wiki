@@ -145,7 +145,7 @@ return 0;
 
 
 
-== addRCurve ==
+== addR2Curve ==
 int addR2Curve(int win,void (`*`curve_ptr)(double,double,double`*`,double`*`,double`*`), double step, double step_1, double lowerA, double upperA, double lowerB, double upperB, char `*`title)
 
 win
@@ -326,6 +326,8 @@ int addRFunctionWithP(int win,double (`*`func_ptr)(double,double`*`),double `*`p
 int addR2FunctionWithP(int win,double (`*`func_ptr)(double,double,double`*`),double `*`para, double x_step, double z_step, char `*`title)
 
 int addRCurveWithP(int win,void (`*`curve_ptr)(double,double`*`,double`*`,double`*`,double`*`), double `*`para, double step, double lower, double upper,char `*`title)
+
+int addR2CurveWithP(int win,void (`*`curve_ptr)(double,double,double`*`,double`*`,double`*`,double`*`), double `*`para, double step, double step_1,double lowerA, double upperA, double lowerB, double upperB, char `*`title)
 
 func_ptr / curve_ptr
  is now pointing different kind of function. There are one double`*` more 
