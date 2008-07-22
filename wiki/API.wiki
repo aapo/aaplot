@@ -16,17 +16,11 @@ gcc -lpng -lGL -lXpm
 
 -lGL are mandatory 
 
-= API for version 0.5 =
-in aaplot.h are limits of the _drawing cube_ and lots of another defaults.
+= API for version 0.6 =
+There are some default-globals, e.g, limits of the _drawing cube_ 
 {{{
-double lower_x_limit = -10.0;
-double upper_x_limit = 10.0;
-
-double lower_y_limit = -5.0;
-double upper_y_limit = 5.0;
-
-double lower_z_limit = -3.0;
-double upper_z_limit = 3.0;
+double default_lower_bounds[3] = {-10.0, -5.0, -3.0};
+double default_upper_bounds[3] = { 10.0,  5.0,  3.0};
 }}}
 You can change the values in your code. When you make new window (add some element to it) it gets *current* defaults.
 
@@ -128,7 +122,7 @@ title
  Title of curve. Will be written in 'legend' in same color than function itself. (legend is info box, which lists all functions)
 
 returning int
- ID_number of just added curves. Its properties are changed with this id number. This id is very own. Even curves/functions are in different windows they can't have same id number. Additional curves can't have same id number which is used any table (and vica versa) 
+ ID_number of just added curve. Its properties are changed with this id number. This id is very own. Even curves/functions are in different windows they can't have same id number. Additional curves can't have same id number which is used any table (and vica versa) 
 
 
 === Example ===
@@ -148,6 +142,70 @@ return 0;
 
 
 }}}
+
+
+
+== addRCurve ==
+int addR2Curve(int win,void (`*`curve_ptr)(double,double,double`*`,double`*`,double`*`), double step, double step_1, double lowerA, double upperA, double lowerB, double upperB, char `*`title)
+
+win
+ Windows number. First window is 0.
+
+curve_ptr
+ Pointer to curve, which is like
+  double some_function(double t, double u, double `*`x, double `*`y, double `*`z)  {`*`x=t;  `*`y=t;  `*`z=t;}
+
+step
+ Stepping of t. Let say first value of x is A, then second value is A+step. And all values are A+(step `*` n), where n is integer.
+
+step_1
+ Stepping of u.
+
+lowerA
+ First value of t.
+
+upperA
+ Last value of t.
+
+lowerB
+ First value of u.
+
+upperB
+ Last value of u.
+
+title
+ Title of curve. Will be written in 'legend' in same color than function itself. (legend is info box, which lists all functions)
+
+returning int
+ ID_number of just added curve. Its properties are changed with this id number. This id is very own. Even curves/functions are in different windows they can't have same id number. Additional curves can't have same id number which is used any table (and vica versa) 
+
+
+=== Example ===
+{{{
+#include "aaplot.h"
+void circle3(double t, double u, double *x, double *y, double *z) {
+double r=u; /* radius */
+*x= r * cos(t);
+*y= 2;
+*z= r * sin(t);
+}
+
+
+void circle(double t, double *x, double *y, double *z) {
+*x= cos(t);
+*y= sin(t);
+*z= 0;
+}
+
+int main(){
+addR2Curve(0,&circle3,0.01,0.5,0,2*M_PI,0,2,"circles");
+drawAll();
+return 0;
+}
+
+
+}}}
+
 == Tables==
 == addTableDataFile ==
 int addTableDataFile(int win,char `*`filename , `*`title)
