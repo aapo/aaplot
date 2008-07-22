@@ -244,7 +244,7 @@ filename
 -1.0 -3.6
  0.0 -4.0
  }}}
- Or
+ Or like this
  {{{
  6 3
  0.0 -4.0 -3.0
@@ -253,13 +253,17 @@ filename
  3.0 -4.0 0.0
  3.7 -3.7 1.0
  4.0 -3.0 2.0
- First is number of points, second is how many dimension. (2 or 3 dimension)
+ }}}
+ First is number of points. Actually how many points is readed, if there are too less numbers, rest comes 'randomly'. Second is how many dimension: 2 or 3 dimension. All of values are doubles.
 
 title
  Title of point set. Will be written in 'legend' in same color than points. (legend is info box, which lists all functions)
 
 returning int
  ID_number of just added function. Its properties are changed with this id number. This id is very own. Even functions are in different windows they can't have same id number. Additional function can't have same id number which is used any table (and vica versa) 
+
+*Note*
+ There are global (double) named _default_2dtable_thirdvalue_, which is the third value of two-dimensional tables.
 
 
 == addTableDataArrays ==
