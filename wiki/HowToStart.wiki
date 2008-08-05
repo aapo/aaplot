@@ -3,7 +3,7 @@
 = How to start =
 If you have bazaar installed on your system, you can get latest sources:
 
-*bzr branch http://lauta.dyndns.org/aaplot*
+*bzr branch http://lauta.dyndns.org/aaplot *
 
 In Ubuntu you need libglu1-mesa-dev package (for gl.h)
 
