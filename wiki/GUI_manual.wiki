@@ -44,9 +44,9 @@ Mouse wheel
 || LEFT/RIGHT || Scales x-axis ||
 || Shitt + UP/DOWN || Scales z-axis||
 || ESC || Close all windows||
-||  a/d : increase x-boundaries ||
-||  w/s : increase y-boundaries ||
-||  q/e : increase z-boundaries ||
-||  A/D : decrease x-boundaries ||
-||  W/S : decrease y-boundaries ||
-||  Q/E : decrease z-boundaries ||
+||  a/d || increase x-boundaries ||
+||  w/s || increase y-boundaries ||
+||  q/e || increase z-boundaries ||
+||  A/D || decrease x-boundaries ||
+||  W/S || decrease y-boundaries ||
+||  Q/E || decrease z-boundaries ||
