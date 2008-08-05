@@ -5,26 +5,30 @@
   * version 0.2
   * version 0.3
   * version 0.4 
-  * version 0.5     <---- Current
+  * version 0.5     
+  * version 0.6     <---- Current
 
 
-= What is in aaplot.0.5.tar.gz? =
+= What is in aaplot.0.6.tar.gz? =
 There are files:
 {{{
-aalto2.dat            example_many_curves.c   og_main.c          openglut_exp.h   
-aalto.dat             example_rings.c         og_menu.c          openglut_ext.h
-aaplot.c              example1.c              og_state.c         openglut.h
-aaplot_defaults.c     example1P.c             og_structure.c     openglut_std.h
-aaplot_func_list.c    example2.c              og_window.c
-aaplot_helper.c       example2P.c             og_callbacks.c        
-aaplot_point_list.c   example3.c              og_cursor.c           
-aaplot_screenshot.c   example3P.c             og_display.c          
-aaplot_table_list.c   example4.c              og_font.c          Makefile        
-aaplot_window.c       example5.c              og_font_data.c     Readme 
-                      example6.c              og_font_helper.c   aaplot_icon.xpm
-                      example7.c              og_init.c
-                      example_gsl.c           og_internal.h
-                      example_butterflies.c      
+aaplot.h                example1.c                 aaglut.h
+aaplot.c                example1P.c                aaglut_internal.h
+aaplot_func_list.c      example2.c                 aaglut_std.h
+aaplot_helper.c         example2P.c                aaglut_exp.h 
+aaplot_inputbox.c       example3.c                 aaglut_ext.h 
+aaplot_point_list.c     example3P.c                aaglut_callbacks.c        
+aaplot_screenshot.c     example4.c                 aaglut_cursor.c        
+aaplot_table_list.c     example4P.c                aaglut_display.c 
+aaplot_window.c         example5.c                 aaglut_font.c        
+                        example5B.c                aaglut_font_data.c 
+Makefile                example6.c                 aaglut_font_helper.c
+Makefile_win            example7.c                 aaglut_init.c 
+Readme                  example8.c                 aaglut_main.c
+aaplot_icon.xpm         example_butterflies.c      aaglut_menu.c 
+aalto2.dat              example_many_curves.c      aaglut_state.c   
+aalto.dat               example_rings.c            aaglut_structure.c     
+saucepan.dat            example_gsl.c              aaglut_window.c  
 }}}
   * .dat -files are point-data for (projection of ) 'Aalto-Vase'
 see: 
