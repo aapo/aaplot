@@ -4,12 +4,13 @@
   * version 0.1
   * version 0.2
   * version 0.3
-  * version 0.4 
-  * version 0.5     
-  * version 0.6     <---- Current
+  * version 0.4
+  * version 0.5
+  * version 0.6
+  * version 0.7   <---- Current
 
 
-= What is in aaplot.0.6.tar.gz? =
+= What is in aaplot.0.7.tar.gz? =
 There are files:
 {{{
 aaplot.h                example1.c                 aaglut.h
