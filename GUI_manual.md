@@ -1,0 +1,63 @@
+#What to do when you get GL-window open.
+
+# GUI - Manual #
+
+## With mouse ##
+Right mouse button
+> Opens the Menu. Menu entries can be clicked with left or right button.
+
+### Menu ###
+  * Toggle Move/Rotate -mode
+  * Change cursor to crosshair
+  * Prints manual (to console at this moment)
+  * Reset view back to normal
+  * Hiding/Unhiding coordinateplanes (XY,YZ,XZ)
+  * Close all gl-windows.
+  * With every function/table
+    * Change title
+    * Change point size
+    * Change stepping (both if have two steppings)
+    * direction (e.g. f(z)=x)
+    * New color (pick next random color)
+    * Hide/Unhide
+
+Left mouse button + moving mouse
+  * If you are _movingmode_ it will pan (i.e. move) the whole view.
+  * If you are _rotatingmode_ it rotates the view.
+> > moving left 
+
+&lt;-&gt;
+
+ right
+> > > Y-axis stay in place and zx-plane rotates
+
+> > moving up 
+
+&lt;-&gt;
+
+ down
+> > > X-axis stay in place and zy-plane rotates
+
+Middle mouse button
+
+> Marks one point to coordinate. (This works correct only if view is not rotated)
+
+Mouse wheel
+> Zooming in and out.
+
+## With Keyboard ##
+| 1 and 2 | X-axis stay in place and zy-plane rotates |
+|:--------|:------------------------------------------|
+| 3 and 4 | Y-axis stay in place and zx-plane rotates |
+| 5 and 6 | Z-axis stay in place and xy-plane rotates |
+| z | Take screenshot |
+| UP/DOWN | Scales y-axis |
+| LEFT/RIGHT | Scales x-axis |
+| Shitt + UP/DOWN | Scales z-axis|
+| ESC | Close all windows|
+|  a/d | increase x-boundaries |
+|  w/s | increase y-boundaries |
+|  q/e | increase z-boundaries |
+|  A/D | decrease x-boundaries |
+|  W/S | decrease y-boundaries |
+|  Q/E | decrease z-boundaries |

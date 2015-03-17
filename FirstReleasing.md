@@ -1,0 +1,48 @@
+
+---
+
+# THIS PAGE IS ONLY HISTORY #
+
+---
+
+
+# History #
+
+First released version 0.1
+
+
+# What is in aaplot\_0.1.tar.gz? #
+There are files:
+```
+aalto2.dat           aapo.todo  Makefile          og_menu.c
+aalto.dat            esim1.c    og_callbacks.c    og_state.c
+aaplot.c             esim2.c    og_cursor.c       og_structure.c
+aaplot_defaults.c    esim3.c    og_display.c      og_window.c
+aaplot_func_list.c   esim4.c    og_font.c         openglut_exp.h
+aaplot_helper.c      esim5.c    og_font_data.c    openglut_ext.h
+aaplot_point_list.c  esim6.c    og_font_helper.c  openglut.h
+aaplot_screenshot.c  esim7.c    og_init.c         openglut_std.h
+aaplot_table_list.c  esim8.c    og_internal.h
+aaplot_window.c      esim9.c    og_main.c
+```
+  * .dat -files are point-data for (projection of ) 'Aalto-Vase'
+see:
+![http://tbn0.google.com/images?q=tbn:cQxcwxmAlbqg9M:http://www.iittalahomeshopping.com/WebRoot/iittala/Shops/iittala/4680/EBC8/CD64/5826/CE4C/5274/EB19/D9BC/005100AaltoMalja160Punainen.jpg](http://tbn0.google.com/images?q=tbn:cQxcwxmAlbqg9M:http://www.iittalahomeshopping.com/WebRoot/iittala/Shops/iittala/4680/EBC8/CD64/5826/CE4C/5274/EB19/D9BC/005100AaltoMalja160Punainen.jpg)
+  * aaplot -files are this project
+  * aapo.todo is my own todo (finnish)
+  * esim -files are examples (_esim_ erkki means example) (names will change)
+  * Makefile makefile
+  * og and openglut -files are ripped and modded from openglut see http://openglut.sourceforge.net/
+
+
+---
+
+# How to use? #
+```
+make all
+or
+make esim1
+(or some other esim*)
+```
+
+One of examples (esim6.c) uses gsl, it is not compiled with 'make all'. see: http://www.gnu.org/software/gsl/

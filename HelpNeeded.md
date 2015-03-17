@@ -1,0 +1,35 @@
+#Help needed
+# Welcome to Join #
+
+If you want join the project you are welcome. (That's why aaplot is OSS.)
+
+If you have bazaar installed on your system, you can get latest sources:
+```
+bzr branch http://lauta.dyndns.org/aaplot
+```
+In Ubuntu you need libglu1-mesa-dev package (for gl.h)
+```
+sudo apt-get install libglu1-mesa-dev
+```
+
+If you want take screenshots, you need libpng. In Ubuntu:
+```
+sudo apt-get install libpng3
+```
+
+If you do NOT install/have libpng, you must make two changes:
+  * In aaplot.h comment the line #define AAPLOT\_SCREENSHOT
+  * In Makefile remove -lpng from LDFLAGS=
+
+
+aaplot has very cool icon and you need libXpm. In Ubuntu:
+```
+sudo apt-get install libxpm-dev
+```
+
+If you do NOT install/have libxpm-dev, you must make two changes:
+  * In aaplot.h comment the line #define AAPLOT\_ICON
+  * In Makefile remove -lXpm from LDFLAGS=
+
+# Small tasks #
+There are some small problems and you can help to solve them without seeing any sources of aaplot. You find them in issues. They have titled 'discuss'.
