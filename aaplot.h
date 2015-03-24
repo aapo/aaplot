@@ -8,13 +8,6 @@
 #endif
 
 
-//these are not tested in windows
-#ifndef _MSC_VER
-#define AAPLOT_SCREENSHOT
-#define AAPLOT_ICON
-#endif
-
-
 void refresh ();
 void drawAll();
 

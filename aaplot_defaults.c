@@ -1,6 +1,3 @@
-#define AAPLOT_SCREENSHOT
-#define AAPLOT_ICON
-
 /*background color: 1,1,1=white. 0,0,0=black*/
 double default_background_color[3] = {1.0,1.0,1.0} ;
 
