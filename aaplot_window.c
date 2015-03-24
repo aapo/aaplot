@@ -112,8 +112,22 @@ void add_window(int width, int height, char *title) {
    n->scale[2] = 1;
    n->width = width;
    n->height = height;
+
    n->moving = 0;
+   n->startx = 0; 
+   n->starty = 0; 
+
+   n->rotating = 0;
+   n->rstartx = 0; 
+   n->rstarty = 0;
+
+   n-> move_divider = 1;
+
    n->title = title;
+   n->mouse_x = 0;
+   n->mouse_y = 0;
+   n->menuID = -1;
+   n->user_clicked = NULL;
    n->functions = NULL;
    n->tables = NULL;
    n->user_clicked = NULL;

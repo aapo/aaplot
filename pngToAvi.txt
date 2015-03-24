@@ -1,0 +1,5 @@
+alkuun ehka:
+mf=type=png:fps=25
+
+
+mencoder "mf://*png" -mf type=png -o out.avi -ovc xvid -xvidencopts pass=1

@@ -1,6 +1,6 @@
 -----------------------------------------------------
-aaplot 0.6
-5. October 2008
+aaplot 0.7
+24. October 2008
 by: Aapo Rantalainen
 GNU GPL 3.0 (or later)
 ------------------------------------------------------
@@ -8,6 +8,13 @@ GNU GPL 3.0 (or later)
 INFO
 ====
 aaplot is function plotting library/toolkit.
+
+PREREQUIRE
+==========
+Yuo need libgl. (In Ubuntu: libglu1-mesa-dev)
+If you want take screenshots, you need libpng (In Ubuntu: libpng3-dev)
+If you want window-icons, you need linXpm (In Ubuntu: libxpm-dev)
+
 
 USAGE
 =====
@@ -40,7 +47,31 @@ gcc -lXpm -lpng -lGL my_file.c aaplot.a
 run like this:
 ./a.out
 
+EXAMPLES
+========
+Take a look at example-files.
+    * example1: R->R functions
+    * example2: R2->R functions
+    * example3: R->R3 curves
+    * example4: R2->R3 curves
+    * example5: file+arrays (2d and 3d)
+    * example5B: file of 3d-data (saucepan.dat)
+    * example6: about user clicked (selected) points
+    * example7: three windows
+    * example8: changing attributes of functions/tables 
 
+    * example1P: R->R, with parameters
+    * example2P: R2->R, with parameters
+    * example3P: R->R3, with parameters
+    * example4P: R2->R3, with parameters 
+
+    * example_butterflies: four parameterized curves
+    * example_many_curves: just many (>20) curves,
+    * example_rings: three rings
+    * example_gsl: aaplot with gsl_matrix 
+
+You can compile them all:
+make all
 
 GUI
 ===
@@ -104,6 +135,9 @@ W/S : decrease y-boundaries
 Q/E : decrease z-boundaries
 ESC 	Close all windows
 
++/- : zooms in and out\n\
+m   : toggles rotate/moving -mode\n\
+n   : resets view\n\
 
 
 

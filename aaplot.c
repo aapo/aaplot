@@ -726,147 +726,6 @@ void mouse_buttons ( int button, int state, int x, int y )
       }
 }
 
-#define DELTA 0.25f
-void keyboard( unsigned char key, int x, int y )
-   {
-   window *w = getCurrentWindow();
-
-   switch( key )
-      {
-      case 27:  /*The ESC-button*/
-         glutLeaveMainLoop();
-/* glutLeaveMainLoop()=
-   FREEGLUT_EXIT_IF_NOT_IALISED ( "glutLeaveMainLoop" );
-   fgState.ExecState = GLUT_EXEC_STATE_STOP ;
-*/
-         break;
-      case '1':
-         update_mo(w->rotation_matrix, -5, 1,0,0 );
-         break;
-      case '2':
-         update_mo(w->rotation_matrix, 5, 1,0,0 );
-         break;
-      case '3':
-         update_mo(w->rotation_matrix, -5, 0,1,0 );
-         break;
-      case '4':
-         update_mo(w->rotation_matrix, 5, 0,1,0 );
-         break;
-      case '5':
-         update_mo(w->rotation_matrix, -5, 0,0,1 );
-         break;
-      case '6':
-         update_mo(w->rotation_matrix, 5, 0,0,1 );
-         break;
-      case 'z':
-         PNGScreenShot(w->width, w->height);
-         break;
-
-
-
-      case 'A': w->lower_bounds[0] += DELTA; 
-                if (w->lower_bounds[0] + DELTA > w->upper_bounds[0])
-                   w->upper_bounds[0] = w->lower_bounds[0] + DELTA;
-               break;
-      case 'a': w->lower_bounds[0] -= DELTA; break;
-
-      case 'd': w->upper_bounds[0] += DELTA; break;
-      case 'D': w->upper_bounds[0] -= DELTA;
-                if (w->upper_bounds[0] - DELTA < w->lower_bounds[0])
-                    w->lower_bounds[0] = w->upper_bounds[0] - DELTA; 
-                break;
-
-      case 'S': w->lower_bounds[1] += DELTA; 
-                if (w->lower_bounds[1] + DELTA > w->upper_bounds[1])
-                    w->upper_bounds[1] = w->lower_bounds[1] + DELTA; 
-                break;
-      case 's': w->lower_bounds[1] -= DELTA; break;
-
-      case 'w': w->upper_bounds[1] += DELTA;break;
-      case 'W': w->upper_bounds[1] -= DELTA;
-                if (w->upper_bounds[1] - DELTA < w->lower_bounds[1])
-                    w->lower_bounds[1] = w->upper_bounds[1] - DELTA;
-                break;
-
-      case 'Q': w->lower_bounds[2] += DELTA; 
-                if (w->lower_bounds[2] + DELTA > w->upper_bounds[2])
-                    w->upper_bounds[2] = w->lower_bounds[2] + DELTA; 
-                break;
-      case 'q': w->lower_bounds[2] -= DELTA; break;
-
-      case 'e': w->upper_bounds[2] += DELTA;break;
-      case 'E': w->upper_bounds[2] -= DELTA;
-                if (w->upper_bounds[2] - DELTA < w->lower_bounds[2])
-                    w->lower_bounds[2] = w->upper_bounds[2] - DELTA;
-                break;
-
-/*      //moving camera or target with keyboard
-      case 'r': target[0] -= DELTA; break;
-      case 'R': target[0] += DELTA; break;
-      case 't': target[1] -= DELTA; break;
-      case 'T': target[1] += DELTA; break;
-      case 'y': target[2] -= DELTA; break;
-      case 'Y': target[2] += DELTA; break;
-      case 'f': camera[0] -= DELTA; break;
-      case 'F': camera[0] += DELTA; break;
-      case 'g': camera[1] -= DELTA; break;
-      case 'G': camera[1] += DELTA; break;
-      case 'h': camera[2] -= DELTA; break;
-      case 'H': camera[2] += DELTA; break;
-*/
-      }
- glutPostRedisplay(); 
-}
-
-
-void special_keys (int key, int x, int y)  {
-   window *w = getCurrentWindow();
-
-    switch (key)
-        {
-        case GLUT_KEY_F12 :
-            printf ("F12 function key. \n");
-            break;
-         case GLUT_KEY_F11 :
-            printf ("F11 function key. \n");
-            break;
-        case GLUT_KEY_LEFT :
-            w->scale[0] -=0.1; refresh();
-            break;
-        case GLUT_KEY_UP :
-            if (glutGetModifiers()==1) /*shift*/
-              w->scale[2] +=0.1;
-            else
-               w->scale[1] +=0.1;
-            refresh();
-            break;
-        case GLUT_KEY_RIGHT :
-            w->scale[0] +=0.1;refresh();
-            break;
-        case GLUT_KEY_DOWN :
-             if (glutGetModifiers()==1) /*shift*/
-               w->scale[2] -=0.1;
-            else
-               w->scale[1] -=0.1;
-            refresh();
-            break;
-        case GLUT_KEY_PAGE_UP :
-            printf ("Page up directional key. \n");
-            break;
-        case GLUT_KEY_PAGE_DOWN :
-            printf ("Page down directional key. \n");
-            break;
-        case GLUT_KEY_HOME :
-            printf ("Home directional key. \n");
-            break;
-        case GLUT_KEY_END :
-            printf ("End directional key. \n");
-            break;
-        case GLUT_KEY_INSERT :
-            printf ("Inset directional key. \n");
-            break;
-}
-}
 
 void toggle_grid(window *w, int plane) {
       char title[20];
@@ -1006,6 +865,9 @@ With Keyboard \n\
     * A/D : decrease x-boundaries\n\
     * W/S : decrease y-boundaries\n\
     * Q/E : decrease z-boundaries\n\
+    * +/- : zooms in and out\n\
+    * m   : toggles rotate/moving -mode\n\
+    * n   : resets view\n\
 \n");
 
       }
@@ -1109,6 +971,165 @@ void passive_mouse_motion(int x, int y)
 //printf("%d,%d ja %lf,%lf\n",x,y, w->mouse_x,w->mouse_y);
  glutPostRedisplay();
 
+}
+
+
+#define DELTA 0.25f
+void keyboard( unsigned char key, int x, int y )
+   {
+   window *w = getCurrentWindow();
+
+   switch( key )
+      {
+      case 27:  /*The ESC-button*/
+         glutLeaveMainLoop();
+/* glutLeaveMainLoop()=
+   FREEGLUT_EXIT_IF_NOT_IALISED ( "glutLeaveMainLoop" );
+   fgState.ExecState = GLUT_EXEC_STATE_STOP ;
+*/
+         break;
+      case '1':
+         update_mo(w->rotation_matrix, -5, 1,0,0 );
+         break;
+      case '2':
+         update_mo(w->rotation_matrix, 5, 1,0,0 );
+         break;
+      case '3':
+         update_mo(w->rotation_matrix, -5, 0,1,0 );
+         break;
+      case '4':
+         update_mo(w->rotation_matrix, 5, 0,1,0 );
+         break;
+      case '5':
+         update_mo(w->rotation_matrix, -5, 0,0,1 );
+         break;
+      case '6':
+         update_mo(w->rotation_matrix, 5, 0,0,1 );
+         break;
+      case 'z':
+         PNGScreenShot(w->width, w->height);
+         break;
+
+
+
+      case 'A': w->lower_bounds[0] += DELTA; 
+                if (w->lower_bounds[0] + DELTA > w->upper_bounds[0])
+                   w->upper_bounds[0] = w->lower_bounds[0] + DELTA;
+               break;
+      case 'a': w->lower_bounds[0] -= DELTA; break;
+
+      case 'd': w->upper_bounds[0] += DELTA; break;
+      case 'D': w->upper_bounds[0] -= DELTA;
+                if (w->upper_bounds[0] - DELTA < w->lower_bounds[0])
+                    w->lower_bounds[0] = w->upper_bounds[0] - DELTA; 
+                break;
+
+      case 'S': w->lower_bounds[1] += DELTA; 
+                if (w->lower_bounds[1] + DELTA > w->upper_bounds[1])
+                    w->upper_bounds[1] = w->lower_bounds[1] + DELTA; 
+                break;
+      case 's': w->lower_bounds[1] -= DELTA; break;
+
+      case 'w': w->upper_bounds[1] += DELTA;break;
+      case 'W': w->upper_bounds[1] -= DELTA;
+                if (w->upper_bounds[1] - DELTA < w->lower_bounds[1])
+                    w->lower_bounds[1] = w->upper_bounds[1] - DELTA;
+                break;
+
+      case 'Q': w->lower_bounds[2] += DELTA; 
+                if (w->lower_bounds[2] + DELTA > w->upper_bounds[2])
+                    w->upper_bounds[2] = w->lower_bounds[2] + DELTA; 
+                break;
+      case 'q': w->lower_bounds[2] -= DELTA; break;
+
+      case 'e': w->upper_bounds[2] += DELTA;break;
+      case 'E': w->upper_bounds[2] -= DELTA;
+                if (w->upper_bounds[2] - DELTA < w->lower_bounds[2])
+                    w->lower_bounds[2] = w->upper_bounds[2] - DELTA;
+                break;
+
+      case 'm':
+         if (w->mode==MOVING_MODE)
+            menu_handler(ROTATE_MODE);
+         else 
+            menu_handler(MOVING_MODE);
+          break;
+      case 'n':
+	   menu_handler(4); /*reset view*/
+
+      case '-':
+         mouse_buttons (GLUT_WHEEL_UP, 0,w->mouse_x,w->mouse_y);
+         break;
+      case '+':
+         mouse_buttons (GLUT_WHEEL_DOWN, 0,w->mouse_x,w->mouse_y);
+         break;
+
+/*      //moving camera or target with keyboard
+      case 'r': target[0] -= DELTA; break;
+      case 'R': target[0] += DELTA; break;
+      case 't': target[1] -= DELTA; break;
+      case 'T': target[1] += DELTA; break;
+      case 'y': target[2] -= DELTA; break;
+      case 'Y': target[2] += DELTA; break;
+      case 'f': camera[0] -= DELTA; break;
+      case 'F': camera[0] += DELTA; break;
+      case 'g': camera[1] -= DELTA; break;
+      case 'G': camera[1] += DELTA; break;
+      case 'h': camera[2] -= DELTA; break;
+      case 'H': camera[2] += DELTA; break;
+*/
+      }
+ glutPostRedisplay(); 
+}
+
+
+void special_keys (int key, int x, int y)  {
+   window *w = getCurrentWindow();
+
+    switch (key)
+        {
+        case GLUT_KEY_F12 :
+            printf ("F12 function key. \n");
+            break;
+         case GLUT_KEY_F11 :
+            printf ("F11 function key. \n");
+            break;
+        case GLUT_KEY_LEFT :
+            w->scale[0] -=0.1; refresh();
+            break;
+        case GLUT_KEY_UP :
+            if (glutGetModifiers()==1) /*shift*/
+              w->scale[2] +=0.1;
+            else
+               w->scale[1] +=0.1;
+            refresh();
+            break;
+        case GLUT_KEY_RIGHT :
+            w->scale[0] +=0.1;refresh();
+            break;
+        case GLUT_KEY_DOWN :
+             if (glutGetModifiers()==1) /*shift*/
+               w->scale[2] -=0.1;
+            else
+               w->scale[1] -=0.1;
+            refresh();
+            break;
+        case GLUT_KEY_PAGE_UP :
+            printf ("Page up directional key. \n");
+            break;
+        case GLUT_KEY_PAGE_DOWN :
+            printf ("Page down directional key. \n");
+            break;
+        case GLUT_KEY_HOME :
+            printf ("Home directional key. \n");
+            break;
+        case GLUT_KEY_END :
+            printf ("End directional key. \n");
+            break;
+        case GLUT_KEY_INSERT :
+            printf ("Inset directional key. \n");
+            break;
+	}
 }
 
 

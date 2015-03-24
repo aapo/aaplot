@@ -1,8 +1,8 @@
 CC=cc
 CFLAGS=-O2 
 
-LDFLAGS= -L/usr/lib -lpng -lGL -lXpm -Wall -Wextra
-# -Wall -pedantic -ansi -Wextra
+LDFLAGS= -L/usr/lib -lpng -lXpm -lGL  -Wall -Wextra
+# -pedantic -ansi
 
 FILES= aaplot.c aaplot.h aaplot_func_list.c aaplot_helper.c aaplot_window.c aaplot_point_list.c aaplot_table_list.c aaplot_screenshot.c aaplot_inputbox.c aaplot_icon.xpm
 
