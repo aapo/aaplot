@@ -1,7 +1,6 @@
-
 #include "aaplot.h"
+/*there are globals that we need before including other files*/
 
-/*there are globals, that we need before including other files*/
 /*background color: 1,1,1=white. 0,0,0=black*/
 double default_background_color[3] = {1.0,1.0,1.0};
 int default_coordplane[3] ={1,0,0}; /*XY, YZ, ZX*/
@@ -11,19 +10,12 @@ int default_window_height = 500;
 
 double width_of_the_axis = 2.0;
 
-double default_lower_x_limit = -10.0;
-double default_upper_x_limit = 10.0;
+double default_lower_bounds[3] = {-10.0, -5.0, -3.0};
+double default_upper_bounds[3] = { 10.0,  5.0,  3.0};
 
-double default_lower_y_limit = -5.0;
-double default_upper_y_limit = 5.0;
-
-double default_lower_z_limit = -3.0;
-double default_upper_z_limit = 3.0;
-
-double default_size = 2.0;
+double default_size = 2.0; /* size of the plots*/
 
 char *default_name ="function";
-//double default_step = 0.0001;
 
 float  default_camera[3] = {1, 4.0  , 10};
 float  default_target[3] = {1, 4.0  , 0};
@@ -33,6 +25,7 @@ double default_y_grid=1;  /* density of grid. 0=no grid*/
 double default_x_grid=2;
 double default_z_grid=0.5;
 
+double default_2dtable_thirdvalue=0; /*third value of the 2d-tables */
 #define axisArrows
 
 
@@ -40,7 +33,7 @@ double default_z_grid=0.5;
 #include <png.h>
 #endif
 
-#include "openglut.h"
+#include "aaglut.h"
 #include "aaplot_helper.c"
 #include "aaplot_func_list.c"
 #include "aaplot_point_list.c"
@@ -49,18 +42,33 @@ double default_z_grid=0.5;
 #include "aaplot_window.c"
 #include "aaplot_inputbox.c"
 
+
+/** Windows and Linux have different values of mouse wheel.*/
 #if !defined(GLUT_WHEEL_UP)
-#  define GLUT_WHEEL_UP   3
-#  define GLUT_WHEEL_DOWN 4
+  #ifdef _MSC_VER
+   #define GLUT_WHEEL_UP   4
+ #else
+   #define GLUT_WHEEL_UP   3
+ #endif
 #endif
 
-/*Think*/
+#if !defined(GLUT_WHEEL_DOWN)
+  #ifdef _MSC_VER
+   #define GLUT_WHEEL_DOWN  5
+ #else
+   #define GLUT_WHEEL_DOWN  4
+ #endif
+#endif
+
+
+
+
+/*Think-list:*/
 /* Not even todo-list, just think-list.
 
-should every window has own 
+should every window has own
  -width_of_the_axis
  -color of axis
-
 
 */
 
@@ -180,20 +188,20 @@ void buildModel( window *w )
    glBegin(GL_LINES);
    /* X-axis with red*/
    glColor3f(1,0,0);
-   glVertex3f(w->lower_x_limit,0,0);
-   glVertex3f(w->upper_x_limit,0,0);
+   glVertex3f(w->lower_bounds[0],0,0);
+   glVertex3f(w->upper_bounds[0],0,0);
 
    /* Y-axis with green*/
    glColor3f(0,1,0);
-   glVertex3f(0,w->lower_y_limit,0);
-   glVertex3f(0,w->upper_y_limit,0);
+   glVertex3f(0,w->lower_bounds[1],0);
+   glVertex3f(0,w->upper_bounds[1],0);
 
    /* Z-axis with blue*/
    glColor3f(0,0,1);
-   glVertex3f(0,0,w->lower_z_limit);
-   glVertex3f(0,0,w->upper_z_limit);
+   glVertex3f(0,0,w->lower_bounds[2]);
+   glVertex3f(0,0,w->upper_bounds[2]);
    glEnd();
- 
+
 
 /*  Gridding */
 ///////////////
@@ -202,12 +210,12 @@ if (w->coordplane[0])
    {
    glPushMatrix();
 
-   grid_helper(w->y_grid,w->upper_x_limit,w->lower_x_limit,w->upper_y_limit,w->lower_y_limit);
+   grid_helper(w->y_grid,w->upper_bounds[0],w->lower_bounds[0],w->upper_bounds[1],w->lower_bounds[1]);
 
-   glTranslatef(w->upper_x_limit + w->lower_x_limit,0,0);
+   glTranslatef(w->upper_bounds[0] + w->lower_bounds[0],0,0);
    glRotatef(90,0,0, 1.0);
 
-   grid_helper(w->x_grid,w->upper_y_limit,w->lower_y_limit,w->upper_x_limit,w->lower_x_limit);
+   grid_helper(w->x_grid,w->upper_bounds[1],w->lower_bounds[1],w->upper_bounds[0],w->lower_bounds[0]);
    glPopMatrix();
    }
 
@@ -218,12 +226,12 @@ if (w->coordplane[1])
    glPushMatrix();
    glRotatef(270,0,1,0);
 
-   grid_helper(w->y_grid,w->upper_z_limit,w->lower_z_limit,w->upper_y_limit,w->lower_y_limit);
+   grid_helper(w->y_grid,w->upper_bounds[2],w->lower_bounds[2],w->upper_bounds[1],w->lower_bounds[1]);
 
-   glTranslatef(w->upper_z_limit + w->lower_z_limit,0,0);
+   glTranslatef(w->upper_bounds[2] + w->lower_bounds[2],0,0);
    glRotatef(90,0,0, 1.0);
 
-   grid_helper(w->z_grid,w->upper_y_limit,w->lower_y_limit,w->upper_z_limit,w->lower_z_limit);
+   grid_helper(w->z_grid,w->upper_bounds[1],w->lower_bounds[1],w->upper_bounds[2],w->lower_bounds[2]);
    glPopMatrix();
    }
 
@@ -233,12 +241,12 @@ if (w->coordplane[2])
    glPushMatrix();
    glRotatef(90,1,0,0);
 
-   grid_helper(w->z_grid,w->upper_x_limit,w->lower_x_limit,w->upper_z_limit,w->lower_z_limit);
+   grid_helper(w->z_grid,w->upper_bounds[0],w->lower_bounds[0],w->upper_bounds[2],w->lower_bounds[2]);
 
-   glTranslatef(w->upper_x_limit + w->lower_x_limit,0,0);
+   glTranslatef(w->upper_bounds[0] + w->lower_bounds[0],0,0);
    glRotatef(90,0,0, 1.0);
 
-   grid_helper(w->x_grid,w->upper_z_limit,w->lower_z_limit,w->upper_x_limit,w->lower_x_limit);
+   grid_helper(w->x_grid,w->upper_bounds[2],w->lower_bounds[2],w->upper_bounds[0],w->lower_bounds[0]);
    glPopMatrix();
    }
 
@@ -249,7 +257,7 @@ if (w->coordplane[2])
    glLineWidth(1.0);
    glColor3f(0,0,0);
 
-   for (x=0.0;x<=w->upper_x_limit;x=x+w->y_grid)
+   for (x=0.0;x<=w->upper_bounds[0];x=x+w->y_grid)
       {
       glPushMatrix();
       glTranslatef(x-0.05,0.05,0.0);
@@ -259,7 +267,7 @@ if (w->coordplane[2])
       glutStrokeString(NULL,message);
       glPopMatrix();
       }
-   for (x=0.0;x>=w->lower_x_limit;x=x-w->y_grid)
+   for (x=0.0;x>=w->lower_bounds[0];x=x-w->y_grid)
       {
       glPushMatrix();
       glTranslatef(x-0.05,0.05,0.0);
@@ -277,7 +285,7 @@ if (w->coordplane[2])
    glLineWidth(1.0);
    glColor3f(0,0,0);
 
-   for (y=0.0;y<=w->upper_y_limit;y=y+w->x_grid)
+   for (y=0.0;y<=w->upper_bounds[1];y=y+w->x_grid)
       {
       glPushMatrix();
       glTranslatef(0.0,y-0.05,0.0);
@@ -287,7 +295,7 @@ if (w->coordplane[2])
       glutStrokeString(NULL,message);
       glPopMatrix();
       }
-   for (y=0.0;y>=w->lower_y_limit;y=y-w->x_grid)
+   for (y=0.0;y>=w->lower_bounds[1];y=y-w->x_grid)
       {
       glPushMatrix();
       glTranslatef(0.0,y-0.05,0.0);
@@ -325,25 +333,24 @@ draw_text(1, 0,coordinates,1,0,0);
    glPopMatrix();
 #endif
 
-/*Axis+grids+etc ready////////////////*/
-/*////////////////////////////////////*/
+/****Axis+grids+etc ready  ***********/
+/*************************************/
 
 
 /*******  Functions Start************/
-/*//////////////////////////////////*/
+/************************************/
 {
 function_node *n = w->functions;
 while (n != NULL)
    {
    double j;
-   double y;
-   double i;
+   double k;
    int parameters=0;    /*this will be 1, if WithParameters-version*/
-   
+
    if (n->hidden) /* skip this function totally*/
       {
       n = n->next;
-      continue; 
+      continue;
       }
 
    glPointSize(n->size);
@@ -360,32 +367,55 @@ if (n->type>10)
 if (n->type%10==1)
    {
    glBegin(GL_POINTS);
-   for (j=w->lower_x_limit;j<w->upper_x_limit;j=j+n->x_step)
+   for (j=w->lower_bounds[n->direction[0]];j<w->upper_bounds[n->direction[0]];j=j+n->step_0)
+
       {
-      y=     parameters==0 ? n->function(j)   :  n->function_p(j,n->parameters);
-      if (y>=w->lower_y_limit && y<=w->upper_y_limit)
+      k=     parameters==0 ? n->function(j)   :  n->function_p(j,n->parameters);
+
+      double values[3];
+      values[n->direction[0]]=j;
+      values[n->direction[1]]=k;
+      values[n->direction[2]]=0;
+
+      if (values[0]>=w->lower_bounds[0] && values[0]<=w->upper_bounds[0] &&
+          values[1]>=w->lower_bounds[1] && values[1]<=w->upper_bounds[1] &&
+          values[2]>=w->lower_bounds[2] && values[2]<=w->upper_bounds[2])
          {
-         glVertex3f(j,y,0);
+         glVertex3f(values[0],values[1],values[2]);
          }
       }
    glEnd();
    }
 
+double i,y  ;
 /******** R^2->R  **********/
 if (n->type%10==2)
    {
    glBegin(GL_POINTS);
-   for (i=w->lower_z_limit;i<w->upper_z_limit;i=i+n->z_step)
+   for (i=w->lower_bounds[n->direction[1]];i<w->upper_bounds[n->direction[1]];i=i+n->step_1)
       {
-      for (j=w->lower_x_limit;j<w->upper_x_limit;j=j+n->x_step)
+      for (j=w->lower_bounds[n->direction[0]];j<w->upper_bounds[n->direction[0]];j=j+n->step_0)
          {
          y=   parameters==0 ? n->function2(j,i)  :  n->function2_p(j,i,n->parameters);
-         if (y>=w->lower_y_limit && y<=w->upper_y_limit)
-            glVertex3f(j,y,i);
+
+      double values[3];
+      values[n->direction[0]]=j;
+      values[n->direction[1]]=i;
+      values[n->direction[2]]=y;
+
+      if (values[0]>=w->lower_bounds[0] && values[0]<=w->upper_bounds[0] &&
+          values[1]>=w->lower_bounds[1] && values[1]<=w->upper_bounds[1] &&
+          values[2]>=w->lower_bounds[2] && values[2]<=w->upper_bounds[2])
+         {
+         glVertex3f(values[0],values[1],values[2]);
+         }
+
+
          }
       }
    glEnd();
    }
+
 
 /***curves R -> R^3  *******/
 if (n->type%10==3)
@@ -393,60 +423,97 @@ if (n->type%10==3)
    double alfa;
    double x,y,z;
    glBegin(GL_POINTS);
-   for (alfa=n->lower_alfa;alfa < n->upper_alfa;alfa=alfa+n->x_step)
+   for (alfa=n->lower_alfa;alfa < n->upper_alfa;alfa=alfa+n->step_0)
       {
       parameters==0 ?  n->curve(alfa,&x,&y,&z)  :  n->curve_p(alfa,&x,&y,&z,n->parameters);
-      if (x>=w->lower_x_limit && x<=w->upper_x_limit &&
-          y>=w->lower_y_limit && y<=w->upper_y_limit &&
-          z>=w->lower_z_limit && z<=w->upper_z_limit)
+
+      if (x>=w->lower_bounds[0] && x<=w->upper_bounds[0] &&
+          y>=w->lower_bounds[1] && y<=w->upper_bounds[1] &&
+          z>=w->lower_bounds[2] && z<=w->upper_bounds[2])
          glVertex3f(x,y,z);
       }
    glEnd();
    }
 
+/***curves R -> R^3  *******/
+if (n->type%10==4)
+   {
+   double alfa,beta;
+   double x,y,z;
+   glBegin(GL_POINTS);
+   for (alfa=n->lower_alfa;alfa < n->upper_alfa;alfa=alfa+n->step_0)
+      {
+      for (beta=n->lower_beta;beta < n->upper_beta;beta=beta+n->step_1)
+         {
+         parameters==0 ?  n->curve2(alfa,beta,&x,&y,&z)  :  n->curve2_p(alfa,beta,&x,&y,&z,n->parameters);
+
+         if (x>=w->lower_bounds[0] && x<=w->upper_bounds[0] &&
+             y>=w->lower_bounds[1] && y<=w->upper_bounds[1] &&
+             z>=w->lower_bounds[2] && z<=w->upper_bounds[2])
+             glVertex3f(x,y,z);
+         }
+      }
+   glEnd();
+   }
+
+
+/** function finalizer*/
 amount++;
 draw_text(1, amount,n->name,n->red,n->green,n->blue);
 n = n->next;
 }
 }
 /*******  Functions Ready************/
-/*//////////////////////////////////*/
+/************************************/
 
 
 /*******  Arrays Start************/
-/*///////////////////////////////*/
+/*********************************/
 {
 table_node *t = w->tables;
 while (t != NULL)
    {
+   if (t->hidden) /* skip this table totally*/
+      {
+      t = t->next;
+      continue;
+      }
+
    point *p = t->points;
    glPointSize(t->size);
    glColor3f(t->red,t->green,t->blue);
    glBegin(GL_POINTS);
    while (p != NULL)
       {
-      double x=p->x;
-      double y=p->y;
-      double z=p->z;
-      if (x>w->lower_x_limit && x<w->upper_x_limit &&
-          y>w->lower_y_limit && y<w->upper_y_limit &&
-          z>w->lower_z_limit && z<w->upper_z_limit )
-         glVertex3f(x,y,z);
+      double values[3];
+      values[t->direction[0]]=p->x;
+      values[t->direction[1]]=p->y;
+      values[t->direction[2]]=p->z;
+
+      if (values[0]>=w->lower_bounds[0] && values[0]<=w->upper_bounds[0] &&
+          values[1]>=w->lower_bounds[1] && values[1]<=w->upper_bounds[1] &&
+          values[2]>=w->lower_bounds[2] && values[2]<=w->upper_bounds[2])
+         {
+         glVertex3f(values[0],values[1],values[2]);
+         }
+
+
       p=p->next;
       }
    glEnd();
 
    amount++;
-   draw_text(1, amount,t->name,t->red,t->green,t->blue); 
+   draw_text(1, amount,t->name,t->red,t->green,t->blue);
    t = t->next;
    }
 }
-/*******  Arrays Ready************/
-/*///////////////////////////////*/
 
-/*******  User-Clicked start************/
-/*///////////////////////////////*/
-{ 
+/*******  Arrays Ready************/
+/*********************************/
+
+/*******  User-Clicked start*********/
+/************************************/
+{
 point *p = w->user_clicked;
 if (p != NULL)
    {
@@ -458,24 +525,24 @@ if (p != NULL)
       double x=p->x;
       double y=p->y;
       double z=p->z;
-      if (x>w->lower_x_limit && x<w->upper_x_limit &&
-          y>w->lower_y_limit && y<w->upper_y_limit &&
-          z>w->lower_z_limit && z<w->upper_z_limit )
+      if (x>w->lower_bounds[0] && x<w->upper_bounds[0] &&
+          y>w->lower_bounds[1] && y<w->upper_bounds[1] &&
+          z>w->lower_bounds[2] && z<w->upper_bounds[2] )
          glVertex3f(x,y,z);
       p=p->next;
       }
    glEnd();
-   
+
    amount++;
-   draw_text(1, amount,"User clicked",1,0,0);   
+   draw_text(1, amount,"User clicked",1,0,0);
    }
 }
-/*******   User-Clicked Ready************/
-/*///////////////////////////////*/
+/*******   User-Clicked Ready********/
+/************************************/
 
 
 /*******  Arrays Ready************/
-/*///////////////////////////////*/
+/*********************************/
   glPopMatrix();
 /*video casting*/
 /*  PNGScreenShot(w->width, w->height); */
@@ -483,7 +550,7 @@ if (p != NULL)
 
 
 
-/*This is called when some window needs repaintting (only that window is repainted)*/
+/*This is called when some window needs repainting (only that window is repainted)*/
 void display()
    {
    int win = glutGetWindow();
@@ -536,7 +603,7 @@ void reshape(int width, int h)
    while (w != NULL)
       {
       if (w->id == win)
-         {         
+         {
          w->width=width;
          w->height=h;
          w->move_divider=(max/2.0)/ w->camera[2]/-1.0;
@@ -547,7 +614,7 @@ void reshape(int width, int h)
 
          perspective(90,4/3,0.0001,2000.0);
 
-         /* this brakes zoom!*/         
+         /* this brakes zoom!*/
          /*  glOrtho(-10,10,-10,10, -2000,2000); */
 
          glMatrixMode (GL_MODELVIEW);
@@ -604,9 +671,9 @@ void mouse_buttons ( int button, int state, int x, int y )
       /*this will be usefull
        shift=1
       control=2
-      molemmat=3
+      both=3
       */
-      // printf("modifiers=%d\n",glutGetModifiers());    
+      // printf("modifiers=%d\n",glutGetModifiers());
       switch (w->mode)
          {
          case ROTATE_MODE:
@@ -614,7 +681,7 @@ void mouse_buttons ( int button, int state, int x, int y )
             w->rstartx = x;
             w->rstarty = y;
             break;
-         case MOVING_MODE:            
+         case MOVING_MODE:
             w->moving = 1;
             w->startx = x;
             w->starty = y;
@@ -630,7 +697,7 @@ void mouse_buttons ( int button, int state, int x, int y )
             break;
          case MOVING_MODE:
             w->moving = 0;
-            break;    
+            break;
          }
       }
 
@@ -652,7 +719,7 @@ void mouse_buttons ( int button, int state, int x, int y )
       double X,Y;
       /* 10.0 is how many grid is visible to origon...border*/
       X= (10.0/(w->width/2.0)*x  -10.0  + w->camera[0]  ) /w->scale[0]   ;
-      Y= (- (10.0/(w->height/2.0)*y -10.0) + w->camera[1])  /w->scale[1]   ;
+      Y= (- (10.0/(w->height/2.0)*y -10.0) + w->camera[1])  /w->scale[1] ;
       add_point(&(w->user_clicked),X,Y,0);
       glutPostRedisplay();
       //printf("X=%lf. Y=%lf\n",X,Y);
@@ -694,41 +761,61 @@ void keyboard( unsigned char key, int x, int y )
       case 'z':
          PNGScreenShot(w->width, w->height);
          break;
-/*
-      //moving camera or target with keyboard
-      case 'q': target[0] -= DELTA; break;
-      case 'Q': target[0] += DELTA; break;
-      case 'w': target[1] -= DELTA; break;
-      case 'W': target[1] += DELTA; break;
-      case 'e': target[2] -= DELTA; break;
-      case 'E': target[2] += DELTA; break;
-      case 'a': camera[0] -= DELTA; break;
-      case 'A': camera[0] += DELTA; break;
-      case 's': camera[1] -= DELTA; break;
-      case 'S': camera[1] += DELTA; break;
-      case 'd': camera[2] -= DELTA; break;
-      case 'D': camera[2] += DELTA; break;
+
+
+
+      case 'A': w->lower_bounds[0] += DELTA; 
+                if (w->lower_bounds[0] + DELTA > w->upper_bounds[0])
+                   w->upper_bounds[0] = w->lower_bounds[0] + DELTA;
+               break;
+      case 'a': w->lower_bounds[0] -= DELTA; break;
+
+      case 'd': w->upper_bounds[0] += DELTA; break;
+      case 'D': w->upper_bounds[0] -= DELTA;
+                if (w->upper_bounds[0] - DELTA < w->lower_bounds[0])
+                    w->lower_bounds[0] = w->upper_bounds[0] - DELTA; 
+                break;
+
+      case 'S': w->lower_bounds[1] += DELTA; 
+                if (w->lower_bounds[1] + DELTA > w->upper_bounds[1])
+                    w->upper_bounds[1] = w->lower_bounds[1] + DELTA; 
+                break;
+      case 's': w->lower_bounds[1] -= DELTA; break;
+
+      case 'w': w->upper_bounds[1] += DELTA;break;
+      case 'W': w->upper_bounds[1] -= DELTA;
+                if (w->upper_bounds[1] - DELTA < w->lower_bounds[1])
+                    w->lower_bounds[1] = w->upper_bounds[1] - DELTA;
+                break;
+
+      case 'Q': w->lower_bounds[2] += DELTA; 
+                if (w->lower_bounds[2] + DELTA > w->upper_bounds[2])
+                    w->upper_bounds[2] = w->lower_bounds[2] + DELTA; 
+                break;
+      case 'q': w->lower_bounds[2] -= DELTA; break;
+
+      case 'e': w->upper_bounds[2] += DELTA;break;
+      case 'E': w->upper_bounds[2] -= DELTA;
+                if (w->upper_bounds[2] - DELTA < w->lower_bounds[2])
+                    w->lower_bounds[2] = w->upper_bounds[2] - DELTA;
+                break;
+
+/*      //moving camera or target with keyboard
+      case 'r': target[0] -= DELTA; break;
+      case 'R': target[0] += DELTA; break;
+      case 't': target[1] -= DELTA; break;
+      case 'T': target[1] += DELTA; break;
+      case 'y': target[2] -= DELTA; break;
+      case 'Y': target[2] += DELTA; break;
+      case 'f': camera[0] -= DELTA; break;
+      case 'F': camera[0] += DELTA; break;
+      case 'g': camera[1] -= DELTA; break;
+      case 'G': camera[1] += DELTA; break;
+      case 'h': camera[2] -= DELTA; break;
+      case 'H': camera[2] += DELTA; break;
 */
       }
- refresh();
-/*is this enough? glutPostRedisplay(); */
-}
-
-void aapo_input(int lastKey,char *input)
-{
-   if ((lastKey == 13) && input[0])
-      {
-      double d=atof(input);
-//whichObject = atoi(inputString) ; // Get the input number
-
-      printf("given double %lf \n",d);
-      }
-
-   if (lastKey == 27)
-      {
-      printf("cancelled\n");
-      }
-
+ glutPostRedisplay(); 
 }
 
 
@@ -739,19 +826,10 @@ void special_keys (int key, int x, int y)  {
         {
         case GLUT_KEY_F12 :
             printf ("F12 function key. \n");
-  
-KeyboardInputStart("kysely ikkuna",
-                     aapo_input,w->id);
-
             break;
-case GLUT_KEY_F11 :
+         case GLUT_KEY_F11 :
             printf ("F11 function key. \n");
-  
-KeyboardInputStart("kysely ikkuna2",
-                     aapo_input,w->id);
-
             break;
-        
         case GLUT_KEY_LEFT :
             w->scale[0] -=0.1; refresh();
             break;
@@ -800,21 +878,83 @@ void toggle_grid(window *w, int plane) {
          t="YZ";
       else
          t="XZ";
-            
 
       if (w->coordplane[plane])
          {
          w->coordplane[plane]=0;
-         sprintf(title,"Show %s-plane",t);         
+         sprintf(title,"Show %s-plane",t);
          }
       else
          {
          w->coordplane[plane]=1;
-         sprintf(title,"Hide %s-plane",t);         
-         }      
+         sprintf(title,"Hide %s-plane",t);
+         }
       glutChangeMenuEntryAttributes(menuID,title,menuID);
 }
 
+
+void input_handler_title(int lastKey,char *input, int id)
+{
+printf("lastkey=%d, input=%s, id=%d\n",lastKey,input,id);
+   if ((lastKey == 13) ) //add this if you forbid empty title:  && input[0])
+      {
+      changeEntityTitle(id, input);
+      }
+
+   if (lastKey == 27)
+      {
+      //printf("cancelled\n");
+      }
+
+}
+
+
+void input_handler_stepping0(int lastKey,char *input, int id)
+{
+   if ((lastKey == 13) && input[0])
+      {
+      double d=atof(input);
+      if (d)
+         changeEntityStepping0(id,d);
+      }
+
+   if (lastKey == 27)
+      {
+      //printf("cancelled\n");
+      }
+}
+
+
+void input_handler_stepping1(int lastKey,char *input, int id)
+{
+   if ((lastKey == 13) && input[0])
+      {
+      double d=atof(input);
+      if (d)
+         changeEntityStepping1(id,d);
+      }
+
+   if (lastKey == 27)
+      {
+      //printf("cancelled\n");
+      }
+}
+
+void input_handler_size(int lastKey,char *input, int id)
+{
+   if ((lastKey == 13) && input[0])
+      {
+      double d=atof(input);
+      if (d>0)
+          changeEntityPlotSize(id,d);
+      }
+
+   if (lastKey == 27)
+      {
+      //printf("cancelled\n");
+      }
+
+}
 
 
 /*
@@ -823,16 +963,16 @@ void toggle_grid(window *w, int plane) {
 void menu_handler( int menuID )
 {
   window *w = getCurrentWindow();
-    
+
 
     /*      debug print     */
-    printf( "SampleMenu() callback executed, windowID %d, menuID is %i\n", w->id, menuID );
+    //printf( "debug: SampleMenu() callback executed, windowID %d, menuID is %i\n", w->id, menuID );
 
    if (menuID==ROTATE_MODE)
       {
       w->mode=ROTATE_MODE;
       glutSetCursor(GLUT_CURSOR_CYCLE);
-      glutChangeMenuEntryAttributes(ROTATE_MODE,"Moving mode",MOVING_MODE);      
+      glutChangeMenuEntryAttributes(ROTATE_MODE,"Moving mode",MOVING_MODE);
       }
 
    if (menuID==MOVING_MODE)
@@ -846,7 +986,7 @@ void menu_handler( int menuID )
       {
       glutSetCursor(GLUT_CURSOR_CROSSHAIR);
       }
-   
+
    if (menuID==2)
       {
       printf("Manual\n\
@@ -860,8 +1000,14 @@ With Keyboard \n\
     * UP/DOWN    :   Scales y-axis\n\
     * LEFT/RIGHT :   Scales x-axis\n\
     * Shitt + UP/DOWN :   Scales z-axis\n\
+    * a/d : increase x-boundaries\n\
+    * w/s : increase y-boundaries\n\
+    * q/e : increase z-boundaries\n\
+    * A/D : decrease x-boundaries\n\
+    * W/S : decrease y-boundaries\n\
+    * Q/E : decrease z-boundaries\n\
 \n");
-    
+
       }
    if (menuID==3) /*quit*/
       {
@@ -884,36 +1030,70 @@ With Keyboard \n\
       w->camera[0] =  default_camera[0];
       w->camera[1] =  default_camera[1];
       w->camera[2] =  default_camera[2];
-            
+
       w->move_divider=(max/2.0)/ w->camera[2]/-1.0;
       }
- 
-   if (menuID==5) 
+
+   if (menuID==5)
       {
-      toggle_grid(w,0);      
+      toggle_grid(w,0);
       }
-   if (menuID==6) 
+   if (menuID==6)
       {
-      toggle_grid(w,1);      
+      toggle_grid(w,1);
       }
-   if (menuID==7) 
+   if (menuID==7)
       {
-      toggle_grid(w,2);      
+      toggle_grid(w,2);
       }
 
    if (menuID<0)  /*function menu pressed*/
       {
-      int f_id=   -menuID/1000;
+      int id=     -menuID/1000;
       int action= -menuID%1000;
-      
-      printf("function %d, action %d\n",f_id,action);
 
-      function_node *function =getFunctionById(f_id);
-      if (action==4) 
-         function->hidden=1;
- glutPostRedisplay();
-      }  
-}  
+      //printf("debug: entity %d, action %d\n",id,action);
+
+      if (action==1)
+         {
+         input_box_function("New title:",input_handler_title,w->id,id);
+         }
+
+       if (action==2)
+         {
+         input_box_function("New pointsize:",input_handler_size,w->id,id);
+         }
+
+      if (action==3)
+         {
+         input_box_function("New stepping_0:",input_handler_stepping0,w->id,id);
+         }
+
+      if (action==4)
+         {
+         input_box_function("New stepping_1:",input_handler_stepping1,w->id,id);
+         }
+
+      if (action==5)
+         {
+         toggleHidden(id);
+         }
+
+      if (action>=6 && action<=11)
+         {
+         changeDirection(id,action-6);
+         }
+
+      if (action==12)
+         {
+         float red, green, blue;
+         getColors(&red,&green,&blue);
+         changeEntityColor(id, red,green,blue);
+         }
+
+      glutPostRedisplay();
+      }
+}
 
 
 
@@ -924,14 +1104,12 @@ void passive_mouse_motion(int x, int y)
 /*this is the same than in middle-clicking*/
       w->mouse_x= (10.0/(w->width/2.0)*x  -10.0  + w->camera[0]  ) /w->scale[0]   ;
       w->mouse_y= (- (10.0/(w->height/2.0)*y -10.0) + w->camera[1])  /w->scale[1]   ;
-        
-  
+
+
 //printf("%d,%d ja %lf,%lf\n",x,y, w->mouse_x,w->mouse_y);
  glutPostRedisplay();
 
 }
-
-
 
 
 
@@ -955,6 +1133,7 @@ void init_window(int win)
    glutInitWindowPosition (0, 0);
 
    w->id = glutCreateWindow (w->title);
+   
    ogSetIcon();
 
    glutDisplayFunc  (display);
@@ -965,25 +1144,10 @@ void init_window(int win)
    glutMotionFunc   (mouse_motion);
 
    glutPassiveMotionFunc(passive_mouse_motion);
-   
 
-    int grid_sub_menu;
-    int subMenuB;
 
-    w->menuID = glutCreateMenu( menu_handler );
-    
-//    glutAddMenuEntry( "Sub menu A1 (01)", 11 );
-  /*  glutAddMenuEntry( "Sub menu A2 (02)", 12 );
-    glutAddMenuEntry( "Sub menu A3 (03)", 13 );
-*/
-    subMenuB = glutCreateMenu( menu_handler );
-    glutAddMenuEntry( "Sub menu B1 (04)", 14 );
-    glutAddMenuEntry( "Sub menu B2 (05)", 15 );
-    glutAddMenuEntry( "Sub menu B3 (06)", 16 );
-   
- //subsubmenu glutAddSubMenu( "Going to sub menu A", w->menuID );
-
-grid_sub_menu = glutCreateMenu( menu_handler );
+   w->menuID = glutCreateMenu( menu_handler );
+   int grid_sub_menu = glutCreateMenu( menu_handler );
 
 glutAddMenuEntry(w->coordplane[0]?"Hide XY-grid":"Show XY-grid",  5 );
 glutAddMenuEntry(w->coordplane[1]?"Hide YZ-grid":"Show YZ-grid",  6 );
@@ -996,7 +1160,7 @@ glutAddMenuEntry(w->coordplane[2]?"Hide XZ-grid":"Show XZ-grid",  7 );
     glutAddMenuEntry( "Reset view",  4 );
     glutAddMenuEntry( "Close All (ESC)",  3 );
 
- 
+
    glutAddSubMenu( "Grids",grid_sub_menu );
 
    glutAddSubMenu( "Entities", w->menuID );
@@ -1061,11 +1225,14 @@ void drawAll()
    {
    if (is_initialized)
       glutMainLoop();
+
+   /** finalizating:*/  
+   /*
+   There is no point in freeing blocks at the end of a program, because all of the program's space is given back to the system when the process terminates.
+   cite:
+   http://www.gnu.org/software/libtool/manual/libc/Freeing-after-Malloc.html
+   */
    }
-
-
-
-
 
 void changeEntityColor(int id, float red, float green, float blue) {
 function_node *n = getFunctionById(id);
@@ -1086,6 +1253,7 @@ n->blue = blue;
 }
 
 
+
 void changeEntityPlotSize(int id, int size) {
 function_node *n = getFunctionById(id);
 if (n==NULL)
@@ -1100,41 +1268,182 @@ if (n==NULL)
 n->size = size;
 }
 
-/*not for tables*/
-void changeEntityXStepping(int id, double x_step) {
-function_node *n = getFunctionById(id);
-if (n==NULL)
-   {   
-   return;
-   }
-n->x_step = x_step;
-}
-
-/*not for tables
-changing z_step of R->R function means nothing
-*/
-void changeEntityZStepping(int id, double z_step) {
-function_node *n = getFunctionById(id);
-if (n==NULL)
-   {   
-   return;
-   }
-n->z_step = z_step;
-}
-
-
-void changeEntityTitle(int id, char *title) {
+void toggleHidden(int id) {
 function_node *n = getFunctionById(id);
 if (n==NULL)
    {
    table_node *t =getTableById (id);
    if (t==NULL)
       return;
-   t->name = title;
+   if (t->hidden)
+       t->hidden=0;
+    else
+       t->hidden=1;
    return;
    }
 
-n->name = title;
+if (n->hidden)
+    n->hidden=0;
+else
+    n->hidden=1;
+}
+
+
+/*
+direction   R2->R        3dT    R->R      2dT
+ 0          f(x,y)=z     xyz   f(x)=y      XY
+ 1          f(x,z)=y     xzy   f(x)=z      XZ
+ 2          f(y,x)=z     yxz   f(y)=x      YX
+ 3          f(y,z)=x     yzx   f(y)=z      YZ
+ 4          f(z,x)=y     zxy   f(z)=x      ZX
+ 5          f(z,y)=x     zyx   f(z)=y      ZY
+*/
+
+void changeDirection(int id, int d) {
+function_node *n = getFunctionById(id);
+if (n==NULL)
+   {
+   table_node *t =getTableById (id);
+   if (t==NULL)
+      return;
+   if (d==0)
+      {
+      t->direction[0] = 0;
+      t->direction[1] = 1;
+      t->direction[2] = 2;
+      }
+   if (d==1)
+      {
+      t->direction[0] = 0;
+      t->direction[1] = 2;
+      t->direction[2] = 1;
+      }
+   if (d==2)
+      {
+      t->direction[0] = 1;
+      t->direction[1] = 0;
+      t->direction[2] = 2;
+      }
+   if (d==3)
+      {
+      t->direction[0] = 1;
+      t->direction[1] = 2;
+      t->direction[2] = 0;
+      }
+   if (d==4)
+      {
+      t->direction[0] = 2;
+      t->direction[1] = 0;
+      t->direction[2] = 1;
+      }
+   if (d==5)
+      {
+      t->direction[0] = 2;
+      t->direction[1] = 1;
+      t->direction[2] = 0;
+      }
+   return;
+   }
+
+if (d==0)
+   {
+   n->direction[0] = 0;
+   n->direction[1] = 1;
+   n->direction[2] = 2;
+   }
+if (d==1)
+   {
+   n->direction[0] = 0;
+   n->direction[1] = 2;
+   n->direction[2] = 1;
+   }
+if (d==2)
+   {
+   n->direction[0] = 1;
+   n->direction[1] = 0;
+   n->direction[2] = 2;
+   }
+if (d==3)
+   {
+   n->direction[0] = 1;
+   n->direction[1] = 2;
+   n->direction[2] = 0;
+   }
+if (d==4)
+   {
+   n->direction[0] = 2;
+   n->direction[1] = 0;
+   n->direction[2] = 1;
+   }
+if (d==5)
+   {
+   n->direction[0] = 2;
+   n->direction[1] = 1;
+   n->direction[2] = 0;
+   }
+}
+
+/*not for tables*/
+void changeEntityStepping0(int id, double step_0) {
+function_node *n = getFunctionById(id);
+if (n==NULL)
+   {
+   return;
+   }
+n->step_0 = step_0;
+}
+
+/*not for tables
+changing step_1 of R->R function means nothing
+*/
+void changeEntityStepping1(int id, double step_1) {
+function_node *n = getFunctionById(id);
+if (n==NULL)
+   {
+   return;
+   }
+n->step_1 = step_1;
+}
+
+
+void changeEntityTitle(int id, char *title) {
+function_node *n = getFunctionById(id);
+
+/*count how many chars in the new title*/
+int i=0;
+char c = title[i];
+while(c!='\0')
+   {
+   i++;
+   c=title[i];
+   }
+
+char *new_name = malloc(i+1*sizeof(char));;
+i=0;
+c = title[i];
+while(c!='\0')
+   {
+   new_name[i]=c;
+   i++;
+   c=title[i];
+   }
+
+new_name[i]='\0';
+
+
+if (n==NULL)
+   {
+   table_node *t =getTableById (id);
+   if (t==NULL)
+      return;
+   t->name=new_name;
+   return;
+   }
+n->name = new_name;
+
+//This needs lots of refactoring.
+//glutChangeMenuEntryAttributes(n->menu_id,new_name,n->menu_id);
+
 }
 
 
@@ -1142,14 +1451,13 @@ n->name = title;
 void setWindowAttribute(int win, char* attrib, double x) {
 window *w =get_window_by_int(win);
 w->scale[0]=x;
-
 }
 
 
 /*
 reverse ordered. First given point is last in the array.
 */
-double *getClickedPointsFromWindow(int win, int *n) {  
+double *getClickedPointsFromWindow(int win, int *n) {
    window *w = get_window_by_int(win);
 
 
@@ -1159,21 +1467,21 @@ double *getClickedPointsFromWindow(int win, int *n) {
    point *p = w->user_clicked;
 
    while (p)
-      {     
+      {
       count++;
       p=p->next;
       }
 
-   *n=count;   
-   ret= malloc(2*count*sizeof(double));   
+   *n=count;
+   ret= malloc(2*count*sizeof(double));
    p = w->user_clicked;
    for (i=0;i<2*count;i=i+2)
-      {      
+      {
       ret[i]  =p->x;
       ret[i+1]=p->y;
       p=p->next;
       }
- 
+
    return ret;
    }
 
@@ -1186,25 +1494,76 @@ double *getClickedPointsFromWindow(int win, int *n) {
    w=get_window_by_int(win); \
    getColors(&red,&green,&blue);
 
-#define ADD_PUT_MENU int submenu;\
-    submenu = glutCreateMenu( menu_handler );\
-    glutAddMenuEntry( "Change color", 14 );\
-    glutAddMenuEntry( "Change title", 15 );\
-    glutAddMenuEntry( "Change stepping", 16 );\
-    glutAddMenuEntry( "Toggle hide/unhide", 17 );\
-    glutSetMenu(w->menuID);\
-    glutAddSubMenu( s, submenu );
-
 void put_menu(int f_id, int menu_id, char *title) {
     int submenu;
     submenu = glutCreateMenu( menu_handler );
-    glutAddMenuEntry( "Change color", -(f_id*1000+1) );
-    glutAddMenuEntry( "Change title", -(f_id*1000+2) );
-    glutAddMenuEntry( "Change stepping", -(f_id*1000+3) );
-    glutAddMenuEntry( "Toggle hide/unhide", -(f_id*1000+4) );
+    glutAddMenuEntry( "Change title", -(f_id*1000+1) );
+    glutAddMenuEntry( "Change point size", -(f_id*1000+2) );
+
+
+    function_node *n = getFunctionById(f_id);
+    table_node *t =getTableById (f_id);
+
+   /*tables have no stepping*/
+    if (n!=NULL)
+      {
+      glutAddMenuEntry( "Change stepping", -(f_id*1000+3) );
+      if (n->type%10==2)  //R2->R function
+         {
+         glutAddMenuEntry( "Change another stepping ", -(f_id*1000+4) );
+         }
+      }
+
+
+   if (n!=NULL && (n->type%10==3 || n->type%10==4))
+      {} //curves
+
+   else
+      {
+      int subsub = glutCreateMenu( menu_handler );
+
+      if (n!=NULL)
+         {
+
+         if (n->type%10==1) //1 or 11 = R->R
+            {
+            glutAddMenuEntry( "f(x)=y", -(f_id*1000+6) );
+            glutAddMenuEntry( "f(x)=z", -(f_id*1000+7) );
+            glutAddMenuEntry( "f(y)=x", -(f_id*1000+8) );
+            glutAddMenuEntry( "f(y)=z", -(f_id*1000+9) );
+            glutAddMenuEntry( "f(z)=x", -(f_id*1000+10) );
+            glutAddMenuEntry( "f(z)=y", -(f_id*1000+11) );
+            }
+         if (n->type%10==2) //2 or 12 = R2->R
+            {
+            glutAddMenuEntry( "f(x,y)=z", -(f_id*1000+6) );
+            glutAddMenuEntry( "f(x,z)=y", -(f_id*1000+7) );
+            glutAddMenuEntry( "f(y,x)=z", -(f_id*1000+8) );
+            glutAddMenuEntry( "f(y,z)=x", -(f_id*1000+9) );
+            glutAddMenuEntry( "f(z,x)=y", -(f_id*1000+10) );
+            glutAddMenuEntry( "f(z,y)=x", -(f_id*1000+11) );
+            }
+         }
+      else if (t!=NULL)
+         {
+         glutAddMenuEntry( "XY", -(f_id*1000+6) );
+         glutAddMenuEntry( "XZ", -(f_id*1000+7) );
+         glutAddMenuEntry( "YX", -(f_id*1000+8) );
+         glutAddMenuEntry( "YZ", -(f_id*1000+9) );
+         glutAddMenuEntry( "ZX", -(f_id*1000+10) );
+         glutAddMenuEntry( "ZY", -(f_id*1000+11) );
+         }
+
+      glutSetMenu(submenu);
+      glutAddSubMenu( "direction", subsub );
+      }
+
+    glutAddMenuEntry( "New color", -(f_id*1000+12) );
+    glutAddMenuEntry( "Toggle hide/unhide", -(f_id*1000+5) );
     glutSetMenu(menu_id);
     glutAddSubMenu( title, submenu );
 }
+
 
 int addRFunction(int win,double (*func_ptr)(double), double step, char *s)
    {
@@ -1213,6 +1572,7 @@ int addRFunction(int win,double (*func_ptr)(double), double step, char *s)
    put_menu(f_id,w->menuID,s);
    return f_id;
    }
+
 
 int addRFunctionWithP(int win,double (*func_ptr)(double,double*),double *para, double step, char *s)
    {
@@ -1241,15 +1601,33 @@ int addR2FunctionWithP(int win,double (*func_ptr)(double,double,double*),double 
 int addRCurve(int win,void (*curve_ptr)(double,double*,double*,double*), double step, double lower, double upper, char *s)
    {
    ADD_BEGIN
-   int f_id =  function_add3(&(w->functions),curve_ptr,step,lower,upper,s,red,green,blue);
+   int f_id =  curve_add(&(w->functions),curve_ptr,step,lower,upper,s,red,green,blue);
    put_menu(f_id,w->menuID,s);
-   return f_id; 
+   return f_id;
    }
 
 int addRCurveWithP(int win,void (*curve_ptr)(double,double*,double*,double*,double*),double *para, double step, double lower, double upper, char *s)
    {
    ADD_BEGIN
-   int f_id= function_add3B(&(w->functions),curve_ptr,para,step,lower,upper,s,red,green,blue);
+   int f_id= curve_addB(&(w->functions),curve_ptr,para,step,lower,upper,s,red,green,blue);
+   put_menu(f_id,w->menuID,s);
+   return f_id;
+   }
+
+
+int addR2Curve(int win,void (*curve_ptr)(double,double,double*,double*,double*), double step, double step_1,double lowerA, double upperA, double lowerB, double upperB, char *s)
+   {
+   ADD_BEGIN
+   int f_id =  curve2_add(&(w->functions),curve_ptr,step,step_1,lowerA,upperA,lowerB,upperB,s,red,green,blue);
+   put_menu(f_id,w->menuID,s);
+   return f_id;
+   }
+
+
+int addR2CurveWithP(int win,void (*curve_ptr)(double,double,double*,double*,double*,double*),double *para, double step, double step_1,double lowerA, double upperA, double lowerB, double upperB, char *s)
+   {
+   ADD_BEGIN
+   int f_id= curve2_addB(&(w->functions),curve_ptr,para,step,step_1,lowerA,upperA,lowerB,upperB,s,red,green,blue);
    put_menu(f_id,w->menuID,s);
    return f_id;
    }
@@ -1272,3 +1650,13 @@ int addTableDataArrays(int win,int count,double x[],double y[], char *s)
    put_menu(f_id,w->menuID,s);
    return f_id;
    }
+
+int addTableDataArrays3d(int win,int count,double x[],double y[],double z[], char *s)
+   {
+   ADD_BEGIN
+   point *pl=makeList3d(count,x,y,z);
+   int f_id = add_table(&(w->tables),pl,s,red,green,blue);
+   put_menu(f_id,w->menuID,s);
+   return f_id;
+   }
+

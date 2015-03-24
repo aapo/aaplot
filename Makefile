@@ -6,22 +6,18 @@ LDFLAGS= -L/usr/lib -lpng -lGL -lXpm -Wall -Wextra
 
 FILES= aaplot.c aaplot.h aaplot_func_list.c aaplot_helper.c aaplot_window.c aaplot_point_list.c aaplot_table_list.c aaplot_screenshot.c aaplot_inputbox.c aaplot_icon.xpm
 
-SOURCES = og_cursor.c \
-			 og_callbacks.c \
-			 og_init.c \
-			 og_display.c \
-			 og_main.c \
-			 og_menu.c \
-			 og_structure.c \
-			 og_state.c \
-			 og_font.c \
-			 og_font_data.c \
-			 og_font_helper.c \
-			 og_window.c
-
-glut: $(SOURCES)
-	$(CC) $(CFLAGS) -c $(SOURCES)
-	ar rvs glut.a *.o
+SOURCES = aaglut_cursor.c \
+			 aaglut_callbacks.c \
+			 aaglut_init.c \
+			 aaglut_display.c \
+			 aaglut_main.c \
+			 aaglut_menu.c \
+			 aaglut_structure.c \
+			 aaglut_state.c \
+			 aaglut_font.c \
+			 aaglut_font_data.c \
+			 aaglut_font_helper.c \
+			 aaglut_window.c
 
 
 lib: aaplot.a
@@ -32,7 +28,7 @@ aaplot.a: $(FILES) $(SOURCES)
 
 			
 #example_gsl is not part of, because it needs -lgsl
-all: example1 example1P example2 example2P example3 example3P example4 example5 example6 example7 example_butterflies example_many_curves example_rings
+all: example1 example1P example2 example2P example3 example3P example4 example4P example5 example5B example6 example7 example8 example_butterflies example_many_curves example_rings
 
 example1: aaplot.a example1.c
 	$(CC) $(CFLAGS) $(LDFLAGS) example1.c aaplot.a -o example1 
@@ -58,10 +54,17 @@ example3P: aaplot.a example3P.c
 example4: aaplot.a example4.c
 	$(CC) $(CFLAGS) $(LDFLAGS)  example4.c aaplot.a -o example4
 	strip example4
+example4P: aaplot.a example4P.c
+	$(CC) $(CFLAGS) $(LDFLAGS)  example4P.c aaplot.a -o example4P
+	strip example4P
+
 
 example5: aaplot.a example5.c
 	$(CC) $(CFLAGS) $(LDFLAGS)  example5.c aaplot.a -o example5
 	strip example5
+example5B: aaplot.a example5B.c
+	$(CC) $(CFLAGS) $(LDFLAGS)  example5B.c aaplot.a -o example5B
+	strip example5B
 
 example6: aaplot.a example6.c
 	$(CC) $(CFLAGS) $(LDFLAGS)  example6.c aaplot.a -o example6
@@ -70,6 +73,10 @@ example6: aaplot.a example6.c
 example7: aaplot.a example7.c
 	$(CC) $(CFLAGS) $(LDFLAGS)  example7.c aaplot.a -o example7
 	strip example7
+
+example8: aaplot.a example8.c
+	$(CC) $(CFLAGS) $(LDFLAGS)  example8.c aaplot.a -o example8
+	strip example8
 
 example_butterflies: aaplot.a example_butterflies.c
 	$(CC) $(CFLAGS) $(LDFLAGS)  example_butterflies.c aaplot.a -o example_butterflies

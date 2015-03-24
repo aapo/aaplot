@@ -1,6 +1,6 @@
 /*
 This example contains many curves.
-There is nothing new compared to example3.
+There is nothing new compared to example3 and example3p.
 */
 #include "aaplot.h"
 

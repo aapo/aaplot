@@ -1,8 +1,8 @@
 -----------------------------------------------------
-aaplot 0.5
+aaplot 0.6
+5. October 2008
 by: Aapo Rantalainen
 GNU GPL 3.0 (or later)
-http://code.google.com/p/aaplot/
 ------------------------------------------------------
 
 INFO
@@ -24,7 +24,7 @@ return 3*x*x + 4*x -5;
 int main(){
  addRFunction(0,&f,0.01,"My Function");
   /* 0   = window number
-    &f   = pointer to predefined function
+    &f   = pointer to your function
     0.01 = stepping of x 
    "My Function" = just some title
   */
@@ -55,7 +55,16 @@ Menu
     * Toggle Move/Rotate -mode
     * Change cursor to crosshair
     * Prints manual (to console at this moment)
-    * Close all gl-windows. 
+    * Reset view back to normal
+    * Hiding/Unhiding coordinateplanes (XY,YZ,XZ)
+    * Close all gl-windows.
+    * With every function/table
+          o Change title
+          o Change point size
+          o Change stepping (both if have two steppings)
+          o direction (e.g. f(z)=x)
+          o New color (pick next random color)
+          o Hide/Unhide 
 
 Left mouse button + moving mouse
 
@@ -76,17 +85,23 @@ Middle mouse button
 
 Mouse wheel
 
-    Zooming in and out. 
+    Zooming in and out.
 
 With Keyboard
 
-1 and 2	        X-axis stay in place and zy-plane rotates
+1 and 2	       X-axis stay in place and zy-plane rotates
 3 and 4         Y-axis stay in place and zx-plane rotates
 5 and 6         Z-axis stay in place and xy-plane rotates
 z               Take screenshot
 UP/DOWN 	Scales y-axis
 LEFT/RIGHT 	Scales x-axis
 Shitt + UP/DOWN 	Scales z-axis
+a/d : increase x-boundaries
+w/s : increase y-boundaries
+q/e : increase z-boundaries
+A/D : decrease x-boundaries
+W/S : decrease y-boundaries
+Q/E : decrease z-boundaries
 ESC 	Close all windows
 
 
@@ -95,10 +110,8 @@ ESC 	Close all windows
 
 HACKING
 =======
-Filenames beginning with aaplot* are one layer, writted just for this project.
-Filanames beginning with openglut* and og* are adopted from openglut-project. (with some modifications)
+Filenames beginning with aaplot* are one layer, wroted just for this project.
+Filanames beginning with aaglut* are adopted from openglut-project. (with some modifications)
 
-So I suggest you start with aaplot-files. It is like gl with glut programming. If something is not working, 
-it might be because of my openglut-modifications.
-
-
+So I suggest you start with aaplot-files. It is like gl with glut programming. If something 
+do not work, it might be because of my aaglut-modifications.

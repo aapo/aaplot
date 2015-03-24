@@ -18,7 +18,7 @@ p1[2]= 1.8;
 /*window_number, function,parameters, x_step, title*/
 addRFunctionWithP(0,&my_func,p1,0.001,"parabola1");
 
-/*We can't use same array with another function */
+/*We can't use the same array with another function */
 double p2[3];
 p2[0]=-2.4;
 p2[1]=-3.1;

@@ -11,7 +11,7 @@ return 2*x*x + 4*x - 2;
 int main(){
 /*window_number, function, x_step, title*/
 
-addRFunction(0,&my_func,0.001,"parabola");
+addRFunction(0,&my_func,0.001,"Use middle button to point.");
 
 drawAll(); /*main programs pauses till all windows are closed*/
 

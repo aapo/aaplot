@@ -51,12 +51,8 @@ typedef struct ns3 {
       int menuID; /*contains handle to the this window's menu */
 
       /*boundaries*/
-      double lower_x_limit;
-      double upper_x_limit;
-      double lower_y_limit;
-      double upper_y_limit;
-      double lower_z_limit;
-      double upper_z_limit;
+      double lower_bounds[3];
+      double upper_bounds[3];
 
       double x_grid;
       double y_grid;
@@ -76,7 +72,7 @@ void add_window(int width, int height, char *title) {
    window *n = malloc(sizeof(window));
    if (n == NULL)
      {
-     printf("memory allocation failed\n");
+     //printf("memory allocation failed\n");
      return ;
      }
 
@@ -94,14 +90,14 @@ void add_window(int width, int height, char *title) {
    n->background_color[1] = default_background_color[1];
    n->background_color[2] = default_background_color[2];
 
-   n->lower_x_limit=default_lower_x_limit;
-   n->upper_x_limit=default_upper_x_limit;
+   n->lower_bounds[0]=default_lower_bounds[0];
+   n->lower_bounds[1]=default_lower_bounds[1];
+   n->lower_bounds[2]=default_lower_bounds[2];
 
-   n->lower_y_limit=default_lower_y_limit;
-   n->upper_y_limit=default_upper_y_limit;
+   n->upper_bounds[0]=default_upper_bounds[0];
+   n->upper_bounds[1]=default_upper_bounds[1];
+   n->upper_bounds[2]=default_upper_bounds[2];
 
-   n->lower_z_limit=default_lower_z_limit;
-   n->upper_z_limit=default_upper_z_limit;
 
    n->x_grid=default_x_grid;
    n->y_grid=default_y_grid;

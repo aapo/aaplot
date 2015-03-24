@@ -1,11 +1,13 @@
 
+
 /* Input box code adapted from MDDISPLAY:
 http://www.structbio.vanderbilt.edu/~mothcw/mddisplay
-and distributed openly with permission of Chris Moth, the author 
+and distributed openly with permission of Chris Moth, the author
 */
 #include <ctype.h>
 
-void (* keyboardInputCompleteCallback)(int lastKey,char *inputString);
+void (* keyboardInputCompleteCallback)(int lastKey,char *inputString, int id);
+int current_entity;
 
 int keyboardWindow = -1;
 
@@ -32,14 +34,15 @@ void inputbox_keyboard_func(unsigned char key,int x, int y)
       {
 
       }
-   else // we are in the middle of active text string input 
+   else // we are in the middle of active text string input
       {
       int inputChanged = 0;
 
-      int input_strlen = strlen(keyboardInputString);
+      unsigned int input_strlen = strlen(keyboardInputString);
 
       // If ASCII text entered, add it to the keyboard string
-      if (isprint(key) && input_strlen < sizeof(keyboardInputString)-1)
+      if (isprint(key)
+ && input_strlen < sizeof(keyboardInputString)-1)
          {
 //       if (islower(key))
 //          key = toupper(key);
@@ -66,13 +69,13 @@ void inputbox_keyboard_func(unsigned char key,int x, int y)
          keyboardWindow = -1;
          free(keyboardPromptString);
          // This is "your" function that we'll call when user press <ENTER> or <ESC>ape
-         keyboardInputCompleteCallback(key,keyboardInputString);
+         keyboardInputCompleteCallback(key,keyboardInputString,current_entity);
          }
       else
       if (inputChanged)
          {
          // We need to redraw the entire text input box when the input
-         // has changed througha keystroke or Backspace key.
+         // has changed through a keystroke or Backspace key.
          int currentWindow = glutGetWindow();
 
          // Always Turn cursor On when we get a new key or input change!
@@ -162,7 +165,7 @@ int StringWidth(const char* s)
 // Display the user's text input and the cursor (if keyboardCursorOn)
 // Yes, everytime the cursor flips we draw all of this stuff!
 void inputbox_display_func(void)
-{  
+{
 
    int input_strlen = strlen(keyboardInputString);
 
@@ -198,12 +201,12 @@ void inputbox_display_func(void)
 #define nKeyboardWindowOffset 5
 
    // Draw the "prompt" text
-   DrawString(nKeyboardWindowOffset,h-16,keyboardPromptString);
+   DrawString(nKeyboardWindowOffset,h-20,keyboardPromptString);
 
 
    // Draw any input that the user has entered so far.
    if (input_strlen)
-      DrawString(nKeyboardWindowOffset,h-37,keyboardInputString);
+      DrawString(nKeyboardWindowOffset,h-39,keyboardInputString);
 
    // Draw the underline cursor to the right of the keyboardInputString
    if (keyboardCursorOn)
@@ -212,7 +215,6 @@ void inputbox_display_func(void)
       glRecti(nKeyboardWindowOffset + inputWidth,h-39,inputWidth+15,h-38);
       }
 
-   
    glutSwapBuffers();
 
    // Set up cursor flip...
@@ -229,14 +231,11 @@ void inputbox_display_func(void)
 
 
 
-
-
-
 /* InputBox
 Pops out new mini-window with given string.
 Takes input and when ready (ESC or ENTER) passes the input to given callback-function.
 */
-void KeyboardInputStart(char *title, void (* _InputCompleteCallback)(int lastKey,char *inputString), int parent_window)
+void input_box_function(char *title, void (* _InputCompleteCallback)(int lastKey,char *inputString, int id), int parent_window, int id)
    {
    // We have an active input going on from another caller... Clean up!
    if (keyboardWindow != -1)
@@ -254,13 +253,13 @@ void KeyboardInputStart(char *title, void (* _InputCompleteCallback)(int lastKey
 
       // Pass <ESC> (27) to the Callback function - which will then likely
       // treat the input string as being cancelled.
-      keyboardInputCompleteCallback(27,"");
+      keyboardInputCompleteCallback(27,"",-1);
       }
 
    // Start with an empty input string and the cursor in the on state
    keyboardInputString[0] = 0;
    keyboardCursorOn = 1;
-
+   current_entity=id;
 
    // This is "your" function that we'll call when the user finally
    // presses <ENTER> or <ESC> to terminate string input
@@ -270,7 +269,7 @@ void KeyboardInputStart(char *title, void (* _InputCompleteCallback)(int lastKey
    // Compute the least obstrusive size for the text input window, given
    // the input string length, and display that
       {
-   
+
 
    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
    keyboardWindow = glutCreateSubWindow(

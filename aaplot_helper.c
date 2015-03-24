@@ -173,10 +173,17 @@ void OGAPIENTRY glutSolidCone( GLdouble base, GLdouble height,
     free( cost );
 }
 
+/*identity matrix*/
 void init_rotation_matrix(float mo[16])
    {
-   memset( mo, 0, sizeof(mo) );
-   mo[0]=mo[5]=mo[10]=mo[15]=1;
+   //memset( mo, 0, sizeof(mo) );
+
+   mo[1]=mo[2]=mo[3]=mo[4]=
+   mo[6]=mo[7]=mo[8]=mo[9]=
+   mo[11]=mo[12]=mo[13]=mo[14]=   0;
+
+   mo[0]=mo[5]=mo[10]=mo[15] =    1;
+
    }
 
 void update_mo(float mo[16], float angle, float x, float y, float z )
@@ -299,7 +306,7 @@ else
 //if (*blue >1.0)
 //   *blue=*blue-1.0;
 
-printf("%lf,%lf,%lf\n",*red,*green,*blue);
+//printf("%lf,%lf,%lf\n",*red,*green,*blue);
 }
 #endif
 
@@ -401,7 +408,7 @@ void look_at(GLdouble eyeX,GLdouble eyeY,GLdouble eyeZ,GLdouble centerX,GLdouble
   GLdouble x = eyeX - centerX;
   GLdouble y = eyeY - centerY;
   GLdouble z = eyeZ - centerZ;
-  
+
   //lengths = 0, no difference = no rotation
   if ((x == y) && (y == z) && (z == 0.0f)) return;
   //if looking straight up or down (fix for the gimbal lock - as found in gluLookAt)
@@ -414,26 +421,28 @@ void look_at(GLdouble eyeX,GLdouble eyeY,GLdouble eyeZ,GLdouble centerX,GLdouble
     glTranslated(-x,-y,-z);
     return;
   }
-  
+
   GLdouble rx = 0.0f;
   GLdouble ry = 0.0f;
-  
+
   GLdouble hypA = (x == 0.0f) ? z : hypot(x,z);
   GLdouble hypB = (y == 0.0f) ? hypA : hypot(y,hypA);
   if (z == 0.0f) hypB = hypot(x,y);
-  
-  rx = asin(y / hypB) /M_PI * 180; //toDegs(asin(y / hypB));
-  ry = asin(x / hypA) /M_PI * 180;  //toDegs(asin(x / hypA));
-  
+
+  rx = asin(y / hypB) /M_PI * 180;
+  ry = asin(x / hypA) /M_PI * 180;
+
   //rotate and translate accordingly
   glRotated(rx,1,0,0);
-  if (z < 0.0f){
-    ry += 180.0f;
-  }else{
-    ry = 360.0f - ry;
-  }
+  if (z < 0.0f)
+     {
+     ry += 180.0f;
+     }
+  else
+     {
+     ry = 360.0f - ry;
+     }
   glRotated(ry,0,1,0);
   glTranslated(-eyeX,-eyeY,-eyeZ);
-  
- 
+
 }

@@ -1,48 +1,23 @@
 /*
-Draws two plot-sets from files. (Aalto Vase)
-First file has 26 x,y points.
-Second file has 100 x,y points.
+Curve R2->R^3.
+Now we have two stepping values.
 
-Additional we make two arrays, so one means x-coordinates and the other y-coordinates.
-Then we draw these points.
 */
-
 #include "aaplot.h"
 
 
+void circle3(double t, double u, double *x, double *y, double *z) {
+double r=1; /* radius */
+*x= r * cos(t);
+*y= u;
+*z= r * sin(t);
+}
+
+
+
 int main(){
-/*window_number, file_name, title*/
-default_size=13.0;
-
-addTableDataFile(0,"aalto.dat" , "aalto26"); 
-addTableDataFile(0,"aalto2.dat", "aalto100");
-
-
-/*-Arrays---------------*/
-/*Dynamical arrays*/
-int number_of_points = 10;
-double *x,*y;
-x= malloc(number_of_points*sizeof(double));
-y= malloc(number_of_points*sizeof(double));
-
-/*Compile-time arrays*/
-/*
-#define number_of_points 10
-double x[number_of_points];
-double y[number_of_points]; 
-*/
-
-/*Some values*/
-int i=0;
-for (i=0;i<number_of_points;i++)
-  {
-  x[i]=i*cos(i);
-  y[i]=i*sin(i);
-  }
-
-/* default_size=5.0; */
-/*window_number, total, x,y, title*/
-addTableDataArrays(0,number_of_points,x,y, "some_test_data");
+/*window_number,curve,  step_A, step_B, first_value_A, last_value_A, first_value_B, last_value_B, title*/
+addR2Curve(0,&circle3,0.01,0.2,0,2*M_PI,-2,2,"tube");
 
 drawAll();
 return 0;

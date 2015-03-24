@@ -1,7 +1,7 @@
 /*
-Curve R->R^3.
-(There are no R->R^2 curves)
-With curve, we must define stepping like we do with functions. Additional we must explicitly define the range of parameter. (first and last value)
+Curve R->R^3.  (There are no R->R^2 curves)
+With curve, we must define stepping like we do with functions. Additional
+we must explicitly define the range of parameter. (first and last value)
 
 This example draws
  -circle
@@ -19,7 +19,7 @@ double r=1; /* radius */
 
 
 void baseball(double t, double *x, double *y, double *z) {
-double a=0.4; /*some constant*/
+double a=0.4;  /*some constant*/
 double r=3;  /* radius */
 *x = r* sin(M_PI/2 - (M_PI/2 - a) * cos(t)) * cos(t/2 + a* sin(2 *t));
 *y = r* sin(M_PI/2 - (M_PI/2 - a) * cos(t)) * sin(t/2 + a* sin(2 *t));
@@ -27,13 +27,14 @@ double r=3;  /* radius */
 }
 
 int main(){
-/*window_number,curve,  step, first_value, last_value,title*/
+/*window_number,curve, step, first_value, last_value, title*/
 addRCurve(0,&circle,0.01,0,2*M_PI,"Circle");
 addRCurve(0,&baseball,0.01,-5,15,"Baseball curve");
 
 /*Note about range
 with cirle, it is trivial that we draw [0,2PI].
-with baseball-curve, we must
+with baseball-curve, it is not trivial, 
+ we can:
  -calculate it
  -test it (empiric)
  -overstate it

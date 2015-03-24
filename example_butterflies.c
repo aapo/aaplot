@@ -1,4 +1,5 @@
-/*four parameterized butterflies*/
+/** Four parameterized butterflies
+*/
 #include "aaplot.h"
 
 void butterfly(double u, double *x, double *y, double *z, double *p) {
@@ -10,6 +11,15 @@ void butterfly(double u, double *x, double *y, double *z, double *p) {
 
 int main()
 {
+default_lower_bounds[0] = -10.0;
+default_upper_bounds[0] = 10.0;
+
+default_lower_bounds[1] = -2.0;
+default_upper_bounds[1] = 2.0;
+
+default_lower_bounds[2] = -3.0;
+default_upper_bounds[2] = 3.0;
+
 /*BLACK background*/
 default_background_color[0]=0.0;
 default_background_color[1]=0.0;

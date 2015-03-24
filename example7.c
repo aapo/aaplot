@@ -1,5 +1,7 @@
-/*One function and one table.
-Changing attributes of them.
+/*Uses three windows
+window 0: f
+window 1: g
+window 2: derivate of f and g
 */
 #include "aaplot.h"
 
@@ -7,21 +9,35 @@ double f(double x) {
 return sin(x);
 }
 
+double g(double x) {
+return x*x;
+}
+
+/*derivate of f */
+double Df(double x) {
+return cos(x);
+}
+
+/*derivate of g */
+double Dg(double x) {
+return 2*x;
+}
 
 int main() { 
-int f_id = addRFunction(0,&f,0.01,"sin x");
+addRFunction(0,&f,0.01,"sin x");
+addRFunction(1,&g,0.01,"x*x");
 
-/*entity_id, red,green,blue*/
-changeEntityColor(f_id,0,1,0);
+default_lower_bounds[0] = -1.0;
+default_lower_bounds[1] = -5.0;
+default_lower_bounds[2] = -3.0;
 
-/*entity_id, plot_size*/
-changeEntityPlotSize(f_id,4.54);
+default_upper_bounds[0] = 5.0;
+default_upper_bounds[1] = 1.0;
+default_upper_bounds[2] = 3.0;
 
 
-int t_id= addTableDataFile(0,"aalto2.dat", "aalto100");
-changeEntityColor(t_id,1,0,1);
-changeEntityPlotSize(t_id,6.75);
-
+addRFunction(2,&Df,0.01,"D(sin x)");
+addRFunction(2,&Dg,0.01,"D(x*x)");
 
 drawAll();
 return 0;

@@ -31,7 +31,7 @@ void add_point(point **list, double x,double y,double z) {
     point *n = malloc(sizeof(point));
     if (n == NULL)
       {
-      printf("memory allocation failed\n");
+      //printf("memory allocation failed\n");
       return ;
       }
     n->x=x;
@@ -47,7 +47,17 @@ point *pl=NULL;
 int i;
 for (i=0;i<count;i++)
    {
-   add_point(&pl,x[i],y[i],1);
+   add_point(&pl,x[i],y[i],default_2dtable_thirdvalue);
+   }
+return pl;
+}
+
+point *makeList3d(int count,double x[],double y[],double z[]) {
+point *pl=NULL;
+int i;
+for (i=0;i<count;i++)
+   {
+   add_point(&pl,x[i],y[i],z[i]);
    }
 return pl;
 }
@@ -57,7 +67,7 @@ point *loadFile(char *file_name)
 
   FILE *fp;
   int i,m,n;
-  float eka,toka;
+  double first,second,third;
   point *pl=NULL;
 
   fp=fopen(file_name,"r");
@@ -67,14 +77,18 @@ point *loadFile(char *file_name)
     exit(1);
     }
   if (fscanf(fp,"%d %d",&m,&n)!=2)
-     printf("Bad matrix file");
+     fprintf(stderr,"Bad matrix file\n");
+     
 
-/*fix, at this moment it just guess file has two dimensional points*/
   for (i=0;i<m;i++)
     {
-    fscanf(fp," %f",&eka);
-    fscanf(fp," %f",&toka);
-    add_point(&pl,eka,toka,0);
+    fscanf(fp," %lf",&first);
+    fscanf(fp," %lf",&second);
+    if (n==3)
+      fscanf(fp," %lf",&third);
+    else 
+      third=default_2dtable_thirdvalue;
+    add_point(&pl,first,second,third);
     fscanf(fp,"\n");
     }
   fclose(fp);

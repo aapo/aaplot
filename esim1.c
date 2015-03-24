@@ -32,6 +32,12 @@ addR2Function(0,                     /* window number        */
 
 addTableDataFile(0,"aalto.dat" , "aalto26");
 
+addRFunction(0,&my_func,0.001,"abcdxyz");
+addRFunction(0,&my_func,0.001,"ABCDXYZ");
+addRFunction(0,&my_func,0.001,"!\"#¤%&/()=?");
+addRFunction(0,&my_func,0.001,"¡@£$€¥{[]}\\");
+addRFunction(0,&my_func,0.001,"§½'~*^ˇ");
+addRFunction(0,&my_func,0.001,",.-;:_<>|");
 drawAll();
 return 0;
 }

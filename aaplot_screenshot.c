@@ -46,7 +46,7 @@ if (shot_number==1)
    {
    time_t timer;
    timer=time(NULL);
-   strftime( time_string, 14, "%Y%m%d%H%M",localtime(&timer)); /*14=max lenght*/  
+   strftime( time_string, 14, "%Y%m%d%H%M",localtime(&timer)); /*14=max lenght*/
    char final[18];
    sprintf( final,"%s.png",time_string);
    filename=final;
@@ -60,7 +60,7 @@ else
    shot_number++;
    }
 
-  
+
 /*printf("screenshot:%d,%d\n",width,height);*/
 
   int i;

@@ -25,6 +25,8 @@ typedef struct ns5 {
         float green;
         float blue;
         char *name;
+        int hidden;
+        int direction[3];
         int id;
         struct ns5 *next;
 } table_node;
@@ -50,7 +52,13 @@ int add_table(table_node **tables, point *pl, char* s,float red, float green, fl
     n->red = red;
     n->green = green;
     n->blue = blue;
-    n->id=entity_id_counter;\
-    entity_id_counter++;\
+    n->hidden = 0;
+
+    n->direction[0] = 0;
+    n->direction[1] = 1;
+    n->direction[2] = 2;
+
+    n->id=entity_id_counter;
+    entity_id_counter++;
     return n->id;
 }
