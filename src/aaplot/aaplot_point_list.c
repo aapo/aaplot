@@ -77,19 +77,23 @@ point *loadFile(char *file_name)
     exit(1);
     }
   if (fscanf(fp,"%d %d",&m,&n)!=2)
-     fprintf(stderr,"Bad matrix file\n");
-     
+     fprintf(stderr,"Bad matrix file (a)\n");
 
   for (i=0;i<m;i++)
     {
-    fscanf(fp," %lf",&first);
-    fscanf(fp," %lf",&second);
+    if (fscanf(fp," %lf",&first) != 1)
+        fprintf(stderr,"Bad matrix file (b)\n");
+    if (fscanf(fp," %lf",&second) != 1)
+        fprintf(stderr,"Bad matrix file (c)\n");
+
     if (n==3)
-      fscanf(fp," %lf",&third);
-    else 
+      if(fscanf(fp," %lf",&third) != 1)
+        fprintf(stderr,"Bad matrix file (d)\n");
+    else
       third=default_2dtable_thirdvalue;
     add_point(&pl,first,second,third);
-    fscanf(fp,"\n");
+    if (fscanf(fp,"\n") != 0)
+        fprintf(stderr,"Bad matrix file (e)\n");
     }
   fclose(fp);
   return pl;
