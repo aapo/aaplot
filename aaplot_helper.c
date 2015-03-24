@@ -162,7 +162,7 @@ void update_mo(float mo[16], float angle, float x, float y, float z )
    glMultMatrixf(mo);
    glRotatef( angle, x,y,z );
    glGetFloatv( GL_MODELVIEW_MATRIX, mo );
-   glPopMatrix();  
+   glPopMatrix();
    refresh();
    }
 
@@ -189,7 +189,7 @@ static void draw_text (int col,int row, const char *fmt,float red,float green, f
               glutBitmapWidth(' ') * col,
             - glutBitmapHeight() * (row+2) + viewport[3]
         );
-        
+
 glutBitmapString (fmt);
 
     glPopMatrix();
@@ -323,7 +323,7 @@ else if (*red>low && *red<hig && *green>low && *green<hig)
    int b=rand (); /*toss a coin */
    if (b<RAND_MAX/2)
       *blue=*blue*2 / (1/low);
-   else 
+   else
       *blue=*blue*2 / (1/low) + hig;
    }
 else
@@ -334,7 +334,3 @@ else
 
 /*printf("%lf,%lf,%lf\n",*red,*green,*blue);*/
 }
-
-
-
-

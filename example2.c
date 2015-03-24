@@ -10,8 +10,8 @@ return sin(2*x)*cos(2*z);
 
 
 int main(void)    {
-/*window_number, function, plot_size,x_step,z_step, title */
-addR2Function(0,&surface,2.0,0.01,0.01,"sin 2x * cos 2z");
+/*window_number, function, x_step,z_step, title */
+addR2Function(0,&surface,0.05,0.05,"sin 2x * cos 2z");
 
 drawAll();
 return 0;

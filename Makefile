@@ -1,10 +1,10 @@
 CC=cc
 CFLAGS=-O2 
 
-LDFLAGS= -L/usr/lib -lpng -lGL -lGLU
+LDFLAGS= -L/usr/lib -lpng -lGL -lGLU -lXpm
 # -Wall -pedantic -ansi
 
-FILES= Makefile aaplot.c aaplot_defaults.c aaplot_func_list.c aaplot_helper.c aaplot_window.c aaplot_point_list.c aaplot_table_list.c aaplot_screenshot.c
+FILES= Makefile aaplot.c aaplot_defaults.c aaplot_func_list.c aaplot_helper.c aaplot_window.c aaplot_point_list.c aaplot_table_list.c aaplot_screenshot.c aaplot_icon.xpm
 
 SOURCES = og_cursor.c \
 			 og_callbacks.c \
@@ -50,6 +50,14 @@ example4: $(FILES)  $(SOURCES) example4.c
 example5: $(FILES)  $(SOURCES) example5.c
 	$(CC) $(CFLAGS) $(LDFLAGS)  example5.c -o example5
 	strip example5
+
+example6: $(FILES)  $(SOURCES) example6.c
+	$(CC) $(CFLAGS) $(LDFLAGS)  example6.c -o example6
+	strip example6
+
+example7: $(FILES)  $(SOURCES) example7.c
+	$(CC) $(CFLAGS) $(LDFLAGS)  example7.c -o example7
+	strip example7
 
 example_butterflies: $(FILES)  $(SOURCES) example_butterflies.c
 	$(CC) $(CFLAGS) $(LDFLAGS)  example_butterflies.c -o example_butterflies

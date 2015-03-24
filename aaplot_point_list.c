@@ -30,14 +30,14 @@ typedef struct ns4 {
 void add_point(point **list, double x,double y,double z) {
     point *n = (point *)malloc(sizeof(point));
     if (n == NULL)
-      { 
+      {
       printf("memory allocation failed\n");
       return ;
       }
     n->x=x;
     n->y=y;
     n->z=z;
-    
+
     n->next = *list;
     *list = n;
 }
@@ -61,7 +61,7 @@ point *loadFile(char *file_name)
   point *pl=NULL;
 
   fp=fopen(file_name,"r");
-  if (!fp) 
+  if (!fp)
     {
     fprintf(stderr,"Cannot open file %s\n",file_name);
     exit(1);

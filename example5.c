@@ -24,11 +24,11 @@ return 2*x;
 }
 
 int main() { 
-addRFunction(0,&f,1.0,0.01,"sin x");
-addRFunction(1,&g,1.0,0.01,"x*x");
+addRFunction(0,&f,0.01,"sin x");
+addRFunction(1,&g,0.01,"x*x");
 
-addRFunction(2,&Df,1.0,0.01,"D(sin x)");
-addRFunction(2,&Dg,1.0,0.01,"D(x*x)");
+addRFunction(2,&Df,0.01,"D(sin x)");
+addRFunction(2,&Dg,0.01,"D(x*x)");
 
 drawAll();
 return 0;

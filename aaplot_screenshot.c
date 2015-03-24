@@ -1,8 +1,8 @@
 
-/* 
+/*
 Screenshot -> PNG
 Copyright (C) 2000 Matthew Danish
-Who thanks to Andreas Umbach 
+Who thanks to Andreas Umbach
 
 */
 #ifdef AAPLOT_SCREENSHOT
@@ -25,10 +25,10 @@ int PNGScreenShot(int width,int height) {
 /*date+time maybe?*/
 char *filename="aaplot_screenshot.png";
 /*printf("screenshot:%d,%d\n",width,height);*/
-  
+
   int i;
   png_structp png_ptr;
-  png_infop info_ptr; 
+  png_infop info_ptr;
   png_byte **row_pointers;
   unsigned char *data;
   int colortype;
@@ -37,16 +37,16 @@ char *filename="aaplot_screenshot.png";
 
    data= (unsigned char *) malloc(width * height * 3*sizeof( unsigned char ));
 
-  
+
   glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-  
+
   _fp = fopen(filename, "wb");
-   if(!_fp) 
+   if(!_fp)
      {
      fprintf(stderr, "can't open %s for writing\n", filename);
      return 0;
      }
-  
+
   png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
 
   if (!png_ptr)
@@ -56,7 +56,7 @@ char *filename="aaplot_screenshot.png";
        }
 
   info_ptr = png_create_info_struct(png_ptr);
-  if (!info_ptr) 
+  if (!info_ptr)
       {
       png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
       fclose(_fp);
@@ -83,11 +83,11 @@ char *filename="aaplot_screenshot.png";
   png_write_image(png_ptr, row_pointers);
   png_write_end(png_ptr, info_ptr);
   png_destroy_write_struct(&png_ptr, &info_ptr);
-  
+
   free(row_pointers);
   free(data);
   fclose(_fp);
-  
+
   printf("Wrote screenshot to %s\n", filename);
 
   return 1;

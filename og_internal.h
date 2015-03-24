@@ -562,7 +562,7 @@ struct tagSOG_Menu
 struct tagSOG_MenuEntry
 {
     SOG_Node            Node;
-    int                 ID;                     /* The menu entry ID (local) */
+    int                 ID;                     /* The menu entry ID1 (local)*/
     int                 Ordinal;                /* The menu's ordinal number */
     char               *Text;                   /* The text to be displayed  */
     SOG_Menu           *SubMenu;                /* Optional sub-menu tree    */

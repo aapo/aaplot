@@ -4,7 +4,7 @@ Curve R->R^3.
 With curve, we must define stepping like we do with functions. Additional we must explicitly define the range of parameter. (first and last value)
 
 This example draws
- -circle 
+ -circle
  -baseball curve
 */
 #include "aaplot.c"
@@ -27,13 +27,13 @@ double r=3;  /* radius */
 }
 
 int main(){
-/*window_number,curve, plot_size, step, first_value, last_value,title*/
-addRCurve(0,&circle,1.5,0.01,0,2*M_PI,"Circle");
-addRCurve(0,&baseball,1.5,0.01,-5,15,"Baseball curve");
+/*window_number,curve,  step, first_value, last_value,title*/
+addRCurve(0,&circle,0.01,0,2*M_PI,"Circle");
+addRCurve(0,&baseball,0.01,-5,15,"Baseball curve");
 
 /*Note about range
 with cirle, it is trivial that we draw [0,2PI].
-with baseball-curve, we must 
+with baseball-curve, we must
  -calculate it
  -test it (empiric)
  -overstate it
@@ -42,5 +42,3 @@ with baseball-curve, we must
 drawAll();
 return 0;
 }
-
-

@@ -1,4 +1,5 @@
 void refresh ();
+int addTableDataArrays(int win,int count,double x[],double y[], char *s);
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -32,6 +33,8 @@ int is_initialized = 0;
 extern window *windows;
 int numbers_of_windows=0;
 
+int testi = 0;
+
 /* draws Pii with three lines
 void pii(double x){
    glLineWidth(2.0);
@@ -60,15 +63,15 @@ void refresh ()
    {
    glutSetWindow(w->id);
    glutPostRedisplay();
-   w=w->next;   
-   } 
+   w=w->next;
+   }
  }
 
 
 /*Window builds (only) its own content*/
 void buildModel( window *w )
    {
-   int function_amount=0,table_amount;
+   int amount=0; /*we use this to printing legend*/
    glClearColor(w->background_color[0],
                 w->background_color[1],
                 w->background_color[2],
@@ -76,6 +79,7 @@ void buildModel( window *w )
 
    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
    glPushMatrix();
+   glScaled(w->scale[0],w->scale[1],w->scale[2]);
 
    /*Axis*/
    glLineWidth(width_of_the_axis);
@@ -130,6 +134,9 @@ if (x_grid)
       }
    }
 
+   char coordinates[200];
+  sprintf(coordinates,"(%lf,%lf)",w->mouse_x,w->mouse_y);
+draw_text(1, -1,coordinates,1,0,0);
 
 
 /* small ticks
@@ -186,7 +193,7 @@ glBegin(GL_LINES);
 /*******  Functions Start************/
 /*//////////////////////////////////*/
 {
-node *n = w->functions;
+function_node *n = w->functions;
 while (n != NULL)
    {
    double j;
@@ -197,7 +204,7 @@ while (n != NULL)
    glColor3f(n->red,n->green,n->blue);
 
 
-if (n->type>10) 
+if (n->type>10)
    {
    parameters=1;
    }
@@ -212,14 +219,14 @@ if (n->type%10==1)
       y=     parameters==0 ? n->function(j)   :  n->function_p(j,n->parameters);
       if (y>=lower_y_limit && y<=upper_y_limit)
          {
-         glVertex3f(j,y,0); 
+         glVertex3f(j,y,0);
          }
       }
    glEnd();
    }
 
 /******** R^2->R  **********/
-if (n->type%10==2) 
+if (n->type%10==2)
    {
    glBegin(GL_POINTS);
    for (i=lower_z_limit;i<upper_z_limit;i=i+n->z_step)
@@ -235,7 +242,7 @@ if (n->type%10==2)
    }
 
 /***curves R -> R^3  *******/
-if (n->type%10==3) 
+if (n->type%10==3)
    {
    double alfa;
    double x,y,z;
@@ -251,8 +258,8 @@ if (n->type%10==3)
    glEnd();
    }
 
-draw_text(1, function_amount,n->name,n->red,n->green,n->blue);
-function_amount++;
+draw_text(1, amount,n->name,n->red,n->green,n->blue);
+amount++;
 n = n->next;
 }
 }
@@ -263,14 +270,13 @@ n = n->next;
 /*******  Arrays Start************/
 /*///////////////////////////////*/
 {
-table *t = w->tables;
-table_amount=function_amount;
+table_node *t = w->tables;
 while (t != NULL)
    {
    point *p = t->points;
    glPointSize(t->size);
-   glColor3f(t->red,t->green,t->blue);   
-   glBegin(GL_POINTS); 
+   glColor3f(t->red,t->green,t->blue);
+   glBegin(GL_POINTS);
    while (p != NULL)
       {
       double x=p->x;
@@ -284,26 +290,60 @@ while (t != NULL)
       }
    glEnd();
 
-   draw_text(1, table_amount,t->name,t->red,t->green,t->blue);
-   table_amount++;   
+   draw_text(1, amount,t->name,t->red,t->green,t->blue);
+   amount++;
    t = t->next;
    }
 }
 /*******  Arrays Ready************/
 /*///////////////////////////////*/
+
+/*******  User-Clicked start************/
+/*///////////////////////////////*/
+{ 
+point *p = w->user_clicked;
+if (p != NULL)
+   {
+   glPointSize(4.0);
+   glColor3f(1,0,0);
+   glBegin(GL_POINTS);
+   while (p != NULL)
+      {
+      double x=p->x;
+      double y=p->y;
+      double z=p->z;
+      if (x>lower_x_limit && x<upper_x_limit &&
+          y>lower_y_limit && y<upper_y_limit &&
+          z>lower_z_limit && z<upper_z_limit )
+         glVertex3f(x,y,z);
+      p=p->next;
+      }
+   glEnd();
+   
+   draw_text(1, amount,"User clicked",1,0,0);
+   amount++;
+   }
+}
+/*******   User-Clicked Ready************/
+/*///////////////////////////////*/
+
+
+/*******  Arrays Ready************/
+/*///////////////////////////////*/
+  glPopMatrix();
 }
 
 
 /*This is called when some window needs repaintting (only that window is repainted)*/
 void display()
    {
-   int win = glutGetWindow();   
+   int win = glutGetWindow();
    GLint viewport[4];
    window *w = windows;
    glGetIntegerv( GL_VIEWPORT, viewport );
    glCullFace(GL_BACK);
    glEnable( GL_DEPTH_TEST );
-   
+
    while (w != NULL)
       {
       if (w->id == win)
@@ -316,21 +356,21 @@ void display()
          buildModel(w);
          break;
          }
-      w=w->next;   
-      }  
+      w=w->next;
+      }
 
    glutSwapBuffers();
    }
 
 
 
-/*This is called when size of sone window is changed (only that window is in processing)*/
+/*This is called when size of some window is changed (only that window is in processing)*/
 void reshape(int width, int h)
    {
-   int win = glutGetWindow(); 
+   int win = glutGetWindow();
    int max=(width>h?width:h);
    window *w = windows;
- 
+
    while (w != NULL)
       {
       if (w->id == win)
@@ -346,12 +386,12 @@ void reshape(int width, int h)
          gluPerspective(90,4/3,1.5,20.0);
          glMatrixMode (GL_MODELVIEW);
          break;
-         }  
-      w=w->next;  
+         }
+      w=w->next;
       }
    }
 
-/*This is called when mouse moves over window*/
+/*This is called when mouse moves over window button pressed (eg. dragging)*/
 void mouse_motion ( int x, int y )
    {
    int win = glutGetWindow();
@@ -362,8 +402,8 @@ void mouse_motion ( int x, int y )
           {
           break;
           }
-        w=w->next;   
-        }  
+        w=w->next;
+        }
    /*Now w is current window*/
 
    if (w->rotating)
@@ -393,7 +433,7 @@ void mouse_motion ( int x, int y )
       w->startx = x;
       w->starty = y;
       refresh();
-      }  
+      }
    }
 
 /*This is called when mouse button is pressed*/
@@ -407,48 +447,69 @@ void mouse_buttons ( int button, int state, int x, int y )
           {
           break;
           }
-        w=w->next;   
-        }  
+        w=w->next;
+        }
     /*Now w is current window*/
 
    if ( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN )
       {
-      printf("modifiers=%d\n",glutGetModifiers());
-      w->moving = 1;
-      w->startx = x;
-      w->starty = y;
+      /*this will be usefull
+       shift=1
+      control=2
+      molemmat=3
+      */
+      // printf("modifiers=%d\n",glutGetModifiers());    
+      switch (w->mode)
+         {
+         case ROTATE_MODE:
+            w->rotating = 1;
+            w->rstartx = x;
+            w->rstarty = y;
+            break;
+         case MOVING_MODE:            
+            w->moving = 1;
+            w->startx = x;
+            w->starty = y;
+            break;
+         }
       }
    if ( button == GLUT_LEFT_BUTTON && state == GLUT_UP )
-      w->moving = 0;
+      {
+      switch (w->mode)
+         {
+         case ROTATE_MODE:
+            w->rotating = 0;
+            break;
+         case MOVING_MODE:
+            w->moving = 0;
+            break;    
+         }
+      }
 
-   if ( button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN )
-      {
-      glutSetCursor(GLUT_CURSOR_CYCLE);
-      w->rotating = 1;
-      w->rstartx = x;
-      w->rstarty = y;
-      }
-   if ( button == GLUT_RIGHT_BUTTON && state == GLUT_UP )
-      {
-      w->rotating = 0;
-      glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
-      }
-   if ( button == GLUT_WHEEL_UP ||  button == GLUT_WHEEL_DOWN) 
+
+   if ( button == GLUT_WHEEL_UP ||  button == GLUT_WHEEL_DOWN)
       {
       int max=(w->width>w->height?w->width:w->height);
-      double change=0.5; 
+      double change=0.5;
       if (button == GLUT_WHEEL_DOWN)
          change*=-1;
       w->camera[2]+=change;
       w->move_divider=(max/-2.0)/w->camera[2];
       refresh();
       }
-   
-   /* //what to do with middle button?
-   if ( button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN )
-   */   
-   }
 
+   // glutSetCursor(GLUT_CURSOR_CROSSHAIR);
+   if ( button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN )
+      {
+      double X,Y;
+      /* 10.0 is how many grid is visible to origon...border*/
+      X= (10.0/(w->width/2.0)*x  -10.0  + w->camera[0]  ) /w->scale[0]   ;
+      Y= (- (10.0/(w->height/2.0)*y -10.0) + w->camera[1])  /w->scale[1]   ;
+      add_point(&(w->user_clicked),X,Y,0);
+      glutPostRedisplay();
+      //printf("X=%lf. Y=%lf\n",X,Y);
+      }
+}
 
 #define DELTA 0.25f
 void keyboard( unsigned char key, int x, int y )
@@ -461,8 +522,8 @@ void keyboard( unsigned char key, int x, int y )
           {
           break;
           }
-        w=w->next;   
-        }  
+        w=w->next;
+        }
     /*Now w is current window*/
 
    switch( key )
@@ -470,7 +531,7 @@ void keyboard( unsigned char key, int x, int y )
       case 27:  /*The ESC-button*/
          glutLeaveMainLoop();
 /* glutLeaveMainLoop()=
-   FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutLeaveMainLoop" );
+   FREEGLUT_EXIT_IF_NOT_IALISED ( "glutLeaveMainLoop" );
    fgState.ExecState = GLUT_EXEC_STATE_STOP ;
 */
          break;
@@ -493,7 +554,7 @@ void keyboard( unsigned char key, int x, int y )
          update_mo(w->rotation_matrix, 5, 0,0,1 );
          break;
       case 'z':
-         PNGScreenShot(w->width, w->height);       
+         PNGScreenShot(w->width, w->height);
          break;
 /*
       //moving camera or target with keyboard
@@ -516,23 +577,42 @@ void keyboard( unsigned char key, int x, int y )
 }
 
 void special_keys (int key, int x, int y)  {
+   int win = glutGetWindow();
+   window *w = windows;
+   while (w != NULL)
+        {
+        if (w->id==win)
+          {
+          break;
+          }
+        w=w->next;
+        }
+    /*Now w is current window*/
+
     switch (key)
         {
         case GLUT_KEY_F12 :
             printf ("F12 function key. \n");
-glutSetIconTitle("foo.ico");
             break;
         case GLUT_KEY_LEFT :
-            printf ("Left directional key. \n");
+            w->scale[0] -=0.1; refresh();
             break;
         case GLUT_KEY_UP :
-            printf ("Up directional key. \n");
+            if (glutGetModifiers()==1) /*shift*/
+              w->scale[2] +=0.1;
+            else
+               w->scale[1] +=0.1;
+            refresh();
             break;
         case GLUT_KEY_RIGHT :
-            printf ("Right directional key. \n");
+            w->scale[0] +=0.1;refresh();
             break;
         case GLUT_KEY_DOWN :
-            printf ("Down directional key. \n");
+             if (glutGetModifiers()==1) /*shift*/
+               w->scale[2] -=0.1;
+            else
+               w->scale[1] -=0.1;
+            refresh();
             break;
         case GLUT_KEY_PAGE_UP :
             printf ("Page up directional key. \n");
@@ -554,8 +634,119 @@ glutSetIconTitle("foo.ico");
 
 
 
+/*
+ * A menu callback
+ */
+void menu_handler( int menuID )
+{
+   int win = glutGetWindow();
+   window *w = windows;
+   while (w != NULL)
+        {
+        if (w->id==win)
+          {
+          break;
+          }
+        w=w->next;
+        }
+    /*Now w is current window*/
 
-void init_window(int win) 
+    /*      debug print     */
+   // printf( "SampleMenu() callback executed, windowID %d, menuID is %i\n", w->id, menuID );
+
+   if (menuID==ROTATE_MODE)
+      {
+      w->mode=ROTATE_MODE;
+      glutSetCursor(GLUT_CURSOR_CYCLE);
+      glutChangeMenuEntryAttributes(oghFindMenuEntryById(glutGetTrueMenu(),ROTATE_MODE),"Moving mode",MOVING_MODE);
+      }
+
+   if (menuID==MOVING_MODE)
+      {
+      w->mode=MOVING_MODE;
+      glutSetCursor(GLUT_CURSOR_INFO);
+      glutChangeMenuEntryAttributes(oghFindMenuEntryById(glutGetTrueMenu(),MOVING_MODE),"Rotating mode",ROTATE_MODE);
+      }
+
+   if (menuID==1)
+      {
+      glutSetCursor(GLUT_CURSOR_CROSSHAIR);
+      }
+   
+   if (menuID==2)
+      {
+      printf("Manual\n\
+-------\n\
+With Keyboard \n\
+    * 1 and 2    :   X-axis stay in place and zy-plane rotates\n\
+    * 3 and 4    :   Y-axis stay in place and zx-plane rotates\n\
+    * 5 and 6    :   Z-axis stay in place and xy-plane rotates\n\
+    * z          :   Take screenshot\n\
+    * ESC        :   Close all windows\n\
+    * UP/DOWN    :   Scales y-axis\n\
+    * LEFT/RIGHT :   Scales x-axis\n\
+    * Shitt + UP/DOWN :   Scales z-axis\n\
+\n");
+    
+      }
+   if (menuID==3)
+      {
+      glutLeaveMainLoop();
+      }
+
+  if (menuID==4)
+      {
+      int max=(w->width>w->height?w->width:w->height);
+      int i;
+      for (i=0;i<16;i++)
+         w->rotation_matrix[i]=0;
+      init_rotation_matrix(w->rotation_matrix);
+      w->scale[0] = 1;
+      w->scale[1] = 1;
+      w->scale[2] = 1;
+      w->target[0] =  default_target[0];
+      w->target[1] =  default_target[1];
+      w->target[2] =  default_target[2];
+      w->camera[0] =  default_camera[0];
+      w->camera[1] =  default_camera[1];
+      w->camera[2] =  default_camera[2];
+            
+      w->move_divider=(max/2.0)/ w->camera[2]/-1.0;
+      }
+}
+
+
+
+void passive_mouse_motion(int x, int y)
+{
+ int win = glutGetWindow();
+   window *w = windows;
+   while (w != NULL)
+       {
+       if (w->id==win)
+         {
+         break;
+         }
+       w=w->next;
+       }
+   /*Now w is current window*/
+
+/*this is the same than in middle-clicking*/
+      w->mouse_x= (10.0/(w->width/2.0)*x  -10.0  + w->camera[0]  ) /w->scale[0]   ;
+      w->mouse_y= (- (10.0/(w->height/2.0)*y -10.0) + w->camera[1])  /w->scale[1]   ;
+        
+  
+//printf("%d,%d ja %lf,%lf\n",x,y, w->mouse_x,w->mouse_y);
+ glutPostRedisplay();
+
+}
+
+
+
+
+
+
+void init_window(int win)
    {
    if (win>numbers_of_windows)
       {
@@ -567,23 +758,73 @@ void init_window(int win)
    sprintf(title,"aaPlot Window %d",win);
    numbers_of_windows++;
 
-   add_window (default_window_width, default_window_height, title); 
+   add_window (default_window_width, default_window_height, title);
    window *w = windows;
 
    glutInitWindowSize (w->width, w->height);
    glutInitWindowPosition (0, 0);
 
    w->id = glutCreateWindow (w->title);
-   
+   ogSetIcon();
+
+
+/////////vai oisko kuitenkin windowille listan lisaksi selected_points?
+/*
+int number_of_points = 10;
+double *x,*y;
+x= (double *) malloc(number_of_points*sizeof(double));
+y= (double *) malloc(number_of_points*sizeof(double));
+int i=0;
+for (i=0;i<number_of_points;i++)
+  {
+  x[i]=i*sin(i);
+  y[i]=i*cos(i);
+  }
+printf("%d\n",win);
+   addTableDataArrays(win,number_of_points,x,y,"user_clicked");
+*/
+//////////////
+
    glutDisplayFunc  (display);
    glutReshapeFunc  (reshape);
    glutKeyboardFunc (keyboard);
-   glutSpecialFunc  (special_keys);   
+   glutSpecialFunc  (special_keys);
    glutMouseFunc    (mouse_buttons);
    glutMotionFunc   (mouse_motion);
+
+   glutPassiveMotionFunc(passive_mouse_motion);
    }
 
+
+    int menuID, subMenuA, subMenuB;
+  subMenuA = glutCreateMenu( menu_handler );
+    glutAddMenuEntry( "Sub menu A1 (01)", 11 );
+    glutAddMenuEntry( "Sub menu A2 (02)", 12 );
+    glutAddMenuEntry( "Sub menu A3 (03)", 13 );
+
+    subMenuB = glutCreateMenu( menu_handler );
+    glutAddMenuEntry( "Sub menu B1 (04)", 14 );
+    glutAddMenuEntry( "Sub menu B2 (05)", 15 );
+    glutAddMenuEntry( "Sub menu B3 (06)", 16 );
+    glutAddSubMenu( "Going to sub menu A", subMenuA );
+
+    menuID = glutCreateMenu( menu_handler );
+    glutAddMenuEntry( "RotateMode",  ROTATE_MODE );
+    glutAddMenuEntry( "Crosshair Cursor",   1 );
+    glutAddMenuEntry( "Help", 2 );
+    glutAddMenuEntry( "Reset view",  4 );
+    glutAddMenuEntry( "Close All (ESC)",  3 );
+    glutAddSubMenu( "Enter sub menu A", subMenuA );
+    glutAddSubMenu( "Enter sub menu B", subMenuB );
+    glutAttachMenu( GLUT_RIGHT_BUTTON );
+
+    /*window mode is 'moving' at the start*/
+    glutSetCursor(GLUT_CURSOR_INFO);
+
+
 }
+
+
 
 
 void init_all() {
@@ -593,13 +834,13 @@ void init_all() {
       char *v[]={"aaPlot"};
       is_initialized=1;
 
-      /*just something to glutInit*/   
+      /*just something to glutInit*/
       glutInit(&c, v);
 
       glutInitDisplayMode(GLUT_RGB|GLUT_DEPTH|GLUT_DOUBLE);
       glEnable (GL_DEPTH_TEST);
       glClearColor (0.0, 0.0, 0.0, 0.0);
-  
+
 
       /*This helps visualization of surfaces. FIX this better*/
       #define LIGHTS
@@ -608,7 +849,7 @@ void init_all() {
          GLfloat pos[4] = {0., -5., 0., 1.};
          GLfloat white[4] = {1., 1., 1., 1.};
          GLfloat black[4] = {0., 0., 0., 0.};
-   
+
          glEnable (GL_LIGHTING);
          glEnable (GL_COLOR_MATERIAL);
          glColorMaterial (GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
@@ -617,7 +858,7 @@ void init_all() {
          glLightfv (GL_LIGHT1, GL_POSITION, pos);
          glLightfv (GL_LIGHT1, GL_DIFFUSE, white);
          glLightfv (GL_LIGHT1, GL_SPECULAR, black);
-   
+
          glMaterialfv (GL_FRONT, GL_SPECULAR, black);
          }
       #endif
@@ -645,6 +886,120 @@ window *getCurrentWindow(int win)
    }
 
 
+/*
+Check in every windows every FUNCTIONS and looking for given function id.
+Returns NULL if there are no such a id_number.
+*/
+
+function_node *getFunctionById(int f_id) {
+ window *w = windows;
+ while (w != NULL)
+   {
+   function_node *n = w->functions;
+   while (n != NULL)
+      {
+      if (n->id == f_id)
+         {
+         return n;
+         }
+      n = n->next;
+      }
+   w=w->next;
+   }
+ return NULL;
+ }
+
+/*
+Check in every windows every TABLE and looking for given function id.
+Returns NULL if there are no such a id_number.
+*/
+table_node *getTableById(int t_id) {
+ window *w = windows;
+ while (w != NULL)
+   {
+   table_node *n = w->tables;
+   while (n != NULL)
+      {
+      if (n->id == t_id)
+         {
+         return n;
+         }
+      n = n->next;
+      }
+   w=w->next;
+   }
+ return NULL;
+ }
+
+changeEntityColor(int id, float red, float green, float blue) {
+function_node *n = getFunctionById(id);
+if (n==NULL)
+   {
+   table_node *t =getTableById (id);
+   if (t==NULL)
+      return;
+   t->red = red;
+   t->green = green;
+   t->blue = blue;
+   return;
+   }
+
+n->red = red;
+n->green = green;
+n->blue = blue;
+}
+
+
+changeEntityPlotSize(int id, int size) {
+function_node *n = getFunctionById(id);
+if (n==NULL)
+   {
+   table_node *t =getTableById (id);
+   if (t==NULL)
+      return;
+   t->size = size;
+   return;
+   }
+
+n->size = size;
+}
+
+
+void setWindowScale(int win, double x, double y, double z) {
+/*not-implemented-yet*/
+}
+
+/*
+reverse ordered. First given point is last in the array.
+*/
+double *getClickedPointsFromWindow(int win, int *n) {   
+   window *w = windows; //fix, roll on asked window
+   double *ret;
+   int i=0;
+   int count=0;
+   point *p = w->user_clicked;
+
+   while (p)
+      {     
+      count++;
+      p=p->next;
+      }
+
+   *n=count;   
+   ret= (double *) malloc(2*count*sizeof(double));   
+   p = w->user_clicked;
+   for (i=0;i<2*count;i=i+2)
+      {      
+      ret[i]  =p->x;
+      ret[i+1]=p->y;
+      p=p->next;
+      }
+ 
+   return ret;
+   }
+
+
+
 #define ADD_BEGIN float red, green, blue; \
    window *w; \
    init_all();\
@@ -653,113 +1008,54 @@ window *getCurrentWindow(int win)
    getColors(&red,&green,&blue);
 
 
-void addRFunction(int win,double (*func_ptr)(double),double size, double step, char *s)   
+int addRFunction(int win,double (*func_ptr)(double), double step, char *s)
    {
    ADD_BEGIN
-   list_add(&(w->functions),func_ptr,size,step,s,red,green,blue);
+   return function_add(&(w->functions),func_ptr,step,s,red,green,blue);
    }
 
-void addRFunctionWithP(int win,double (*func_ptr)(double,double*),double *para,double size, double step, char *s)
+int addRFunctionWithP(int win,double (*func_ptr)(double,double*),double *para, double step, char *s)
    {
    ADD_BEGIN
-   list_addB(&(w->functions),func_ptr,para,size,step,s,red,green,blue);
+   return function_addB(&(w->functions),func_ptr,para,step,s,red,green,blue);
    }
 
-void addR2Function(int win,double (*func_ptr)(double,double),double size, double x_step, double z_step, char *s)
+int addR2Function(int win,double (*func_ptr)(double,double), double x_step, double z_step, char *s)
    {
    ADD_BEGIN
-   list_add2(&(w->functions),func_ptr,size,x_step,z_step,s,red,green,blue);
+   return function_add2(&(w->functions),func_ptr,x_step,z_step,s,red,green,blue);
    }
 
-void addR2FunctionWithP(int win,double (*func_ptr)(double,double,double*),double *para,double size, double x_step, double z_step, char *s)
+int addR2FunctionWithP(int win,double (*func_ptr)(double,double,double*),double *para, double x_step, double z_step, char *s)
    {
    ADD_BEGIN
-   list_add2B(&(w->functions),func_ptr,para,size,x_step,z_step,s,red,green,blue);
+   return function_add2B(&(w->functions),func_ptr,para,x_step,z_step,s,red,green,blue);
    }
 
-void addRCurve(int win,void (*curve_ptr)(double,double*,double*,double*), double size, double step, double lower, double upper, char *s)
+int addRCurve(int win,void (*curve_ptr)(double,double*,double*,double*), double step, double lower, double upper, char *s)
    {
    ADD_BEGIN
-   list_add3(&(w->functions),curve_ptr,size,step,lower,upper,s,red,green,blue);
+   return function_add3(&(w->functions),curve_ptr,step,lower,upper,s,red,green,blue);
    }
 
-void addRCurveWithP(int win,void (*curve_ptr)(double,double*,double*,double*,double*),double *para, double size, double step, double lower, double upper, char *s)
+int addRCurveWithP(int win,void (*curve_ptr)(double,double*,double*,double*,double*),double *para, double step, double lower, double upper, char *s)
    {
    ADD_BEGIN
-   list_add3B(&(w->functions),curve_ptr,para,size,step,lower,upper,s,red,green,blue);
+   return function_add3B(&(w->functions),curve_ptr,para,step,lower,upper,s,red,green,blue);
    }
 
 
-void addTableDataFile(int win,char *file,double size, char *s)
+int addTableDataFile(int win,char *file, char *s)
    {
    ADD_BEGIN
    point *pl=loadFile(file);
-   add_table(&(w->tables),pl,size,s,red,green,blue);
+   return add_table(&(w->tables),pl,s,red,green,blue);
    }
 
-void addTableDataArrays(int win,int count,double x[],double y[],double size, char *s)
+int addTableDataArrays(int win,int count,double x[],double y[], char *s)
    {
    ADD_BEGIN
    point *pl=makeList(count,x,y);
-   add_table(&(w->tables),pl,size,s,red,green,blue);
+   return add_table(&(w->tables),pl,s,red,green,blue);
    }
-
-
-
-#ifdef disabled
-is it necessary to force some color?
-this is wrong method
-we need some setColor(function_id,r,g,b);
-
-void addRFunctionWithC(int win,double (*func_ptr)(double),double size, double step, char *s,float red, float green, float blue)   
-   {
-   ADD_BEGIN
-   list_add(&(w->funktiot),func_ptr,size,step,s,red,green,blue);
-   }
-
-void addRFunctionWithP(int win,double (*func_ptr)(double,double*),double *para,double size, double step, char *s,float red, float green, float blue)
-   {
-   ADD_BEGIN
-   list_addB(&(w->funktiot),func_ptr,para,size,step,s,red,green,blue);
-   }
-
-void addR2Function(int win,double (*func_ptr)(double,double),double size, double x_step, double z_step, char *s,float red, float green, float blue)
-   {
-   ADD_BEGIN
-   list_add2(&(w->funktiot),func_ptr,size,x_step,z_step,s,red,green,blue);
-   }
-
-void addR2FunctionWithP(int win,double (*func_ptr)(double,double,double*),double *para,double size, double x_step, double z_step, char *s,float red, float green, float blue)
-   {
-   ADD_BEGIN
-   list_add2B(&(w->funktiot),func_ptr,para,size,x_step,z_step,s,red,green,blue);
-   }
-
-void addRCurve(int win,void (*curve_ptr)(double,double*,double*,double*), double size, double step, double lower, double upper, char *s,float red, float green, float blue)
-   {
-   ADD_BEGIN
-   list_add3(&(w->funktiot),curve_ptr,size,step,lower,upper,s,red,green,blue);
-   }
-
-void addRCurveWithP(int win,void (*curve_ptr)(double,double*,double*,double*,double*),double *para, double size, double step, double lower, double upper, char *s,float red, float green, float blue)
-   {
-   ADD_BEGIN
-   list_add3B(&(w->funktiot),curve_ptr,para,size,step,lower,upper,s,red,green,blue);
-   }
-
-
-void addTableDataFile(int win,char *file,double size, char *s,float red, float green, float blue)
-   {
-   ADD_BEGIN
-   point *pl=loadFile(file);
-   add_table(&(w->taulukot),pl,size,s,red,green,blue);
-   }
-
-void addTableDataArrays(int win,int count,double x[],double y[],double size, char *s,float red, float green, float blue)
-   {
-   ADD_BEGIN
-   point *pl=teeJono(count,x,y);
-   add_table(&(w->taulukot),pl,size,s,red,green,blue);
-   }
-#endif
 

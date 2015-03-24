@@ -1,4 +1,5 @@
 #define AAPLOT_SCREENSHOT
+#define AAPLOT_ICON
 
 /*background color: 1,1,1=white. 0,0,0=black*/
 double default_background_color[3] = {1.0,1.0,1.0} ;
@@ -17,14 +18,16 @@ double upper_y_limit = 5.0;
 double lower_z_limit = -3.0;
 double upper_z_limit = 3.0;
 
+double default_size = 1.0;
+
 
 char *default_name ="funktio";
-double default_size = 1.0;
-double default_step = 0.0001;
-double default_red = 1;
-double default_green = 0;
-double default_blue = 1;
 
+//double default_step = 0.0001;
+
+
+   float  default_camera[3] = {1, 4.0  , 10};
+   float  default_target[3] = {1, 4.0  , 0};
 
 
 

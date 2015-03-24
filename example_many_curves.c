@@ -184,48 +184,49 @@ default_background_color[1]=0.0;
 default_background_color[2]=0.0;
 
 /*window number,curve,plot_size,stepping,first,last,title*/
-addRCurve   (0 ,&helix ,2.0,0.1,5.0 ,15.0,"helix");          
+addRCurve   (0 ,&helix ,0.1,5.0 ,15.0,"helix");          
 
-addRCurve(0,&cubic,1.5,0.01,-2,2,"cubic1");
-addRCurve(0,&astroid,1.5,0.01,-3,3,"astroid");
-addRCurve(0,&cardioid,1.5,0.01,0,6,"cardioid");
-addRCurve(0,&ellipse,1.5,0.01,0,8,"ellipse");
-addRCurve(0,&cruciform,1.5,0.01,-20,20,"cruciform");
-
-
-addRCurve(0,&deltoid,1.5,0.01,-5,5,"deltoid");
-addRCurve(0,&epicycloid,1.5,0.01,-5,5,"epicycloid");
-
-addRCurve(0,&epitrochoid,1.5,0.01,-5,5,"epitrochoid");
+addRCurve(0,&cubic,0.01,-2,2,"cubic1");
+addRCurve(0,&astroid,0.01,-3,3,"astroid");
+addRCurve(0,&cardioid,0.01,0,6,"cardioid");
+addRCurve(0,&ellipse,0.01,0,8,"ellipse");
+addRCurve(0,&cruciform,0.01,-20,20,"cruciform");
 
 
-addRCurve(0,&hypocycloid,1.5,0.01,-5,5,"hypocycloid");
-addRCurve(0,&aapocycloid,1.5,0.01,-5,5,"aa-pocycloid");
+addRCurve(0,&deltoid,0.01,-5,5,"deltoid");
+addRCurve(0,&epicycloid,0.01,-5,5,"epicycloid");
 
-addRCurve(0,&kappa_curve,1.5,0.01,-5,5,"kappa_curve");
-
-addRCurve(0,&nephroid,1.5,0.01,-5,5,"nephroid");
-addRCurve(0,&nephroid2,1.5,0.01,-5,5,"nephroid2");
-
-addRCurve(0,&serpentine,1.5,0.01,-5,5,"serpentine");
-
-addRCurve(0,&torusknot,10.0,0.05,0,17,"torusknot");
+addRCurve(0,&epitrochoid,0.01,-5,5,"epitrochoid");
 
 
-addRCurve(0,&butterfly,1,0.001,0,17,"butterfly");
+addRCurve(0,&hypocycloid,0.01,-5,5,"hypocycloid");
+addRCurve(0,&aapocycloid,0.01,-5,5,"aa-pocycloid");
 
-addRCurve(0,&rose,1.5,0.01,-5,5,"rose");
-addRCurve(0,&spirals,1.5,0.01,-50,50,"archimedes");
+addRCurve(0,&kappa_curve,0.01,-5,5,"kappa_curve");
 
-addRCurve(0,&twisted,1.5,0.01,-50,50,"twisted");
-addRCurve(0,&lemniscate,1.5,0.01,0,6.5,"lemniscate");
+addRCurve(0,&nephroid,0.01,-5,5,"nephroid");
+addRCurve(0,&nephroid2,0.01,-5,5,"nephroid2");
 
-addRCurve(0,&viviani,1.5,0.01,-2*M_PI,2*M_PI,"viviani");
-addRCurve(0,&baseball,1.5,0.01,0,4*M_PI,"baseball");
+addRCurve(0,&serpentine,0.01,-5,5,"serpentine");
+
+/*size 10*/
+int torus = addRCurve(0,&torusknot,0.05,0,17,"torusknot");
+changeEntityPlotSize(torus, 10.0);
+
+addRCurve(0,&butterfly,0.001,0,17,"butterfly");
+
+addRCurve(0,&rose,0.01,-5,5,"rose");
+addRCurve(0,&spirals,0.01,-50,50,"archimedes");
+
+addRCurve(0,&twisted,0.01,-50,50,"twisted");
+addRCurve(0,&lemniscate,0.01,0,6.5,"lemniscate");
+
+addRCurve(0,&viviani,0.01,-2*M_PI,2*M_PI,"viviani");
+addRCurve(0,&baseball,0.01,0,4*M_PI,"baseball");
 
 
 
-addRCurve(0,&granny,1.5,0.01,0,2*M_PI,"granny_knot");
+addRCurve(0,&granny,0.01,0,2*M_PI,"granny_knot");
 
 /* //fast way to test some points
 double x,y,z;

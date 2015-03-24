@@ -68,7 +68,8 @@ static float menu_pen_hfore [4] = {1.0f,  1.0f,  1.0f,  1.0f};
 static float menu_pen_hback [4] = {0.15f, 0.15f, 0.45f, 1.0f};
 #else
 static float menu_pen_fore  [4] = {0.0f,  0.0f,  0.0f,  1.0f};
-static float menu_pen_back  [4] = {0.70f, 0.70f, 0.70f, 1.0f};
+//static float menu_pen_back  [4] = {0.70f, 0.70f, 0.70f, 1.0f};
+static float menu_pen_back  [4] = {0.0f,  0.8f, 1.0f, 1.0f};
 static float menu_pen_hfore [4] = {0.0f,  0.0f,  0.0f,  1.0f};
 static float menu_pen_hback [4] = {1.0f,  1.0f,  1.0f,  1.0f};
 #endif
@@ -90,6 +91,23 @@ static SOG_MenuEntry *oghFindMenuEntry( SOG_Menu *menu, const int index )
     }
 
     return entry;
+}
+
+/*
+Find a menu entry by menuID.
+Return 0, if there are no such a menuID.
+by: aapo
+*/
+static SOG_MenuEntry *oghFindMenuEntryById( SOG_Menu *menu, const int asked)
+{
+  SOG_MenuEntry *entry = ( SOG_MenuEntry * )menu->Entries.First;
+    while( entry)
+      {
+      if (entry->ID == asked)
+          return entry;
+      entry = ( SOG_MenuEntry * )entry->Node.Next;       
+      }
+    return 0;
 }
 
 /*
@@ -640,6 +658,9 @@ int OGAPIENTRY glutGetMenu( void )
     return 0;
 }
 
+
+
+
 /*!
     \fn
     \brief    Set the current menu ID.
@@ -685,12 +706,43 @@ void OGAPIENTRY glutAddMenuEntry( const char *label, int value )
     if( ogStructure.Menu )
     {
         menuEntry->Text = ogStrDup( label );
-        menuEntry->ID   = value;
+        menuEntry->ID   = value;        
 
         ogListAppend( &ogStructure.Menu->Entries, &menuEntry->Node );
         oghCalculateMenuBoxSize( );
     }
 }
+
+
+/*Returns pointer to this windows menu
+by: aapo*/
+SOG_Menu OGAPIENTRY *glutGetTrueMenu( void )
+{
+    freeglut_assert_ready;
+
+    if( ogStructure.Menu )
+        return ogStructure.Menu;
+
+    return 0;
+}
+
+/*aapo*/
+void OGAPIENTRY glutChangeMenuEntryAttributes(SOG_MenuEntry *menuEntry, const char *newlabel, int newvalue )
+{
+ /*   SOG_MenuEntry *menuEntry =
+        ( SOG_MenuEntry * )calloc( sizeof( SOG_MenuEntry ), 1 );
+*/
+//    freeglut_assert_ready;
+    if( ogStructure.Menu )
+    {
+        menuEntry->Text = ogStrDup( newlabel );
+        menuEntry->ID   = newvalue;        
+
+//        ogListAppend( &ogStructure.Menu->Entries, &menuEntry->Node );
+        oghCalculateMenuBoxSize( );
+    }
+}
+
 
 /*!
     \fn

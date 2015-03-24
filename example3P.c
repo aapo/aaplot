@@ -21,8 +21,8 @@ p1[0]=5.5;
 p1[1]=2.3;
 
 
-/*window_number, curve, parameters, plot_size, step, first_value, last_value,title*/
-addRCurveWithP(0,&ellipse,p1,1.5,0.01,0,2*M_PI,"ellipse 1");
+/*window_number, curve, parameters, step, first_value, last_value,title*/
+addRCurveWithP(0,&ellipse,p1,0.01,0,2*M_PI,"ellipse 1");
 
 
 /*We can't use same array with another function */
@@ -30,7 +30,7 @@ double p2[3];
 p2[0]= 1.4;
 p2[1]= 2.3;
 
-addRCurveWithP(0,&ellipse,p2,2.5,0.01,0,2*M_PI,"ellipse 2");
+addRCurveWithP(0,&ellipse,p2,0.01,0,2*M_PI,"ellipse 2");
 
 drawAll();
 return 0;

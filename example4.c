@@ -11,9 +11,13 @@ Then we draw these points.
 
 
 int main(){
-/*window_number, file_name, plot_size, title*/
-addTableDataFile(0,"aalto.dat" ,3, "aalto26"); 
-addTableDataFile(0,"aalto2.dat",2, "aalto100");
+/*window_number, file_name, title*/
+default_size=3.0;
+
+addTableDataFile(0,"aalto.dat" , "aalto26"); 
+addTableDataFile(0,"aalto2.dat", "aalto100");
+
+
 
 
 /*-Arrays---------------*/
@@ -38,8 +42,9 @@ for (i=0;i<number_of_points;i++)
   y[i]=i*sin(i);
   }
 
-/*window_number, total, x,y, plot_size, title*/
-addTableDataArrays(0,number_of_points,x,y,5, "some_test_data");
+default_size=5.0;
+/*window_number, total, x,y, title*/
+addTableDataArrays(0,number_of_points,x,y, "some_test_data");
 
 drawAll();
 return 0;

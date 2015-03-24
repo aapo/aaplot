@@ -31,7 +31,7 @@ typedef struct ns {
         void (*curve_p)   (double,double*,double*,double*,double*); /*curve with parameters*/
         double lower_alfa;   /*only curves has this*/
         double upper_alfa;   /*only curves has this*/
-        int type;        
+        int type;
         double *parameters; /*only 'with-parameters' has this*/
         double size;        /*size of the plots*/
         double x_step;
@@ -42,9 +42,9 @@ typedef struct ns {
         int id;
         char *name;
         struct ns *next;
-} node;
+} function_node;
 
-int id_counter=0;
+int entity_id_counter=0;
 /*
 type means:
 1= R->R
@@ -57,28 +57,28 @@ type means:
 */
 
 
-#define MALLOC node *n = (node *)malloc(sizeof(node));\
+#define MALLOC function_node *n = (function_node *)malloc(sizeof(function_node));\
     if (n == NULL)\
       { \
       printf("memory allocation failed\n");\
       return -1;\
-      }\
+      }
 
 #define GENERAL n->next = *functions;\
       *functions = n;\
-      n->size = size;\
+      n->size = default_size;\
       n->x_step = x_step;\
       n->name = s;\
       n->red = red;\
       n->green = green;\
       n->blue = blue;\
-      n->id=id_counter;\
-      id_counter++;\
+      n->id=entity_id_counter;\
+      entity_id_counter++;\
 
 /*Add node to the first of the list.
 Returns id-number of the new node. Or -1 in the error situation.
 */
-int list_add(node **functions, double (*func_ptr)(double),double size, double x_step, char* s,float red, float green, float blue) {
+int function_add(function_node **functions, double (*func_ptr)(double), double x_step, char* s,float red, float green, float blue) {
 MALLOC
 GENERAL
 
@@ -87,7 +87,7 @@ n->type=1;
 return n->id;
 }
 
-int list_addB(node **functions, double (*func_ptr)(double,double*),double *para,double size, double x_step, char* s,float red, float green, float blue) {
+int function_addB(function_node **functions, double (*func_ptr)(double,double*),double *para, double x_step, char* s,float red, float green, float blue) {
 MALLOC
 GENERAL
 
@@ -98,18 +98,18 @@ return n->id;
 }
 
 
-int list_add2(node **functions, double (*func_ptr)(double,double),double size, double x_step, double z_step, char* s,float red, float green, float blue) {
+int function_add2(function_node **functions, double (*func_ptr)(double,double), double x_step, double z_step, char* s,float red, float green, float blue) {
 MALLOC
 GENERAL
 
       n->function2=func_ptr;
       n->z_step = z_step;
-      n->type=2;      
+      n->type=2;
 
 return n->id;
 }
 
-int list_add2B(node **functions, double (*func_ptr)(double,double,double*),double *para,double size, double x_step, double z_step, char* s,float red, float green, float blue) {
+int function_add2B(function_node **functions, double (*func_ptr)(double,double,double*),double *para, double x_step, double z_step, char* s,float red, float green, float blue) {
 MALLOC
 GENERAL
 
@@ -122,7 +122,7 @@ return n->id;
 
 
 /*stepping is x_stepping*/
-int list_add3(node **functions, void (*curve_ptr)(double,double*,double*,double*),double size, double x_step, double lower, double upper,char* s,float red, float green, float blue) {
+int function_add3(function_node **functions, void (*curve_ptr)(double,double*,double*,double*),double x_step, double lower, double upper,char* s,float red, float green, float blue) {
 MALLOC
 GENERAL
 
@@ -133,7 +133,7 @@ GENERAL
     return n->id;
 }
 
-int list_add3B(node **functions, void (*curve_ptr)(double,double*,double*,double*,double*),double *para,double size, double x_step, double lower, double upper,char* s,float red, float green, float blue) {
+int function_add3B(function_node **functions, void (*curve_ptr)(double,double*,double*,double*,double*),double *para, double x_step, double lower, double upper,char* s,float red, float green, float blue) {
 MALLOC
 GENERAL
 
@@ -146,7 +146,7 @@ GENERAL
 }
 
 
-#ifdef not_yet_tested
+#ifdef not_yet_tested_and_too_old
 void list_remove(node *functions,int id) {
    node *n = functions;
    node *edellinen = functions;
