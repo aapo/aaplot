@@ -1,6 +1,7 @@
 CC=cc
 CFLAGS=-O2
 
+AAPLOT_FILES=
 
 LDFLAGS= -L/usr/lib  -lGL -lm -lX11 -Wall -Wextra
 # -pedantic -ansi
@@ -12,25 +13,31 @@ CFLAGS+=-DAAPLOT_SCREENSHOT
 #UnComment if you want icon for application
 #LDFLAGS+=-lXpm 
 #CFLAGS+=-DAAPLOT_ICON 
+#AAPLOT_FILES+=aaplot_icon.xpm
 
 
 
+AAPLOT_FILES+= src/aaplot/aaplot.c \
+ src/aaplot/aaplot_func_list.c \
+ src/aaplot/aaplot_helper.c \
+ src/aaplot/aaplot_window.c \
+ src/aaplot/aaplot_point_list.c \
+ src/aaplot/aaplot_table_list.c \
+ src/aaplot/aaplot_screenshot.c \
+ src/aaplot/aaplot_inputbox.c
 
-
-FILES= aaplot.c aaplot.h aaplot_func_list.c aaplot_helper.c aaplot_window.c aaplot_point_list.c aaplot_table_list.c aaplot_screenshot.c aaplot_inputbox.c aaplot_icon.xpm
-
-SOURCES = aaglut_cursor.c \
-			 aaglut_callbacks.c \
-			 aaglut_init.c \
-			 aaglut_display.c \
-			 aaglut_main.c \
-			 aaglut_menu.c \
-			 aaglut_structure.c \
-			 aaglut_state.c \
-			 aaglut_font.c \
-			 aaglut_font_data.c \
-			 aaglut_font_helper.c \
-			 aaglut_window.c
+AAGLUT_FILES = src/aaglut/aaglut_cursor.c \
+			 src/aaglut/aaglut_callbacks.c \
+			 src/aaglut/aaglut_init.c \
+			 src/aaglut/aaglut_display.c \
+			 src/aaglut/aaglut_main.c \
+			 src/aaglut/aaglut_menu.c \
+			 src/aaglut/aaglut_structure.c \
+			 src/aaglut/aaglut_state.c \
+			 src/aaglut/aaglut_font.c \
+			 src/aaglut/aaglut_font_data.c \
+			 src/aaglut/aaglut_font_helper.c \
+			 src/aaglut/aaglut_window.c
 
 		
 #example_gsl is not part of, because it needs -lgsl
@@ -39,8 +46,8 @@ all: example1 example1P example2 example2P example3 example3P example4 example4P
 
 lib: aaplot.a
 
-aaplot.a: $(FILES) $(SOURCES)
-	$(CC) $(CFLAGS) -c aaplot.c
+aaplot.a: $(AAPLOT_FILES) $(AAGLUT_FILES)
+	$(CC) $(CFLAGS) -c src/aaplot/aaplot.c
 	ar rvs aaplot.a aaplot.o
 
 
