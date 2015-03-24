@@ -1,9 +1,17 @@
-  /*
+/*
 Linked list.
 Node contains
 -window
 -camera[]
 -target[]
+-width,height
+-are we moving the contents
+-are we rotating the contents
+-zoom-factor (move_divider)
+-title
+-backgound-color
+-rotating matrix (see aaplot_helper.c)
+-id_number
 
 New nodes goes to first of the list.
 
@@ -11,48 +19,51 @@ Time
 Adding O(1)
 Removing O(n)
 Printing O(n)
-
 Where n is number of nodes.
-
 */
 #include <stdio.h>   /* for printf */
 #include <stdlib.h>  /* for malloc */
 
 
-
 typedef struct ns3 {
-      float  camera[3],target[3]; /* Location of the camera and its target*/
+      float camera[3],target[3]; /* Location of the camera and its target*/
       int width;    /*width of the window*/
       int height;    /*heigth of the window*/
 
       int moving,startx, starty; /*first is state-boolean, anothers are coordinates*/
       int rotating, rstartx,rstarty;
       float move_divider;
-       
+      int id;
 	   char *title;
       double background_color[3];
       float rotation_matrix[16];
-      int id;
-      node *funktiot; /*kaikki tahan ikkunaan liittyvat funktiot*/
-      table *taulukot;  /*kaikki tahan ikkunaan liittyvat taulukkodatat*/
+      node *functions; /*all functions which that window owns*/
+      table *tables;  /*all tables which that window owns*/
       struct ns3 *next;
 } window;
 
 
-/*fix, tasta extern.*/
+/*fix,make extern*/
 window *windows = NULL; 
 
 /*Add node to the first of the list.
 */
-void list3_add(float camera[3], float target[3], 
-            int width, int height,            
-            char *title) {
+void add_window(int width, int height, char *title) {
     window *n = (window *)malloc(sizeof(window));
     if (n == NULL)
       {
-      printf("muistin varaus epaonnistui\n");
+      printf("memory allocation failed\n");
       return ;
       }
+
+   float  camera[3],target[3];
+   target[0] = 0;
+   target[1] = 4.0;
+   target[2] = 0;
+   camera[0] = 0;
+   camera[1] = 4.0;
+   camera[2] = 10;
+
 
     n->next = windows;
     windows = n;
@@ -71,13 +82,13 @@ void list3_add(float camera[3], float target[3],
     n->height = height;
     n->moving = 0;
     n->title = title;
-    n->funktiot = NULL;
-    n->taulukot = NULL;
+    n->functions = NULL;
+    n->tables = NULL;
     init_rotation_matrix(n->rotation_matrix);   
 }
 
 
-#ifdef eiviel
+#ifdef not_tested
 void list_remove(int id) {
    node *n = funktiot;
    node *edellinen = funktiot;
@@ -105,9 +116,7 @@ void list_remove(int id) {
       n = n->next;
       }
 }
-#endif
 
-#ifdef eikaytossa
 void list_removeB(double (*f)(double)) {
    node *n = funktiot;
    node *edellinen = funktiot;

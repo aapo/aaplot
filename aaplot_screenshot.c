@@ -101,10 +101,3 @@ printf("Screenshooting is not compiled in.\n");
 return -1;
 }
 #endif
-
-#ifdef test_main_screen_shot
-int main () {
-PNGScreenShot("test_image.png");
-return 0;
-}
-#endif

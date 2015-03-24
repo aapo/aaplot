@@ -3,13 +3,9 @@
 
 /*
  Compute a lookup table of cos and sin values forming a cirle.
-
     It is the responsibility of the caller to free these tables
-
     The size of the table is (n+1) to form a connected loop
-
     The last entry is exactly the same as the first
-
     The sign of n can be flipped to get the reverse loop
 */
 static void ogCircleTable( double **sint, double **cost, const int n )
@@ -171,69 +167,13 @@ void update_mo(float mo[16], float angle, float x, float y, float z )
    }
 
 
-#ifdef vanha
-/* draws a string of text with an 18 point helvetica bitmap font
-   at position (x,y) in window space (bottom left corner is (0,0). */
-void draw_text(int x, int y, char* s,float red,float green, float blue)
-   {
-   int lines;
-   char* p;
-
-   glDisable(GL_DEPTH_TEST);
-   glMatrixMode(GL_PROJECTION);
-   glPushMatrix();
-   glLoadIdentity();
-   glOrtho(0, glutGet(GLUT_WINDOW_WIDTH),0, glutGet(GLUT_WINDOW_HEIGHT), -1, 1);
-   glMatrixMode(GL_MODELVIEW);
-   glPushMatrix();
-   glLoadIdentity();
-   glColor3f(red,green,blue);
-   glRasterPos2i(x, y);
-   for (p = s, lines = 0; *p; p++)
-       {
-       if (*p == '\n')
-          {
-          lines++;
-          glRasterPos2i(x, y-(lines*18));
-          }
-      glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *p);
-
-/*fontteja
-GLUT_BITMAP_TIMES_ROMAN_24,
-  GLUT_BITMAP_TIMES_ROMAN_10,
-  GLUT_BITMAP_9_BY_15,
-  GLUT_BITMAP_8_BY_13,
-  GLUT_BITMAP_HELVETICA_10,
-  GLUT_BITMAP_HELVETICA_12,
-  GLUT_BITMAP_HELVETICA_18,
-#define GLUT_BITMAP_9_BY_15             {&glutBitmap9By15}
-#define GLUT_BITMAP_8_BY_13             {&glutBitmap8By13}
-#define GLUT_BITMAP_TIMES_ROMAN_10      {&glutBitmapTimesRoman10}
-#define GLUT_BITMAP_TIMES_ROMAN_24      {&glutBitmapTimesRoman24}
-#if {GLUT_API_VERSION >= 3}
-#define GLUT_BITMAP_HELVETICA_10        {&glutBitmapHelvetica10}
-#define GLUT_BITMAP_HELVETICA_12        {&glutBitmapHelvetica12}
-#define GLUT_BITMAP_HELVETICA_18        {&glutBitmapHelvetica18}
-
-*/
-
-       }
-   glMatrixMode(GL_PROJECTION);
-   glPopMatrix();
-   glMatrixMode(GL_MODELVIEW);
-   glPopMatrix();
-   glEnable(GL_DEPTH_TEST);
-   }
-#endif
-/*0,0 on vasen ylakulma*/
+/* draws a string of text at position (col,row)
+   in window space (upper left corner is (0,0). */
 static void draw_text (int col,int row, const char *fmt,float red,float green, float blue)
 {
-
     int viewport[4];
-    void *font = GLUT_BITMAP_TIMES_ROMAN_24;
-//GLUT_BITMAP_9_BY_15;//GLUT_BITMAP_HELVETICA_18;//GLUT_BITMAP_TIMES_ROMAN_10; /*GLUT_BITMAP_9_BY_15;*/
 
-  glGetIntegerv(GL_VIEWPORT,viewport);
+    glGetIntegerv(GL_VIEWPORT,viewport);
 
     glPushMatrix();
     glLoadIdentity();
@@ -242,17 +182,15 @@ static void draw_text (int col,int row, const char *fmt,float red,float green, f
     glPushMatrix();
     glLoadIdentity();
 
-        glOrtho(0,viewport[2],0,viewport[3],-1,1);
-   glColor3f(red,green,blue);
-
-
+    glOrtho(0,viewport[2],0,viewport[3],-1,1);
+    glColor3f(red,green,blue);
 
         glRasterPos2i(
-              glutBitmapWidth(font, ' ') * col,
-            - glutBitmapHeight(font) * (row+2) + viewport[3]
+              glutBitmapWidth(' ') * col,
+            - glutBitmapHeight() * (row+2) + viewport[3]
         );
         
-glutBitmapString (font, fmt);
+glutBitmapString (fmt);
 
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
@@ -261,7 +199,141 @@ glutBitmapString (font, fmt);
 
 
 
+#ifdef old_get_colors_method
+/*
+Because random number generator is NOT initialized, this gives same numbers each time when program runs.
+All colors will be too 'middle of range', eg. too gray. FIX
+*/
+void getColors(float *red, float *green, float *blue){
+int r=rand ();
+float r1=(r+0.0)/RAND_MAX;
+//r1 = sqrt(r1);// * r1 *r1 * r1;
+r1= r1 /2;
 
+
+int b=rand ();
+if (b>RAND_MAX/2)
+  *red=0.5 + r1;
+else
+  *red=0.5 - r1;
+//printf("%lf\n",*red);
+
+
+r=rand ();
+r1=(r+0.0)/RAND_MAX;
+//r1 = sqrt(r1);// * r1 *r1 * r1;
+r1= r1 /2;
+
+ b=rand ();
+if (b>RAND_MAX/2)
+  *green=0.5 + r1;
+else
+  *green=0.5 - r1;
+//printf("%lf\n",*green);
+
+
+r=rand ();
+r1=(r+0.0)/RAND_MAX;
+//r1 = sqrt(r1);// * r1 *r1 * r1;
+r1= r1 /2;
+
+
+b=rand ();
+if (b>RAND_MAX/2)
+  *blue=0.5 + r1;
+else
+  *blue=0.5 - r1;
+//printf("%lf\n",*red);
+
+
+//int g=rand ();
+/*int b=rand ();
+*blue=(b+0.0)/RAND_MAX;*/
+
+//*red=(r+0.0)/RAND_MAX;
+//*green=(g+0.0)/RAND_MAX;
+//*blue = *red+*green;
+//if (*blue >1.0)
+//   *blue=*blue-1.0;
+
+printf("%lf,%lf,%lf\n",*red,*green,*blue);
+}
+#endif
+
+/*
+Because random number generator is NOT initialized, this gives same numbers each time when program runs.
+I try generate three numbers [0,1], that all is not approx 0,5.
+First I randomize red and green, and if they are 'too middle' I fix blues value.
+
+The point is:
+ red   = random value [0,1]
+ green = random value [0,1]
+
+There are 4 'slots' which red and green might be.
+  0    low     mid=0.5     hig    1
+R |     |         |         |     |
+G |     |         |         |     |
+
+
+case 1:
+  0    low     mid=0.5     hig    1
+R |     |    X    |         |     |
+G |     |    X    |         |     |
+B |     |         |         |  X  |
+
+case 2:
+  0    low     mid=0.5     hig    1
+R |     |         |    X    |     |
+G |     |         |    X    |     |
+B |  X  |         |         |     |
+
+case 3:
+  0    low     mid=0.5     hig    1
+R |     |         |    X    |     |
+G |     |    X    |         |     |
+B |  X  |         |         |  X  |
+
+case 4:
+  0    low     mid=0.5     hig    1
+R |     |    X    |         |     |
+G |     |         |    X    |     |
+B |  X  |         |         |  X  |
+
+*/
+void getColors(float *red, float *green, float *blue){
+int r=rand ();
+*red=(r+0.0)/RAND_MAX;
+int g=rand ();
+*green=(g+0.0)/RAND_MAX;
+
+float low = 0.2;
+float mid = 0.5;
+float hig = 1-low;
+if (*red>low && *red<mid && *green>low && *green<mid)
+   {
+   *blue=(rand()+0.0)/RAND_MAX / (1/low) + hig;
+   }
+else if (*red>mid && *red<hig && *green>mid && *green<hig)
+   {
+   *blue=(rand()+0.0)/RAND_MAX / (1/low);
+   }
+else if (*red>low && *red<hig && *green>low && *green<hig)
+   {
+   *blue=(rand()+0.0)/RAND_MAX / 2.0;
+   int b=rand (); /*toss a coin */
+   if (b<RAND_MAX/2)
+      *blue=*blue*2 / (1/low);
+   else 
+      *blue=*blue*2 / (1/low) + hig;
+   }
+else
+   {
+   int b=rand ();
+   *blue=(b+0.0)/RAND_MAX;
+   }
+
+/*printf("%lf,%lf,%lf\n",*red,*green,*blue);*/
+}
 
 
 

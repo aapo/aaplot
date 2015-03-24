@@ -2,9 +2,7 @@
 
 /*background color: 1,1,1=white. 0,0,0=black*/
 double default_background_color[3] = {1.0,1.0,1.0} ;
-/*double background_g = 1.0;
-double background_b = 1.0;
-*/
+
 int default_window_width = 500;
 int default_window_height = 500;
 
@@ -28,13 +26,13 @@ double default_green = 0;
 double default_blue = 1;
 
 
-#define akselienNuolet
 
-/*kuinka tiheasti y-akselin suuntaisia viivoja, jos ollenkaan. M_PI voi laittaa myos*/
-double y_ruudukko=1;
 
-/*kuinka tiheasti x-akselin suuntaisia viivoja, jos ollenkaan*/
-double x_ruudukko=1;
+/*what is density of grid. 0=no grid*/
+double y_grid=1;
 
-/*ei kaytossa #define Z_RUUDUKKO 1*/
+double x_grid=1;
 
+/*not in use: double z_grid=0;*/
+
+#define axisArrows

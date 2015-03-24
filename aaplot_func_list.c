@@ -1,21 +1,14 @@
-#define DISCRET 1
-#define CONTINUOS 2
-
-/*
-fix. dimension 
-1= R->R
-2= R2->R
-3= R->R3
-
-11=R->R, with parameters
-*/
 
 /*
 Linked list.
-Node contains
--function
--ehka noita rajoja
--id-number
+Each node contains
+-some sort of function
+-type
+-plot_size
+-stepping (and ranges if curve)
+-color
+-id_number
+-title
 
 New nodes goes to first of the list.
 
@@ -23,26 +16,24 @@ Time
 Adding O(1)
 Removing O(n)
 Printing O(n)
-
 Where n is number of nodes.
 */
+
 #include <stdio.h>   /* for printf */
 #include <stdlib.h>  /* for malloc */
 
 typedef struct ns {
         double (*function) (double);
         double (*function_p) (double,double*); /*function with parameters*/
-
-double (*function2) (double,double);
-double (*function2_p) (double,double,double*);  /*function with parameters*/
+        double (*function2) (double,double);
+        double (*function2_p) (double,double,double*);  /*function with parameters*/
         void (*curve)   (double,double*,double*,double*);
-void (*curve_p)   (double,double*,double*,double*,double*); /*function with parameters*/
-        double lower_alfa;  /*only curves has this*/
-        double upper_alfa;  /*only curves has this*/
-        int dimension;
-        int type; /*DISCRET / CONTINUOS */
-        double *parameters; /*only if it has*/
-        double size;
+        void (*curve_p)   (double,double*,double*,double*,double*); /*curve with parameters*/
+        double lower_alfa;   /*only curves has this*/
+        double upper_alfa;   /*only curves has this*/
+        int type;        
+        double *parameters; /*only 'with-parameters' has this*/
+        double size;        /*size of the plots*/
         double x_step;
         double z_step;
         float red;
@@ -54,16 +45,27 @@ void (*curve_p)   (double,double*,double*,double*,double*); /*function with para
 } node;
 
 int id_counter=0;
+/*
+type means:
+1= R->R
+2= R2->R
+3= R->R3
+
+11=R->R, with parameters
+12= R2->R, with parameters
+13= R->R3, with parameters
+*/
+
 
 #define MALLOC node *n = (node *)malloc(sizeof(node));\
     if (n == NULL)\
       { \
-      printf("muistin varaus epaonnistui\n");\
+      printf("memory allocation failed\n");\
       return -1;\
       }\
 
-#define YHTEISET n->next = *funktiot;\
-      *funktiot = n;\
+#define GENERAL n->next = *functions;\
+      *functions = n;\
       n->size = size;\
       n->x_step = x_step;\
       n->name = s;\
@@ -76,72 +78,66 @@ int id_counter=0;
 /*Add node to the first of the list.
 Returns id-number of the new node. Or -1 in the error situation.
 */
-int list_add(node **funktiot, double (*func_ptr)(double),int type,double size, double x_step, char* s,float red, float green, float blue) {
+int list_add(node **functions, double (*func_ptr)(double),double size, double x_step, char* s,float red, float green, float blue) {
 MALLOC
-YHTEISET
+GENERAL
 
 n->function=func_ptr;
-n->type=type;
-n->dimension=1;
+n->type=1;
 return n->id;
 }
 
-int list_addB(node **funktiot, double (*func_ptr)(double,double*),double *para,int type,double size, double x_step, char* s,float red, float green, float blue) {
+int list_addB(node **functions, double (*func_ptr)(double,double*),double *para,double size, double x_step, char* s,float red, float green, float blue) {
 MALLOC
-YHTEISET
+GENERAL
 
 n->function_p=func_ptr;
-n->type=type;
-n->dimension=11;
+n->type=11;
 n->parameters=para;
 return n->id;
 }
 
 
-int list_add2(node **funktiot, double (*func_ptr)(double,double),double size, double x_step, double z_step, char* s,float red, float green, float blue) {
+int list_add2(node **functions, double (*func_ptr)(double,double),double size, double x_step, double z_step, char* s,float red, float green, float blue) {
 MALLOC
-YHTEISET
+GENERAL
 
       n->function2=func_ptr;
       n->z_step = z_step;
-      n->dimension=2;
-      n->type=DISCRET;
+      n->type=2;      
 
 return n->id;
 }
 
-int list_add2B(node **funktiot, double (*func_ptr)(double,double,double*),double *para,double size, double x_step, double z_step, char* s,float red, float green, float blue) {
+int list_add2B(node **functions, double (*func_ptr)(double,double,double*),double *para,double size, double x_step, double z_step, char* s,float red, float green, float blue) {
 MALLOC
-YHTEISET
+GENERAL
 
       n->function2_p=func_ptr;
       n->z_step = z_step;
-      n->dimension=12;
-      n->type=DISCRET;
+      n->type=12;
       n->parameters=para;
 return n->id;
 }
 
 
 /*stepping is x_stepping*/
-int list_add3(node **funktiot, void (*curve_ptr)(double,double*,double*,double*),double size, double x_step, double lower, double upper,char* s,float red, float green, float blue) {
+int list_add3(node **functions, void (*curve_ptr)(double,double*,double*,double*),double size, double x_step, double lower, double upper,char* s,float red, float green, float blue) {
 MALLOC
-YHTEISET
+GENERAL
 
-      n->dimension=3;
-      n->type=DISCRET;
+      n->type=3;
       n->curve=curve_ptr;
       n->lower_alfa = lower;
       n->upper_alfa = upper;
     return n->id;
 }
 
-int list_add3B(node **funktiot, void (*curve_ptr)(double,double*,double*,double*,double*),double *para,double size, double x_step, double lower, double upper,char* s,float red, float green, float blue) {
+int list_add3B(node **functions, void (*curve_ptr)(double,double*,double*,double*,double*),double *para,double size, double x_step, double lower, double upper,char* s,float red, float green, float blue) {
 MALLOC
-YHTEISET
+GENERAL
 
-      n->dimension=13;
-      n->type=DISCRET;
+      n->type=13;
       n->curve_p=curve_ptr;
       n->lower_alfa = lower;
       n->upper_alfa = upper;
@@ -150,10 +146,10 @@ YHTEISET
 }
 
 
-
-void list_remove(node *funktiot,int id) {
-   node *n = funktiot;
-   node *edellinen = funktiot;
+#ifdef not_yet_tested
+void list_remove(node *functions,int id) {
+   node *n = functions;
+   node *edellinen = functions;
    if (n == NULL)
       {
       /*printf("list is empty\n");*/
@@ -163,7 +159,7 @@ void list_remove(node *funktiot,int id) {
    /*removing the first is special case   */
    if (n->id==id)
       {
-      funktiot=n->next;
+      functions=n->next;
       return;
       }
 
@@ -180,9 +176,9 @@ void list_remove(node *funktiot,int id) {
 }
 
 
-void list_removeB(node *funktiot, double (*f)(double)) {
-   node *n = funktiot;
-   node *edellinen = funktiot;
+void list_removeB(node *functions, double (*f)(double)) {
+   node *n = functions;
+   node *edellinen = functions;
    if (n == NULL)
       {
       /*printf("list is empty\n");*/
@@ -192,7 +188,7 @@ void list_removeB(node *funktiot, double (*f)(double)) {
    /*removing the first is special case   */
    if (n->function==f)
       {
-      funktiot=n->next;
+      functions=n->next;
       return;
       }
 
@@ -207,8 +203,9 @@ void list_removeB(node *funktiot, double (*f)(double)) {
       n = n->next;
       }
 }
+#endif
 
-/* //testailu
+/* //testing
 double f(double x) {
 return x*2;
 }
@@ -229,9 +226,9 @@ list_add(g,-5,5);
 list_print();
 list_add(h,-5,5);
 
-//    list_print(funktiot);
-   // list_remove(&funktiot);
-//    list_remove(&funktiot);
+//    list_print(functions);
+   // list_remove(&functions);
+//    list_remove(&functions);
 list_print();
 
  //tamakin toimii list_removeB(g);
@@ -240,7 +237,7 @@ list_print();
 list_add(g,-5,5);
 list_print();
 
-//  list_remove(&funktiot);
+//  list_remove(&functions);
 
     return 0;
 }

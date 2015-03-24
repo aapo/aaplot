@@ -1,12 +1,8 @@
-
 void refresh ();
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "aaplot_defaults.c"
-
-
-
 
 #ifdef AAPLOT_SCREENSHOT
 #include <png.h>
@@ -21,24 +17,22 @@ void refresh ();
 
 
 
-
-
 #if !defined(GLUT_WHEEL_UP)
 #  define GLUT_WHEEL_UP   3
 #  define GLUT_WHEEL_DOWN 4
 #endif
-/*
-joitain linkkeja
-http://www.opengl.org/documentation/specs/glut/spec3/node1.html
-http://nehe.gamedev.net/data/lessons/lesson.asp?lesson=13
-*/
-/*GLOBALS*/
 
+/*
+Some links:
+http://www.opengl.org/documentation/specs/glut/spec3/node1.html
+*/
+
+/*GLOBALS*/
 int is_initialized = 0;
 extern window *windows;
+int numbers_of_windows=0;
 
-
-/* piirtaa piin kolmella tikulla
+/* draws Pii with three lines
 void pii(double x){
    glLineWidth(2.0);
    glBegin(GL_LINES);
@@ -53,10 +47,12 @@ void pii(double x){
    glVertex3f(x+0.09,-0.6,0);
 
    glEnd();
-
 }
 */
 
+
+/*Refresh all windows. (eg. glutPostRedisplay() in every)
+*/
 void refresh ()
  {
  window *w = windows;
@@ -69,43 +65,43 @@ void refresh ()
  }
 
 
-/*ikkuna buildaa vain itseaan*/
+/*Window builds (only) its own content*/
 void buildModel( window *w )
    {
+   int function_amount=0,table_amount;
+   glClearColor(w->background_color[0],
+                w->background_color[1],
+                w->background_color[2],
+                                    0); /*this last is alpha channel*/
 
-glClearColor(w->background_color[0],
-             w->background_color[1],
-             w->background_color[2],
-                           0);
-glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
+   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
    glPushMatrix();
 
-   /*Akselit*/
+   /*Axis*/
    glLineWidth(width_of_the_axis);
    glBegin(GL_LINES);
-   /*punaisella x-akseli*/
+   /* X-axis with red*/
    glColor3f(1,0,0);
    glVertex3f(lower_x_limit,0,0);
    glVertex3f(upper_x_limit,0,0);
 
-   /*vihrealla y-akseli*/
+   /* Y-axis with green*/
    glColor3f(0,1,0);
    glVertex3f(0,lower_y_limit,0);
    glVertex3f(0,upper_y_limit,0);
 
-   /*sinisella z-akseli*/
+   /* Z-axis with blue*/
    glColor3f(0,0,1);
    glVertex3f(0,0,lower_z_limit);
    glVertex3f(0,0,upper_z_limit);
    glEnd();
 
 
- /*ruudukko*/
-if (y_ruudukko)
+ /*Grid*/
+if (y_grid)
    {
    double x;
-   for (x=lower_x_limit;x<upper_x_limit;x=x+y_ruudukko)
+   for (x=lower_x_limit;x<upper_x_limit;x=x+y_grid)
       {
       glLineWidth(1.0);
       glColor3f(0.5,0.5,0.5);
@@ -118,10 +114,10 @@ if (y_ruudukko)
       }
    }
 
-if (x_ruudukko)
+if (x_grid)
    {
    double y;
-   for (y=lower_y_limit;y<upper_y_limit;y=y+x_ruudukko)
+   for (y=lower_y_limit;y<upper_y_limit;y=y+x_grid)
       {
       glLineWidth(1.0);
       glColor3f(0.5,0.5,0.5);
@@ -136,17 +132,17 @@ if (x_ruudukko)
 
 
 
-/* //asteikko=pienet nysat siis vain, et tarvitse, jos ruudukko nakyy
-double tappi=0.1;
+/* small ticks
+double stick=0.1;
 double x,y;
 for (x=M_PI;x<upper_x_limit;x=x+M_PI)
    {
    glBegin(GL_LINES)
    glColor3f(1,0,0);
-   glVertex3f(x,tappi,0);
-   glVertex3f(x,-tappi,0);
-   glVertex3f(-x,tappi,0);
-   glVertex3f(-x,-tappi,0);
+   glVertex3f(x,stick,0);
+   glVertex3f(x,-stick,0);
+   glVertex3f(-x,stick,0);
+   glVertex3f(-x,-stick,0);
  glEnd();
 }
 for (y=1;y<upper_y_limit;y=y+1)
@@ -154,16 +150,16 @@ for (y=1;y<upper_y_limit;y=y+1)
 glColor3f(0,1,0);
 glBegin(GL_LINES);
 
-   glVertex3f(tappi,y,0);
-   glVertex3f(-tappi,y,0);
-   glVertex3f(tappi,-y,0);
-   glVertex3f(-tappi,-y,0);
+   glVertex3f(stick,y,0);
+   glVertex3f(-stick,y,0);
+   glVertex3f(stick,-y,0);
+   glVertex3f(-stick,-y,0);
  glEnd();
 }
 
 */
 
-#ifdef akselienNuolet
+#ifdef axisArrows
    glPushMatrix();
    glColor3f(1.0,0.0,0.0);
    glTranslatef(1.0,0.0,0.0);
@@ -183,110 +179,95 @@ glBegin(GL_LINES);
    glPopMatrix();
 #endif
 
+/*Axis+grids+etc ready////////////////*/
+/*////////////////////////////////////*/
 
 
-/*akselit valmiit////////////////*/
-/*///////////////////////////////*/
-
-
-/*  funktiot   ////////////////*/
-/*///////////////////////////////*/
+/*******  Functions Start************/
+/*//////////////////////////////////*/
 {
-  node *n = w->funktiot;
-int lkm=0;
+node *n = w->functions;
 while (n != NULL)
    {
-   double j,j2;
-   double y,y2;
+   double j;
+   double y;
    double i;
-   int parameters=0; /*WithParameters-version*/
+   int parameters=0;    /*this will be 1, if WithParameters-version*/
    glPointSize(n->size);
    glColor3f(n->red,n->green,n->blue);
 
 
-if (n->dimension>10) 
+if (n->type>10) 
    {
    parameters=1;
    }
 
 
-/* R->R  ////////////////*/
-if (n->dimension%10==1)
+/******** R->R  ************/
+if (n->type%10==1)
    {
+   glBegin(GL_POINTS);
    for (j=lower_x_limit;j<upper_x_limit;j=j+n->x_step)
       {
       y=     parameters==0 ? n->function(j)   :  n->function_p(j,n->parameters);
       if (y>=lower_y_limit && y<=upper_y_limit)
-       {
-       j2=j;
-       while(j2<upper_x_limit)
          {
-         j2+=n->x_step;
-         y2=   parameters==0 ? n->function(j)  :  n->function_p(j,n->parameters);
-         if (y2>=lower_y_limit && y2<=upper_y_limit)
-            {
-            if (n->type==CONTINUOS)
-               glBegin(GL_LINE);
-            else
-               glBegin(GL_POINTS);
-
-            glVertex3f(j,y,0);
-            glVertex3f(j2,y2,0);
-            glEnd();
-            j2=upper_x_limit; /*break*/
-            }
+         glVertex3f(j,y,0); 
          }
-        }
       }
+   glEnd();
    }
 
-/* funktiot R^2->R   */
-if (n->dimension%10==2) 
-{
-glBegin(GL_POINTS);
- for (i=lower_z_limit;i<upper_z_limit;i=i+n->z_step)
+/******** R^2->R  **********/
+if (n->type%10==2) 
+   {
+   glBegin(GL_POINTS);
+   for (i=lower_z_limit;i<upper_z_limit;i=i+n->z_step)
       {
-     for (j=lower_x_limit;j<upper_x_limit;j=j+n->x_step)
-        {
-        y=   parameters==0 ? n->function2(j,i)  :  n->function2_p(j,i,n->parameters);
-        if (y>=lower_y_limit && y<=upper_y_limit)
-          glVertex3f(j,y,i);
-        }
+      for (j=lower_x_limit;j<upper_x_limit;j=j+n->x_step)
+         {
+         y=   parameters==0 ? n->function2(j,i)  :  n->function2_p(j,i,n->parameters);
+         if (y>=lower_y_limit && y<=upper_y_limit)
+            glVertex3f(j,y,i);
+         }
       }
-glEnd();
-}
-
-/* curves R -> R^3  */
-if (n->dimension%10==3) 
-{
-double alfa;
-double x,y,z;
-glBegin(GL_POINTS);
-for (alfa=n->lower_alfa;alfa < n->upper_alfa;alfa=alfa+n->x_step)
-    {
-    parameters==0 ?  n->curve(alfa,&x,&y,&z)  :  n->curve_p(alfa,&x,&y,&z,n->parameters);
-    if (x>=lower_x_limit && x<=upper_x_limit &&
-        y>=lower_y_limit && y<=upper_y_limit &&
-        z>=lower_z_limit && z<=upper_z_limit)
-        glVertex3f(x,y,z);
-    }
-glEnd();
-}
-
-   draw_text(1, lkm,n->name,n->red,n->green,n->blue);
-   lkm++;
-   n = n->next;
+   glEnd();
    }
-}
-/*  funktiot valmiit  *********/
-/******************************/
 
-/*Taulukko datat*/
-/*************************************/
-table *t = w->taulukot;
+/***curves R -> R^3  *******/
+if (n->type%10==3) 
+   {
+   double alfa;
+   double x,y,z;
+   glBegin(GL_POINTS);
+   for (alfa=n->lower_alfa;alfa < n->upper_alfa;alfa=alfa+n->x_step)
+      {
+      parameters==0 ?  n->curve(alfa,&x,&y,&z)  :  n->curve_p(alfa,&x,&y,&z,n->parameters);
+      if (x>=lower_x_limit && x<=upper_x_limit &&
+          y>=lower_y_limit && y<=upper_y_limit &&
+          z>=lower_z_limit && z<=upper_z_limit)
+         glVertex3f(x,y,z);
+      }
+   glEnd();
+   }
+
+draw_text(1, function_amount,n->name,n->red,n->green,n->blue);
+function_amount++;
+n = n->next;
+}
+}
+/*******  Functions Ready************/
+/*//////////////////////////////////*/
+
+
+/*******  Arrays Start************/
+/*///////////////////////////////*/
+{
+table *t = w->tables;
+table_amount=function_amount;
 while (t != NULL)
    {
-   point *p = t->pisteet;
+   point *p = t->points;
    glPointSize(t->size);
    glColor3f(t->red,t->green,t->blue);   
    glBegin(GL_POINTS); 
@@ -295,21 +276,25 @@ while (t != NULL)
       double x=p->x;
       double y=p->y;
       double z=p->z;
-      if (x>lower_x_limit && x<upper_x_limit 
-      &&  y>lower_y_limit && y<upper_y_limit 
-      &&  z>lower_z_limit && z<upper_z_limit )
+      if (x>lower_x_limit && x<upper_x_limit &&
+          y>lower_y_limit && y<upper_y_limit &&
+          z>lower_z_limit && z<upper_z_limit )
          glVertex3f(x,y,z);
       p=p->next;
       }
    glEnd();
 
-   /*maybe? draw_text(1, 1,n->name,n->red,n->green,n->blue);*/
+   draw_text(1, table_amount,t->name,t->red,t->green,t->blue);
+   table_amount++;   
    t = t->next;
    }
 }
+/*******  Arrays Ready************/
+/*///////////////////////////////*/
+}
 
 
-
+/*This is called when some window needs repaintting (only that window is repainted)*/
 void display()
    {
    int win = glutGetWindow();   
@@ -319,71 +304,67 @@ void display()
    glCullFace(GL_BACK);
    glEnable( GL_DEPTH_TEST );
    
-
-
- while (w != NULL)
-   {
-   if (w->id == win)
-      {
-      glLoadIdentity();
-      gluLookAt(w->camera[0], w->camera[1], w->camera[2],
-                w->target[0], w->target[1], w->target[2],
-                0.0, 1.0, 0.0);
-      glMultMatrixf(w->rotation_matrix);    /*rotating */
-      buildModel(w);
-      }
-   w=w->next;   
-   }  
-
- 
- glutSwapBuffers();
-   }
-
-
-
-void reshape(int width, int h)
-   {
-   int max=(width>h?width:h);
-   int win = glutGetWindow();
-
-
- window *w = windows;
- while (w != NULL)
-   {
-   if (w->id == win)
-      {
-
-   w->width=width;
-   w->height=h;
-   w->move_divider=(max/2.0)/ w->camera[2]/-1.0;
-
-   glViewport (0, 0, (GLsizei) max, (GLsizei) max);
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-
-   gluPerspective(90,4/3,1.5,20.0);
-   glMatrixMode (GL_MODELVIEW);
- 
-    
-   }  
-  w=w->next;  
-   }
-}
-
-void motion ( int x, int y )
-   {
-  int win = glutGetWindow();
-   window *w = windows;
    while (w != NULL)
-     {
- 
-    if (w->id==win)
       {
+      if (w->id == win)
+         {
+         glLoadIdentity();
+         gluLookAt(w->camera[0], w->camera[1], w->camera[2],
+                   w->target[0], w->target[1], w->target[2],
+                   0.0, 1.0, 0.0);
+         glMultMatrixf(w->rotation_matrix);    /*rotating */
+         buildModel(w);
          break;
-      }
+         }
       w=w->next;   
       }  
 
+   glutSwapBuffers();
+   }
+
+
+
+/*This is called when size of sone window is changed (only that window is in processing)*/
+void reshape(int width, int h)
+   {
+   int win = glutGetWindow(); 
+   int max=(width>h?width:h);
+   window *w = windows;
+ 
+   while (w != NULL)
+      {
+      if (w->id == win)
+         {
+         w->width=width;
+         w->height=h;
+         w->move_divider=(max/2.0)/ w->camera[2]/-1.0;
+
+         glViewport (0, 0, (GLsizei) max, (GLsizei) max);
+         glMatrixMode(GL_PROJECTION);
+         glLoadIdentity();
+
+         gluPerspective(90,4/3,1.5,20.0);
+         glMatrixMode (GL_MODELVIEW);
+         break;
+         }  
+      w=w->next;  
+      }
+   }
+
+/*This is called when mouse moves over window*/
+void mouse_motion ( int x, int y )
+   {
+   int win = glutGetWindow();
+   window *w = windows;
+   while (w != NULL)
+        {
+        if (w->id==win)
+          {
+          break;
+          }
+        w=w->next;   
+        }  
+   /*Now w is current window*/
 
    if (w->rotating)
       {
@@ -412,31 +393,27 @@ void motion ( int x, int y )
       w->startx = x;
       w->starty = y;
       refresh();
-      }
-   
-
+      }  
    }
 
-
-void mouse ( int button, int state, int x, int y )
+/*This is called when mouse button is pressed*/
+void mouse_buttons ( int button, int state, int x, int y )
    {
- int win = glutGetWindow();
+   int win = glutGetWindow();
    window *w = windows;
    while (w != NULL)
-     {
- 
- 
-    if (w->id==win)
-      {
-   
-         break;
-      }
-      w=w->next;   
-      }  
-
+        {
+        if (w->id==win)
+          {
+          break;
+          }
+        w=w->next;   
+        }  
+    /*Now w is current window*/
 
    if ( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN )
       {
+      printf("modifiers=%d\n",glutGetModifiers());
       w->moving = 1;
       w->startx = x;
       w->starty = y;
@@ -446,57 +423,55 @@ void mouse ( int button, int state, int x, int y )
 
    if ( button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN )
       {
+      glutSetCursor(GLUT_CURSOR_CYCLE);
       w->rotating = 1;
       w->rstartx = x;
       w->rstarty = y;
       }
    if ( button == GLUT_RIGHT_BUTTON && state == GLUT_UP )
+      {
       w->rotating = 0;
-
-
-   if ( button == GLUT_WHEEL_UP ) /*fix, naiden yhdistaminen*/
+      glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+      }
+   if ( button == GLUT_WHEEL_UP ||  button == GLUT_WHEEL_DOWN) 
       {
       int max=(w->width>w->height?w->width:w->height);
-      w->camera[2]+=0.5;
+      double change=0.5; 
+      if (button == GLUT_WHEEL_DOWN)
+         change*=-1;
+      w->camera[2]+=change;
       w->move_divider=(max/-2.0)/w->camera[2];
       refresh();
       }
-   if ( button == GLUT_WHEEL_DOWN )
-      {
-      int max=(w->width>w->height?w->width:w->height);
-      w->camera[2]-=0.5;
-      w->move_divider=(max/-2.0)/w->camera[2];
-      refresh();
-      }
-/*
-if ( button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN )
-*/
    
+   /* //what to do with middle button?
+   if ( button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN )
+   */   
    }
+
 
 #define DELTA 0.25f
 void keyboard( unsigned char key, int x, int y )
    {
- int win = glutGetWindow();
-
+   int win = glutGetWindow();
    window *w = windows;
    while (w != NULL)
-     {
- 
-    if (w->id==win)
-      {
-         break;
-      }
-      w=w->next;   
-      }  
+        {
+        if (w->id==win)
+          {
+          break;
+          }
+        w=w->next;   
+        }  
+    /*Now w is current window*/
 
    switch( key )
       {
-      case 27:
+      case 27:  /*The ESC-button*/
          glutLeaveMainLoop();
-/*tallaista tuo funktio pitaa sisallaan
-FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutLeaveMainLoop" );
-    fgState.ExecState = GLUT_EXEC_STATE_STOP ;
+/* glutLeaveMainLoop()=
+   FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutLeaveMainLoop" );
+   fgState.ExecState = GLUT_EXEC_STATE_STOP ;
 */
          break;
       case '1':
@@ -521,6 +496,7 @@ FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutLeaveMainLoop" );
          PNGScreenShot(w->width, w->height);       
          break;
 /*
+      //moving camera or target with keyboard
       case 'q': target[0] -= DELTA; break;
       case 'Q': target[0] += DELTA; break;
       case 'w': target[1] -= DELTA; break;
@@ -534,18 +510,17 @@ FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutLeaveMainLoop" );
       case 'd': camera[2] -= DELTA; break;
       case 'D': camera[2] += DELTA; break;
 */
-
-
-   }
+      }
  refresh();
+/*is this enough? glutPostRedisplay(); */
 }
 
-void special_keys (int key, int x, int y)
-{  switch (key)
-    {
-
-  case GLUT_KEY_F12 :
+void special_keys (int key, int x, int y)  {
+    switch (key)
+        {
+        case GLUT_KEY_F12 :
             printf ("F12 function key. \n");
+glutSetIconTitle("foo.ico");
             break;
         case GLUT_KEY_LEFT :
             printf ("Left directional key. \n");
@@ -579,99 +554,77 @@ void special_keys (int key, int x, int y)
 
 
 
-  
-
-int ikkunoiden_maara=0;
-/*
-maara=0
-pyydetty. 0,1,2,3,4
-
-*/
-
-
 
 void init_window(int win) 
-{
-
- if (win>ikkunoiden_maara)
    {
-   init_window(win-1); /*rekursiivisesti myos kaikki pienemmat alustetaan*/
-   }
- if (win==ikkunoiden_maara)
-{
+   if (win>numbers_of_windows)
+      {
+      init_window(win-1); /*recursively. all lower is initialized too*/
+      }
+ if (win==numbers_of_windows)
+   {
+   char title[20];
+   sprintf(title,"aaPlot Window %d",win);
+   numbers_of_windows++;
 
-
-float  camera[3],target[3];
-   target[0] = 0;
-   target[1] = 4.0;
-   target[2] = 0;
-   camera[0] = 0;
-   camera[1] = 4.0;
-   camera[2] = 10;
-
-char title[20];
-sprintf(title,"aaPlot Window %d",win);
-ikkunoiden_maara++;
-
-list3_add( camera, target,default_window_width, default_window_height, title); 
-window *w = windows;
+   add_window (default_window_width, default_window_height, title); 
+   window *w = windows;
 
    glutInitWindowSize (w->width, w->height);
    glutInitWindowPosition (0, 0);
 
- w->id = glutCreateWindow (w->title);
+   w->id = glutCreateWindow (w->title);
    
    glutDisplayFunc  (display);
    glutReshapeFunc  (reshape);
    glutKeyboardFunc (keyboard);
    glutSpecialFunc  (special_keys);   
-   glutMouseFunc    (mouse);
-   glutMotionFunc   (motion);
-}
+   glutMouseFunc    (mouse_buttons);
+   glutMotionFunc   (mouse_motion);
+   }
 
 }
 
 
 void init_all() {
- if (!(is_initialized))
-   {
-   int c=1;
-   char *v[]={"aaPlot"};
-   is_initialized=1;
+   if (!(is_initialized))
+      {
+      int c=1;
+      char *v[]={"aaPlot"};
+      is_initialized=1;
 
-  /*jotakin on annettava tuolle initille*/   
-   glutInit(&c, v);
+      /*just something to glutInit*/   
+      glutInit(&c, v);
 
-   glutInitDisplayMode(GLUT_RGB|GLUT_DEPTH|GLUT_DOUBLE);
- glEnable (GL_DEPTH_TEST);
-   glClearColor (0.0, 0.0, 0.0, 0.0);
+      glutInitDisplayMode(GLUT_RGB|GLUT_DEPTH|GLUT_DOUBLE);
+      glEnable (GL_DEPTH_TEST);
+      glClearColor (0.0, 0.0, 0.0, 0.0);
   
 
+      /*This helps visualization of surfaces. FIX this better*/
+      #define LIGHTS
+      #ifdef LIGHTS
+         {
+         GLfloat pos[4] = {0., -5., 0., 1.};
+         GLfloat white[4] = {1., 1., 1., 1.};
+         GLfloat black[4] = {0., 0., 0., 0.};
+   
+         glEnable (GL_LIGHTING);
+         glEnable (GL_COLOR_MATERIAL);
+         glColorMaterial (GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-#define valot
-#ifdef valot
-  {
-  GLfloat pos[4] = {0., -5., 0., 1.};
-  GLfloat white[4] = {1., 1., 1., 1.};
-  GLfloat black[4] = {0., 0., 0., 0.};
+         glEnable (GL_LIGHT1);
+         glLightfv (GL_LIGHT1, GL_POSITION, pos);
+         glLightfv (GL_LIGHT1, GL_DIFFUSE, white);
+         glLightfv (GL_LIGHT1, GL_SPECULAR, black);
+   
+         glMaterialfv (GL_FRONT, GL_SPECULAR, black);
+         }
+      #endif
 
-  glEnable (GL_LIGHTING);
-  glEnable (GL_COLOR_MATERIAL);
-  glColorMaterial (GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-
-  glEnable (GL_LIGHT1);
-  glLightfv (GL_LIGHT1, GL_POSITION, pos);
-  glLightfv (GL_LIGHT1, GL_DIFFUSE, white);
-  glLightfv (GL_LIGHT1, GL_SPECULAR, black);
-
-  glMaterialfv (GL_FRONT, GL_SPECULAR, black);
-  }
-#endif
-
-/*tama on sen takia, etta ikkunoiden sulkeminen jatkaa ohjelmaa*/
-glutSetOption(505, 2);              
-
-}
+      /*This is important. Now main-program continues when gl-windows are closed*/
+      glutSetOption(505, 2);
+      }
 }
 
 void drawAll()
@@ -679,11 +632,12 @@ void drawAll()
    glutMainLoop();
    }
 
+
 window *getCurrentWindow(int win)
    {
    window *w = windows;
    int i;
-   for (i=0;i<ikkunoiden_maara-win-1;i++)
+   for (i=0;i<numbers_of_windows-win-1;i++)
       {
       w=w->next;
       }
@@ -691,21 +645,82 @@ window *getCurrentWindow(int win)
    }
 
 
-#define ADD_BEGIN init_all();\
+#define ADD_BEGIN float red, green, blue; \
    window *w; \
+   init_all();\
    init_window(win); \
-   w=getCurrentWindow(win);\
+   w=getCurrentWindow(win); \
+   getColors(&red,&green,&blue);
 
-void addRFunction(int win,double (*func_ptr)(double),int type,double size, double step, char *s,float red, float green, float blue)
+
+void addRFunction(int win,double (*func_ptr)(double),double size, double step, char *s)   
    {
    ADD_BEGIN
-   list_add(&(w->funktiot),func_ptr,type,size,step,s,red,green,blue);
+   list_add(&(w->functions),func_ptr,size,step,s,red,green,blue);
    }
 
-void addRFunctionWithP(int win,double (*func_ptr)(double,double*),double *para,int type,double size, double step, char *s,float red, float green, float blue)
+void addRFunctionWithP(int win,double (*func_ptr)(double,double*),double *para,double size, double step, char *s)
    {
    ADD_BEGIN
-   list_addB(&(w->funktiot),func_ptr,para,type,size,step,s,red,green,blue);
+   list_addB(&(w->functions),func_ptr,para,size,step,s,red,green,blue);
+   }
+
+void addR2Function(int win,double (*func_ptr)(double,double),double size, double x_step, double z_step, char *s)
+   {
+   ADD_BEGIN
+   list_add2(&(w->functions),func_ptr,size,x_step,z_step,s,red,green,blue);
+   }
+
+void addR2FunctionWithP(int win,double (*func_ptr)(double,double,double*),double *para,double size, double x_step, double z_step, char *s)
+   {
+   ADD_BEGIN
+   list_add2B(&(w->functions),func_ptr,para,size,x_step,z_step,s,red,green,blue);
+   }
+
+void addRCurve(int win,void (*curve_ptr)(double,double*,double*,double*), double size, double step, double lower, double upper, char *s)
+   {
+   ADD_BEGIN
+   list_add3(&(w->functions),curve_ptr,size,step,lower,upper,s,red,green,blue);
+   }
+
+void addRCurveWithP(int win,void (*curve_ptr)(double,double*,double*,double*,double*),double *para, double size, double step, double lower, double upper, char *s)
+   {
+   ADD_BEGIN
+   list_add3B(&(w->functions),curve_ptr,para,size,step,lower,upper,s,red,green,blue);
+   }
+
+
+void addTableDataFile(int win,char *file,double size, char *s)
+   {
+   ADD_BEGIN
+   point *pl=loadFile(file);
+   add_table(&(w->tables),pl,size,s,red,green,blue);
+   }
+
+void addTableDataArrays(int win,int count,double x[],double y[],double size, char *s)
+   {
+   ADD_BEGIN
+   point *pl=makeList(count,x,y);
+   add_table(&(w->tables),pl,size,s,red,green,blue);
+   }
+
+
+
+#ifdef disabled
+is it necessary to force some color?
+this is wrong method
+we need some setColor(function_id,r,g,b);
+
+void addRFunctionWithC(int win,double (*func_ptr)(double),double size, double step, char *s,float red, float green, float blue)   
+   {
+   ADD_BEGIN
+   list_add(&(w->funktiot),func_ptr,size,step,s,red,green,blue);
+   }
+
+void addRFunctionWithP(int win,double (*func_ptr)(double,double*),double *para,double size, double step, char *s,float red, float green, float blue)
+   {
+   ADD_BEGIN
+   list_addB(&(w->funktiot),func_ptr,para,size,step,s,red,green,blue);
    }
 
 void addR2Function(int win,double (*func_ptr)(double,double),double size, double x_step, double z_step, char *s,float red, float green, float blue)
@@ -746,4 +761,5 @@ void addTableDataArrays(int win,int count,double x[],double y[],double size, cha
    point *pl=teeJono(count,x,y);
    add_table(&(w->taulukot),pl,size,s,red,green,blue);
    }
+#endif
 

@@ -21,7 +21,7 @@
 
 only one font is in use. take and return it
 */
-static SOG_Font *oghFontByID( void *font ) {
+static SOG_Font *oghFontByID( ) {
 return getFont(); 
 }
 
@@ -67,7 +67,7 @@ printf("pyydettyoghStrokeByID \n");
 void OGAPIENTRY glutBitmapCharacter( void *font, int character )
 {
     const GLubyte *face;
-    SOG_Font *f = oghFontByID( font );
+    SOG_Font *f = oghFontByID( );
 
     if( !f ||
         ( 0 > character ) ||
@@ -119,9 +119,9 @@ void OGAPIENTRY glutBitmapCharacter( void *font, int character )
 
     \see      glRasterPos(), glutBitmapCharacter()
 */
-void OGAPIENTRY glutBitmapString( void *font, const unsigned char *string )
+void OGAPIENTRY glutBitmapString( const char *string )
 {
-    SOG_Font *f = oghFontByID( font );
+    SOG_Font *f = oghFontByID( );
     short x = 0;
     unsigned char c;
 
@@ -192,10 +192,10 @@ void OGAPIENTRY glutBitmapString( void *font, const unsigned char *string )
     \see      glutBitmapCharacter(), glutBitmapLength(), glutBitmapHeight(),
               glutStrokeWidth()
 */
-int OGAPIENTRY glutBitmapWidth( void *font, int character )
+int OGAPIENTRY glutBitmapWidth( int character )
 {
     int ret = 0;
-    SOG_Font *f = oghFontByID( font );
+    SOG_Font *f = oghFontByID( );
 
     if( f &&
         ( 0 <= character ) &&
@@ -227,7 +227,7 @@ int OGAPIENTRY glutBitmapWidth( void *font, int character )
 int OGAPIENTRY glutBitmapLength( void *font, const unsigned char *string )
 {
     int length = 0, this_line_length = 0;
-    SOG_Font *f = oghFontByID( font );
+    SOG_Font *f = oghFontByID( );
     unsigned char c;
 
     if( f && string )
@@ -269,9 +269,9 @@ int OGAPIENTRY glutBitmapLength( void *font, const unsigned char *string )
     \todo     We have discussed adding a "font descender" query.
               We should go ahead and do it.
 */
-int OGAPIENTRY glutBitmapHeight( void *font )
+int OGAPIENTRY glutBitmapHeight( )
 {
-    SOG_Font *f = oghFontByID( font );
+    SOG_Font *f = oghFontByID( );
     int ret = 0;
 
     if( f )

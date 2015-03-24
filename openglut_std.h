@@ -315,7 +315,7 @@ extern "C" {
 
 /*
  * GLUT API macro definitions -- game mode definitions
- */
+
 #define  GLUT_GAME_MODE_ACTIVE              0x0000
 #define  GLUT_GAME_MODE_POSSIBLE            0x0001
 #define  GLUT_GAME_MODE_WIDTH               0x0002
@@ -323,6 +323,7 @@ extern "C" {
 #define  GLUT_GAME_MODE_PIXEL_DEPTH         0x0004
 #define  GLUT_GAME_MODE_REFRESH_RATE        0x0005
 #define  GLUT_GAME_MODE_DISPLAY_CHANGED     0x0006
+ */
 
 /*
  * Initialization functions, see og_init.c
@@ -473,7 +474,7 @@ OGAPI int     OGAPIENTRY glutLayerGet( GLenum query );
  * Font stuff, see og_font.c
  */
 OGAPI void  OGAPIENTRY glutBitmapCharacter( void* font, int character );
-OGAPI int   OGAPIENTRY glutBitmapWidth( void* font, int character );
+OGAPI int   OGAPIENTRY glutBitmapWidth( int character );
 OGAPI void  OGAPIENTRY glutStrokeCharacter( void* font, int character );
 OGAPI float OGAPIENTRY glutStrokeWidth( void* font, int character );
 OGAPI int   OGAPIENTRY glutBitmapLength( void* font, const unsigned char* string );

@@ -1,8 +1,8 @@
 CC=cc
 CFLAGS=-O2 
 
-LDFLAGS= -L/usr/lib -lpng -lGL -lGLU 
-#-Wall -pedantic -ansi
+LDFLAGS= -L/usr/lib -lpng -lGL -lGLU
+# -Wall -pedantic -ansi
 
 FILES= Makefile aaplot.c aaplot_defaults.c aaplot_func_list.c aaplot_helper.c aaplot_window.c aaplot_point_list.c aaplot_table_list.c aaplot_screenshot.c
 
@@ -18,51 +18,52 @@ SOURCES = og_cursor.c \
 			 og_font_data.c \
 			 og_font_helper.c \
 			 og_window.c
-
-SOURCES2 =  og_ext.c \
-			 og_font_data.c \
-			 og_stroke_roman.c \
-			 og_stroke_mono_roman.c \
-			 og_gamemode.c \
-			 og_geometry.c \
-			 og_joystick.c \
-			 og_misc.c \
-			 og_overlay.c \
-			 og_videoresize.c \
 			
+#example_gsl is not part of, because it needs -lgsl
+all: example1 example1P example2 example2P example3 example3P example4 example5 example_butterflies example_many_curves example_rings
 
+example1: $(FILES) $(SOURCES) example1.c
+	$(CC) $(CFLAGS) $(LDFLAGS) example1.c -o example1
+	strip example1
+example1P: $(FILES) $(SOURCES) example1P.c
+	$(CC) $(CFLAGS) $(LDFLAGS) example1P.c -o example1P
+	strip example1P
 
-all: esim1 esim2 esim3 esim4 esim5 esim7 esim8 esim9
+example2: $(FILES) $(SOURCES) example2.c
+	$(CC) $(CFLAGS) $(LDFLAGS) example2.c -o example2
+	strip example2
+example2P: $(FILES) $(SOURCES) example2P.c
+	$(CC) $(CFLAGS) $(LDFLAGS) example2P.c -o example2P
+	strip example2P
 
-esim1: $(FILES) $(SOURCES) esim1.c
-	$(CC) $(CFLAGS) $(LDFLAGS) esim1.c -o esim1
-	strip esim1
+example3: $(FILES)  $(SOURCES) example3.c
+	$(CC) $(CFLAGS) $(LDFLAGS) example3.c -o example3
+	strip example3
+example3P: $(FILES)  $(SOURCES) example3P.c
+	$(CC) $(CFLAGS) $(LDFLAGS) example3P.c -o example3P
+	strip example3P
 
-esim2: $(FILES) $(SOURCES) esim2.c
-	$(CC) $(CFLAGS) $(LDFLAGS) esim2.c -o esim2
-	strip esim2
+example4: $(FILES)  $(SOURCES) example4.c
+	$(CC) $(CFLAGS) $(LDFLAGS)  example4.c -o example4
+	strip example4
 
-esim3: $(FILES) $(SOURCES) esim3.c
-	$(CC) $(CFLAGS) $(LDFLAGS) esim3.c -o esim3
-	strip esim3
+example5: $(FILES)  $(SOURCES) example5.c
+	$(CC) $(CFLAGS) $(LDFLAGS)  example5.c -o example5
+	strip example5
 
-esim4: $(FILES) $(SOURCES) esim4.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SOURCES) esim4.c -o esim4
-	strip esim4
+example_butterflies: $(FILES)  $(SOURCES) example_butterflies.c
+	$(CC) $(CFLAGS) $(LDFLAGS)  example_butterflies.c -o example_butterflies
+	strip example_butterflies
 
-esim5: $(FILES) $(SOURCES) esim5.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SOURCES) esim5.c -o esim5
-	strip esim5
+example_many_curves: $(FILES)  $(SOURCES) example_many_curves.c
+	$(CC) $(CFLAGS) $(LDFLAGS)  example_many_curves.c -o example_many_curves
+	strip example_many_curves
 
-esim7: $(FILES) $(SOURCES) esim7.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SOURCES) esim7.c -o esim7
-	strip esim7
+example_rings: $(FILES)  $(SOURCES) example_rings.c
+	$(CC) $(CFLAGS) $(LDFLAGS)  example_rings.c -o example_rings
+	strip example_rings
 
-esim8: $(FILES) $(SOURCES) esim8.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SOURCES) esim8.c -o esim8
-	strip esim8
-
-esim9: $(FILES) $(SOURCES) esim9.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SOURCES) esim9.c -o esim9
-	strip esim9
+example_gsl: $(FILES)  $(SOURCES) example_gsl.c
+	$(CC) $(CFLAGS) -I/usr/include $(LDFLAGS) -lgsl -lgslcblas -lm example_gsl.c -o example_gsl
+	strip example_gsl
 

@@ -608,12 +608,40 @@ void ogOpenWindow( SOG_Window *window, const char *title,
          * XXX Should ogStrDup() the title, since XStringListToTextProperty()
          * XXX apparently allows the right to edit {title}.
          */
-        XStringListToTextProperty( ( char ** )&title, 1, &textProperty );
+       
+
+
+
+
+
+
+
+
+
+//////////
+//aapo: ei toimi nainkaan.
+  char *icon_name="foo.xpm";
+  XTextProperty iconName;
+  
+  XStringListToTextProperty(&icon_name,1,&iconName);
+/* XSetWMProperties(display,win,&windowName,NULL,argv,argc\
+      ,NULL,NULL,NULL);
+*/
+///////////////
+
+
+
+
+
+ XStringListToTextProperty( ( char ** )&title, 1, &textProperty );
+printf("hep: %s\n",textProperty);
+char *sukka="nuuh";
         XSetWMProperties(
             ogDisplay.Display,
             window->Window.Handle,
             &textProperty,
-            &textProperty,
+            //&textProperty,
+            &iconName,
             0,
             0,
             &sizeHints,
@@ -1456,7 +1484,7 @@ void OGAPIENTRY glutSetIconTitle( const char* title )
         GL_FALSE == ogStructure.Window->State.IsOffscreen )
     {
 #if TARGET_HOST_UNIX_X11
-
+/*tama ei tee mitaan*/
         XTextProperty text;
 
         text.value = ( unsigned char * )ogStrDup( title );
@@ -1464,11 +1492,55 @@ void OGAPIENTRY glutSetIconTitle( const char* title )
         text.format = 8;
         text.nitems = strlen( title );
 
+//printf("XSetWMIconName: %s\n",title);
         XSetWMIconName(
             ogDisplay.Display,
             ogStructure.Window->Window.Handle,
             &text
         );
+//printf("XSetWMIconName: %s\n",text);
+
+//////////////////////
+/*tama muuttaa alapalkissa (ja alt-tab) nakyvan ohjelman nimen kysytyksi*/
+/*
+ XTextProperty name;
+char *t =title;
+  if (XStringListToTextProperty(&t,1,&name) == 0)
+  {
+    fprintf(stderr,"FvwmBanner: cannot allocate window name");
+    return;
+  }
+  XSetWMName(ogDisplay.Display, ogStructure.Window->Window.Handle,&name); //this changes the name in taskbar
+  //XSetWMIconName(ogDisplay.Display, ogStructure.Window->Window.Handle,&name);
+  XFree(name.value);
+*/
+////////////////
+
+
+
+/*jotakin tallaista
+wmhints = XAllocWMHints();
+   wmhints->flags = (IconPixmapHint | IconMaskHint);
+   wmhints->icon_pixmap = icon_pixmap;
+   wmhints->icon_mask = mask_pixmap;
+   if(icon_window != None) {
+      wmhints->flags |= IconWindowHint;
+      wmhints->icon_window = icon_window;
+   }
+   XSetWMHints(SDL_Display, WMwindow, wmhints);
+   XFree(wmhints);
+   XSync(SDL_Display, False);
+
+*/
+
+
+
+
+
+
+
+
+
 
         XFlush( ogDisplay.Display ); /*! \todo Shouldn't need this xflush */
         free( text.value );

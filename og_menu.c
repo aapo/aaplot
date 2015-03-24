@@ -307,13 +307,12 @@ static void oghDisplayMenuBox( SOG_Menu *menu )
         );
 
         /* Have the label drawn, character after character: */
-        glutBitmapString( OPENGLUT_MENU_FONT,
-                          ( unsigned char * )menuEntry->Text );
+        glutBitmapString( ( char * )menuEntry->Text );
 
         /* If it's a submenu, draw a right arrow */
         if( menuEntry->SubMenu )
         {
-            int width = glutBitmapWidth( OPENGLUT_MENU_FONT, '_' );
+            int width = glutBitmapWidth('_' );
             int x_base = menu->Width - 2 - width;
             int y_base = i*OPENGLUT_MENU_HEIGHT + border;
             glBegin( GL_TRIANGLES );

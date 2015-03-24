@@ -72,10 +72,10 @@ OGAPI void    OGAPIENTRY glutSetMenuData(void* data);
 /*
  * Font stuff, see freeglut_font.c
  */
-OGAPI int     OGAPIENTRY glutBitmapHeight( void* font );
+OGAPI int     OGAPIENTRY glutBitmapHeight( );
 OGAPI GLfloat OGAPIENTRY glutStrokeHeight( void* font );
 OGAPI void    OGAPIENTRY glutBitmapString(
-    void* font, const unsigned char *string
+     const char *string
 );
 OGAPI void    OGAPIENTRY glutStrokeString(
     void* font, const unsigned char *string
