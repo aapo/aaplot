@@ -858,7 +858,7 @@ With Keyboard \n\
     * ESC        :   Close all windows\n\
     * UP/DOWN    :   Scales y-axis\n\
     * LEFT/RIGHT :   Scales x-axis\n\
-    * Shitt + UP/DOWN :   Scales z-axis\n\
+    * Shift + UP/DOWN :   Scales z-axis\n\
     * a/d : increase x-boundaries\n\
     * w/s : increase y-boundaries\n\
     * q/e : increase z-boundaries\n\
