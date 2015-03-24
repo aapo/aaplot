@@ -126,7 +126,7 @@ With Keyboard
 z               Take screenshot
 UP/DOWN 	Scales y-axis
 LEFT/RIGHT 	Scales x-axis
-Shitt + UP/DOWN 	Scales z-axis
+Shift + UP/DOWN 	Scales z-axis
 a/d : increase x-boundaries
 w/s : increase y-boundaries
 q/e : increase z-boundaries
