@@ -5,7 +5,7 @@ default_background_color[0]=1.0;
 default_background_color[1]=0.0;
 default_background_color[2]=0.0;
 */
-#include "aaplot.c"
+#include "aaplot.h"
 
 double f(double x) {
 return x*x;

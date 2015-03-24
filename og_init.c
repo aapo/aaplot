@@ -85,6 +85,7 @@ SOG_State ogState =
     GL_FALSE,               /* JoysticksInitted    */
 #if TARGET_HOST_UNIX_X11
     {{{0}}},                /* {0}aapo A jmpbuf BackToMainLoop */
+    
 #elif TARGET_HOST_WIN32 || TARGET_HOST_WINCE
     0,                      /* A jmpbuf BackToMainLoop */
 #endif
@@ -266,12 +267,7 @@ void ogDeinitialize( void )
 
     ogState.KeyRepeat       = GLUT_KEY_REPEAT_ON;
     ogState.Modifiers       = 0xffffffff;
-
-    ogState.GameModeSize.X  = 640;
-    ogState.GameModeSize.Y  = 480;
-    ogState.GameModeDepth   =  16;
-    ogState.GameModeRefresh =  72;
-
+ 
     ogState.Time.Set = GL_FALSE;
 
     ogListInit( &ogState.Timers );

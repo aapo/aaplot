@@ -7,7 +7,7 @@ This example draws
  -circle
  -baseball curve
 */
-#include "aaplot.c"
+#include "aaplot.h"
 
 /*Even this is plane-object, we must set all x,y,z */
 void circle(double t, double *x, double *y, double *z) {

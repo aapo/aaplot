@@ -7,25 +7,23 @@ Additional we make two arrays, so one means x-coordinates and the other y-coordi
 Then we draw these points.
 */
 
-#include "aaplot.c"
+#include "aaplot.h"
 
 
 int main(){
 /*window_number, file_name, title*/
-default_size=3.0;
+default_size=13.0;
 
 addTableDataFile(0,"aalto.dat" , "aalto26"); 
 addTableDataFile(0,"aalto2.dat", "aalto100");
-
-
 
 
 /*-Arrays---------------*/
 /*Dynamical arrays*/
 int number_of_points = 10;
 double *x,*y;
-x= (double *) malloc(number_of_points*sizeof(double));
-y= (double *) malloc(number_of_points*sizeof(double));
+x= malloc(number_of_points*sizeof(double));
+y= malloc(number_of_points*sizeof(double));
 
 /*Compile-time arrays*/
 /*
@@ -42,7 +40,7 @@ for (i=0;i<number_of_points;i++)
   y[i]=i*sin(i);
   }
 
-default_size=5.0;
+/* default_size=5.0; */
 /*window_number, total, x,y, title*/
 addTableDataArrays(0,number_of_points,x,y, "some_test_data");
 

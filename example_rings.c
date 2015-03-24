@@ -2,7 +2,7 @@
 Three rings. If anyone is removed, two are not 'linked'.
 But all together are 'linked'.
 */
-#include "aaplot.c"
+#include "aaplot.h"
 
 
 void ring(double u, double *x, double *y, double *z, double *p) {
@@ -16,10 +16,12 @@ double r = (pow(3,0.5)/3); /* radius */
 int main(void)
 {
 /*BLACK background*/
+/*
 default_background_color[0]=0.0;
 default_background_color[1]=0.0;
 default_background_color[2]=0.0;
 default_size=9.0;
+*/
 
 double p1[2],p2[2],p3[2];
 p1[0]= 0,   p1[1]= 1;

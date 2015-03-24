@@ -17,7 +17,6 @@ int main(void)    {
 
 addR2Function(0,                     /* window number        */
               &f2,                   /* function             */
-              2.0,                   /* size of points       */
               0.1,                   /* stepping of x        */
               0.1,                   /* stepping of z        */
               "abcdefghijklmnopqrstuvwxyz"   /* title of function    */
@@ -26,13 +25,12 @@ addR2Function(0,                     /* window number        */
 
 addR2Function(0,                     /* window number        */
               &f2,                   /* function             */
-              2.0,                   /* size of points       */
               0.1,                   /* stepping of x        */
               0.1,                   /* stepping of z        */
               "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  /* title of function    */
               );                /* colors in RGB [0,1]  */
 
-addTableDataFile(0,"aalto.dat" ,3, "aalto26"); 
+addTableDataFile(0,"aalto.dat" , "aalto26");
 
 drawAll();
 return 0;

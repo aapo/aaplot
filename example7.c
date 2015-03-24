@@ -1,7 +1,7 @@
 /*One function and one table.
 Changing attributes of them.
 */
-#include "aaplot.c"
+#include "aaplot.h"
 
 double f(double x) {
 return sin(x);

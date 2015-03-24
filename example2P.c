@@ -3,7 +3,7 @@ One R2->R function. with parameters.
 Same function but different parameters.
 
 f(x,z)=y */
-#include "aaplot.c"
+#include "aaplot.h"
 
 
 double surface(double x,double z, double *p) {

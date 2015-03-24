@@ -3,7 +3,7 @@ one R->R function with parameters.
 Same function but different parameters.
 */
 
-#include "aaplot.c"
+#include "aaplot.h"
 
 double my_func(double x, double *p) {
 return p[0]*x*x + p[1]*x + p[2];

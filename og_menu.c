@@ -3,11 +3,6 @@
     \brief Pop-up menu creation and handling
 */
 
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "openglut.h"
 #include "og_internal.h"
 
@@ -74,8 +69,11 @@ static float menu_pen_hfore [4] = {0.0f,  0.0f,  0.0f,  1.0f};
 static float menu_pen_hback [4] = {1.0f,  1.0f,  1.0f,  1.0f};
 #endif
 
-/* -- PRIVATE FUNCTIONS ---------------------------------------------------- */
 
+
+
+
+/* -- PRIVATE FUNCTIONS ---------------------------------------------------- */
 /*
  * Find a menu entry by index
  */
@@ -85,11 +83,10 @@ static SOG_MenuEntry *oghFindMenuEntry( SOG_Menu *menu, const int index )
     int i = 1;
 
     while( entry && ( index != i ) )
-    {
-        ++i;
-        entry = ( SOG_MenuEntry * )entry->Node.Next;
-    }
-
+      {
+      ++i;
+      entry = ( SOG_MenuEntry * )entry->Node.Next;
+      }
     return entry;
 }
 
@@ -107,6 +104,18 @@ static SOG_MenuEntry *oghFindMenuEntryById( SOG_Menu *menu, const int asked)
           return entry;
       entry = ( SOG_MenuEntry * )entry->Node.Next;       
       }
+    return 0;
+}
+
+/*Returns pointer to this windows menu
+by: aapo*/
+SOG_Menu OGAPIENTRY *glutGetTrueMenu( void )
+{
+    freeglut_assert_ready;
+
+    if( ogStructure.Menu )
+        return ogStructure.Menu;
+
     return 0;
 }
 
@@ -599,6 +608,20 @@ void oghCalculateMenuBoxSize( void )
 
 /* -- INTERFACE FUNCTIONS -------------------------------------------------- */
 
+/*by aapo*/
+void OGAPIENTRY glutChangeMenuEntryAttributes(int menu_id, const char *newlabel, int newvalue )
+{
+SOG_MenuEntry *menuEntry;
+menuEntry = oghFindMenuEntryById(glutGetTrueMenu(),menu_id);
+
+    if( ogStructure.Menu )
+      {
+      menuEntry->Text = ogStrDup( newlabel );
+      menuEntry->ID   = newvalue;
+      oghCalculateMenuBoxSize( );
+      }
+}
+
 /*!
     \fn
     \brief    Create a new menu.
@@ -714,34 +737,6 @@ void OGAPIENTRY glutAddMenuEntry( const char *label, int value )
 }
 
 
-/*Returns pointer to this windows menu
-by: aapo*/
-SOG_Menu OGAPIENTRY *glutGetTrueMenu( void )
-{
-    freeglut_assert_ready;
-
-    if( ogStructure.Menu )
-        return ogStructure.Menu;
-
-    return 0;
-}
-
-/*aapo*/
-void OGAPIENTRY glutChangeMenuEntryAttributes(SOG_MenuEntry *menuEntry, const char *newlabel, int newvalue )
-{
- /*   SOG_MenuEntry *menuEntry =
-        ( SOG_MenuEntry * )calloc( sizeof( SOG_MenuEntry ), 1 );
-*/
-//    freeglut_assert_ready;
-    if( ogStructure.Menu )
-    {
-        menuEntry->Text = ogStrDup( newlabel );
-        menuEntry->ID   = newvalue;        
-
-//        ogListAppend( &ogStructure.Menu->Entries, &menuEntry->Node );
-        oghCalculateMenuBoxSize( );
-    }
-}
 
 
 /*!

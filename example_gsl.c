@@ -5,7 +5,7 @@ see: http://www.gnu.org/software/gsl/
 First we make gsl_matrix. In this case we just load it from file.
 Then we divide matrix to two arrays and continue like example4.
 */
-#include "aaplot.c"
+#include "aaplot.h"
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_linalg.h>
@@ -60,8 +60,8 @@ upper_y_limit = 6.0;
 lower_x_limit = -6.0;
 upper_x_limit = 6.0;
 
-y_ruudukko=0;
-x_ruudukko=0;
+y_grid=0;
+x_grid=0;
 gsl_matrix *matrix = loadMatrix("aalto.dat"); 
 
 #define MAXPOINTS 1000
@@ -69,7 +69,7 @@ double x[MAXPOINTS];
 double y[MAXPOINTS];
 
 int number_of_points=matrix_to_arrays(matrix,&x[0],&y[0]);
-addTableDataArrays(0,number_of_points,x,y,2, "gsl_matrix");
+addTableDataArrays(0,number_of_points,x,y, "gsl_matrix");
 
 drawAll();
 return 0;

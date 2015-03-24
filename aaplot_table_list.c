@@ -34,11 +34,11 @@ typedef struct ns5 {
 Returns id-number of the new node. Or -1 in the error situation.
 */
 int add_table(table_node **tables, point *pl, char* s,float red, float green, float blue) {
-    table_node *n = (table_node *)malloc(sizeof(table_node));
+    table_node *n = malloc(sizeof(table_node));
     if (n == NULL)
       {
       printf("memory allocation failed\n");
-      return ;
+      return -1;
       }
 
     n->next = *tables;

@@ -27,8 +27,8 @@ Where n is number of nodes.
 #include <stdio.h>   /* for printf */
 #include <stdlib.h>  /* for malloc */
 
-#define ROTATE_MODE 1001
-#define MOVING_MODE 1002
+#define ROTATE_MODE 100001
+#define MOVING_MODE 100002
 
 typedef struct ns3 {
       float camera[3],target[3]; /* Location of the camera and its target*/
@@ -48,6 +48,21 @@ typedef struct ns3 {
       point *user_clicked; /*one point-list if user want clicks points from the screen*/
       int mode;
       double mouse_x,mouse_y; /*coordinates of mouse pointer*/
+      int menuID; /*contains handle to the this window's menu */
+
+      /*boundaries*/
+      double lower_x_limit;
+      double upper_x_limit;
+      double lower_y_limit;
+      double upper_y_limit;
+      double lower_z_limit;
+      double upper_z_limit;
+
+      double x_grid;
+      double y_grid;
+      double z_grid;
+
+      int coordplane[3];
       struct ns3 *next;
 } window;
 
@@ -58,104 +73,54 @@ window *windows = NULL;
 /*Add node to the first of the list.
 */
 void add_window(int width, int height, char *title) {
-    window *n = (window *)malloc(sizeof(window));
-    if (n == NULL)
-      {
-      printf("memory allocation failed\n");
-      return ;
-      }
-/*
-   float  camera[3],target[3];
-   target[0] =  default_target[0];
-   target[1] =  default_target[1];
-   target[2] =  default_target[2];
-   camera[0] =  default_camera[0];
-   camera[1] =  default_camera[1];
-   camera[2] =  default_camera[2];
-  */
-
-    n->next = windows;
-    windows = n;
-    n->camera[0]=default_camera[0];
-    n->camera[1]=default_camera[1];
-    n->camera[2]=default_camera[2];
-    n->target[0]=default_target[0];
-    n->target[1]=default_target[1];
-    n->target[2]=default_target[2];
-
-    n->background_color[0] = default_background_color[0];
-    n->background_color[1] = default_background_color[1];
-    n->background_color[2] = default_background_color[2];
-
-    n->scale[0] = 1;
-    n->scale[1] = 1;
-    n->scale[2] = 1;
-    n->width = width;
-    n->height = height;
-    n->moving = 0;
-    n->title = title;
-    n->functions = NULL;
-    n->tables = NULL;
-    n->user_clicked = NULL;
-    n->mode=MOVING_MODE;
-    init_rotation_matrix(n->rotation_matrix);
-}
-
-
-#ifdef not_tested_and_too_old
-void list_remove(int id) {
-   node *n = funktiot;
-   node *edellinen = funktiot;
+   window *n = malloc(sizeof(window));
    if (n == NULL)
-      {
-      /*printf("list is empty\n");*/
-      return;
-      }
+     {
+     printf("memory allocation failed\n");
+     return ;
+     }
 
-   /*removing the first is special case   */
-   if (n->id==id)
-      {
-      funktiot=n->next;
-      return;
-      }
 
-   while (n != NULL)
-      {
-      if (n->id==id)
-         {
-         edellinen->next=n->next;
-         return;
-         }
-      edellinen=n;
-      n = n->next;
-      }
+   n->next = windows;
+   windows = n;
+   n->camera[0]=default_camera[0];
+   n->camera[1]=default_camera[1];
+   n->camera[2]=default_camera[2];
+   n->target[0]=default_target[0];
+   n->target[1]=default_target[1];
+   n->target[2]=default_target[2];
+
+   n->background_color[0] = default_background_color[0];
+   n->background_color[1] = default_background_color[1];
+   n->background_color[2] = default_background_color[2];
+
+   n->lower_x_limit=default_lower_x_limit;
+   n->upper_x_limit=default_upper_x_limit;
+
+   n->lower_y_limit=default_lower_y_limit;
+   n->upper_y_limit=default_upper_y_limit;
+
+   n->lower_z_limit=default_lower_z_limit;
+   n->upper_z_limit=default_upper_z_limit;
+
+   n->x_grid=default_x_grid;
+   n->y_grid=default_y_grid;
+   n->z_grid=default_z_grid;
+
+   n->coordplane[0] = default_coordplane[0];
+   n->coordplane[1] = default_coordplane[1];
+   n->coordplane[2] = default_coordplane[2];
+
+   n->scale[0] = 1;
+   n->scale[1] = 1;
+   n->scale[2] = 1;
+   n->width = width;
+   n->height = height;
+   n->moving = 0;
+   n->title = title;
+   n->functions = NULL;
+   n->tables = NULL;
+   n->user_clicked = NULL;
+   n->mode=MOVING_MODE;
+   init_rotation_matrix(n->rotation_matrix);
 }
-
-void list_removeB(double (*f)(double)) {
-   node *n = funktiot;
-   node *edellinen = funktiot;
-   if (n == NULL)
-      {
-      /*printf("list is empty\n");*/
-      return;
-      }
-
-   /*removing the first is special case   */
-   if (n->function==f)
-      {
-      funktiot=n->next;
-      return;
-      }
-
-   while (n != NULL)
-      {
-   if (n->function==f)
-         {
-         edellinen->next=n->next;
-         return;
-         }
-      edellinen=n;
-      n = n->next;
-      }
-}
-#endif

@@ -791,7 +791,7 @@ SOG_Window *ogCreateWindow(
 void        ogSetWindow ( SOG_Window *window );
 void        ogOpenWindow(
     SOG_Window *window, const char *title, int x, int y, int w, int h,
-    GLboolean gameMode, GLboolean isSubWindow
+    GLboolean isSubWindow
 );
 void        ogCloseWindow( SOG_Window *window );
 void        ogAddToWindowDestroyList ( SOG_Window *window );

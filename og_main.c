@@ -3,10 +3,6 @@
     \brief The windows message processing methods.
 */
 
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 #include "openglut.h"
 #include "og_internal.h"
 
@@ -942,7 +938,7 @@ void oghDispatchEvent( SOG_Event *ev )
             }
 
             /* Trash the modifiers state */
-            ogState.Modifiers = 0xffffffff;
+            /* aapo: ogState.Modifiers = 0xffffffff; */
         }
         break;
 
@@ -1182,11 +1178,41 @@ void OGAPIENTRY glutMainLoopEvent( void )
 
     ogCloseWindows( );
     if( ogState.GLDebugSwitch )
-        { /*glutReportErrors( );aapo*/
+        { 
          GLenum error;
          while( ( error = glGetError( ) ) != GL_NO_ERROR )
-         ogWarning( "GL error: %s", gluErrorString( error ) );
-         }
+            {
+            switch(error) 
+               {
+               case GL_NO_ERROR:
+                  printf("OK\n");
+                  break;
+               case GL_INVALID_ENUM:
+                  printf("GL_INVALID_ENUM\n");
+                  break;
+               case GL_INVALID_VALUE:
+                  printf("GL_INVALID_VALUE\n");
+                  break;
+               case GL_INVALID_OPERATION:
+                  printf("GL_INVALID_OPERATION\n");
+                  break;
+               case GL_STACK_OVERFLOW:
+                  printf("GL_STACK_OVERFLOW\n");
+                  break;
+               case GL_STACK_UNDERFLOW:
+                  printf("GL_STACK_UNDERFLOW\n");
+                  break;
+               case GL_OUT_OF_MEMORY:
+                  printf("GL_OUT_OF_MEMORY\n");
+                  break;
+               case GL_INVALID_FRAMEBUFFER_OPERATION_EXT:
+                  printf("GL_INVALID_FRAMEBUFFER_OPERATION_EXT\n");
+                  break;
+               default:
+                  printf("UNKNOWN\n");
+               }
+            }             
+        }
 }
 
 /*!
@@ -1383,8 +1409,7 @@ LRESULT CALLBACK ogWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
                 );
             else
             {
-                ogStructure.MenuContext =
-                    (SOG_MenuContext *)malloc( sizeof( SOG_MenuContext ) );
+                ogStructure.MenuContext = malloc( sizeof( SOG_MenuContext ) );
                 ogStructure.MenuContext->Context =
                     wglCreateContext( window->Window.Device );
             }

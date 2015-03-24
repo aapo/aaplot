@@ -2,11 +2,6 @@
    Bitmap and stroke fonts
 */
 
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "openglut.h"
 #include "og_internal.h"
 
@@ -28,10 +23,10 @@ return getFont();
 /*!
     Matches a font ID with a SOG_StrokeFont structure pointer.
     This was changed to match the GLUT header style.
+aapo: is this necessary?
 */
 static SOG_StrokeFont *oghStrokeByID( void *font )
 {
-printf("pyydettyoghStrokeByID \n");
     if( font == GLUT_STROKE_ROMAN      )
         return &ogStrokeRoman;
 
@@ -64,7 +59,7 @@ printf("pyydettyoghStrokeByID \n");
     \see      glRasterPos(), glutBitmapString(), glutBitmapWidth(),
               glutBitmapHeight(), glutStrokeCharacter()
 */
-void OGAPIENTRY glutBitmapCharacter( void *font, int character )
+void OGAPIENTRY glutBitmapCharacter( int character )
 {
     const GLubyte *face;
     SOG_Font *f = oghFontByID( );
@@ -145,6 +140,7 @@ void OGAPIENTRY glutBitmapString( const char *string )
      * A newline will simply translate the next character's insertion
      * point back to the start of the line and down one line.
      */
+
     while(( c = *string++ )) /*while( c = *string++ ) aapo*/
         if( c == '\n' )
         {
@@ -291,7 +287,7 @@ int OGAPIENTRY glutBitmapHeight( )
               (selected by \a fontID)
               using OpenGL \a GL_LINE_STRIP.  These characters
               are drawn at the origin in model space.
-              The the model space origin is translated at the end,
+              The model space origin is translated at the end,
               according to the \a character width in \a fontID.
 
               Does nothing if:
@@ -364,7 +360,7 @@ void OGAPIENTRY glutStrokeCharacter( void *fontID, int character )
     \see      glutStrokeLength(), glutStrokeCharacter(),
               glutStrokeHeight(), glutBitmapString()
 */
-void OGAPIENTRY glutStrokeString( void *fontID, const unsigned char *string )
+void OGAPIENTRY glutStrokeString( void *fontID, const char *string )
 {
     int i, j;
     float length = 0.0;

@@ -5,7 +5,7 @@ With curve, we must define stepping like we do with functions. Additional we mus
 
 This example draws two ellipses with different parameters
 */
-#include "aaplot.c"
+#include "aaplot.h"
 
 /*Even this is plane-object, we must set all x,y,z */
 void ellipse(double t, double *x, double *y, double *z, double *p) {

@@ -1,5 +1,29 @@
-
 #include <string.h> /*memset needs*/
+
+void grid_helper(double grid, double upper_limit, double lower_limit, double upper_bound, double lower_bound) {
+if (grid)
+   {
+   double x;
+   glLineWidth(1.0);
+   glColor3f(0.5,0.5,0.5);
+   for (x=0.0;x<=upper_limit;x+=grid)
+      {
+      glBegin(GL_LINES);
+      glVertex3f(x,upper_bound,0);
+      glVertex3f(x,lower_bound,0);
+      glEnd();
+      }
+   for (x=0.0;x>=lower_limit;x-=grid)
+      {
+      glBegin(GL_LINES);
+      glVertex3f(x,upper_bound,0);
+      glVertex3f(x,lower_bound,0);
+      glEnd();
+      }
+   }
+}
+
+
 
 /*
  Compute a lookup table of cos and sin values forming a cirle.
@@ -168,8 +192,8 @@ void update_mo(float mo[16], float angle, float x, float y, float z )
 
 
 /* draws a string of text at position (col,row)
-   in window space (upper left corner is (0,0). */
-static void draw_text (int col,int row, const char *fmt,float red,float green, float blue)
+   in window space (lower left corner is (0,0). */
+static void draw_text (int col,int row, char *fmt,float red,float green, float blue)
 {
     int viewport[4];
 
@@ -181,20 +205,39 @@ static void draw_text (int col,int row, const char *fmt,float red,float green, f
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-
     glOrtho(0,viewport[2],0,viewport[3],-1,1);
+
     glColor3f(red,green,blue);
 
-        glRasterPos2i(
+  glRasterPos2i(
               glutBitmapWidth(' ') * col,
-            - glutBitmapHeight() * (row+2) + viewport[3]
+              glutBitmapHeight() * (row+0.4)  /* why +0.4? */
         );
+
 
 glutBitmapString (fmt);
 
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
+}
+
+/* draws Pi with three lines
+(for trigonometric scale etc)*/
+void draw_pi(){
+   glLineWidth(2.0);
+   glBegin(GL_LINES);
+
+   glColor3f(1,1,1);
+
+   glVertex3f(0,0,0);
+   glVertex3f(0,3,0);
+    glVertex3f(2,0,0);
+    glVertex3f(2,3,0);
+   glVertex3f(-0.4,3,0);
+   glVertex3f(2.4,3,0);
+
+   glEnd();
 }
 
 
@@ -333,4 +376,64 @@ else
    }
 
 /*printf("%lf,%lf,%lf\n",*red,*green,*blue);*/
+}
+
+
+
+void perspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
+{
+   GLdouble xmin, xmax, ymin, ymax;
+   ymax = zNear * tan(fovy * M_PI / 360.0);
+   ymin = -ymax;
+   xmin = ymin * aspect;
+   xmax = ymax * aspect;
+
+   glFrustum(xmin, xmax, ymin, ymax, zNear, zFar);
+}
+
+
+//THIS IS A REPLACEMENT FOR gluLookAt.
+//It requires 1 less argument (the 'up' vector), because the positive Y axis is
+//always 'up', unless you rotate it on the Z axis, which you can do on your own.
+//It will also fill the array with the rotation angles, that way you can counter-
+//rotate things like sprites.
+void look_at(GLdouble eyeX,GLdouble eyeY,GLdouble eyeZ,GLdouble centerX,GLdouble centerY,GLdouble centerZ){
+  GLdouble x = eyeX - centerX;
+  GLdouble y = eyeY - centerY;
+  GLdouble z = eyeZ - centerZ;
+  
+  //lengths = 0, no difference = no rotation
+  if ((x == y) && (y == z) && (z == 0.0f)) return;
+  //if looking straight up or down (fix for the gimbal lock - as found in gluLookAt)
+  if ((x == z) && (z == 0.0f)){
+    if (y < 0.0f){//if looking straight up
+      glRotated(-90.0f,1,0,0);
+    }else{//if looking straight down
+      glRotated(+90.0f,1,0,0);
+    }
+    glTranslated(-x,-y,-z);
+    return;
+  }
+  
+  GLdouble rx = 0.0f;
+  GLdouble ry = 0.0f;
+  
+  GLdouble hypA = (x == 0.0f) ? z : hypot(x,z);
+  GLdouble hypB = (y == 0.0f) ? hypA : hypot(y,hypA);
+  if (z == 0.0f) hypB = hypot(x,y);
+  
+  rx = asin(y / hypB) /M_PI * 180; //toDegs(asin(y / hypB));
+  ry = asin(x / hypA) /M_PI * 180;  //toDegs(asin(x / hypA));
+  
+  //rotate and translate accordingly
+  glRotated(rx,1,0,0);
+  if (z < 0.0f){
+    ry += 180.0f;
+  }else{
+    ry = 360.0f - ry;
+  }
+  glRotated(ry,0,1,0);
+  glTranslated(-eyeX,-eyeY,-eyeZ);
+  
+ 
 }

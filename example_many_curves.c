@@ -2,7 +2,7 @@
 This example contains many curves.
 There is nothing new compared to example3.
 */
-#include "aaplot.c"
+#include "aaplot.h"
 
 void helix(double alfa, double *x, double *y, double *z) {
 double a=2;    /*1. axis */
@@ -179,9 +179,11 @@ double s =0.02; /*scale*/
 int main(void)
 {
 /*BLACK background*/
+/*
 default_background_color[0]=0.0;
 default_background_color[1]=0.0;
 default_background_color[2]=0.0;
+*/
 
 /*window number,curve,plot_size,stepping,first,last,title*/
 addRCurve   (0 ,&helix ,0.1,5.0 ,15.0,"helix");          

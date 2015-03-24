@@ -23,41 +23,43 @@ Where n is number of nodes.
 #include <stdlib.h>  /* for malloc */
 
 typedef struct ns {
-        double (*function) (double);
-        double (*function_p) (double,double*); /*function with parameters*/
-        double (*function2) (double,double);
-        double (*function2_p) (double,double,double*);  /*function with parameters*/
-        void (*curve)   (double,double*,double*,double*);
-        void (*curve_p)   (double,double*,double*,double*,double*); /*curve with parameters*/
-        double lower_alfa;   /*only curves has this*/
-        double upper_alfa;   /*only curves has this*/
-        int type;
-        double *parameters; /*only 'with-parameters' has this*/
-        double size;        /*size of the plots*/
-        double x_step;
-        double z_step;
-        float red;
-        float green;
-        float blue;
-        int id;
-        char *name;
-        struct ns *next;
-} function_node;
+         double (*function) (double);
+         double (*function_p) (double,double*); /*function with parameters*/
+         double (*function2) (double,double);
+         double (*function2_p) (double,double,double*);  /*function with parameters*/
+         void (*curve)   (double,double*,double*,double*);
+         void (*curve_p)   (double,double*,double*,double*,double*); /*curve with parameters*/
+         double lower_alfa;   /*only curves has this*/
+         double upper_alfa;   /*only curves has this*/
+         int type;
+         double *parameters; /*only 'with-parameters' has this*/
+         double size;        /*size of the plots*/
+         double x_step;
+         double z_step;
+         float red;
+         float green;
+         float blue;
 
+         int hidden;          
+         int id;
+         char *name;
+         struct ns *next;
+} function_node;
+ 
 int entity_id_counter=0;
 /*
 type means:
 1= R->R
 2= R2->R
 3= R->R3
-
+ 
 11=R->R, with parameters
 12= R2->R, with parameters
 13= R->R3, with parameters
 */
-
-
-#define MALLOC function_node *n = (function_node *)malloc(sizeof(function_node));\
+ 
+ 
+#define MALLOC function_node *n = malloc(sizeof(function_node));\
     if (n == NULL)\
       { \
       printf("memory allocation failed\n");\
@@ -72,6 +74,7 @@ type means:
       n->red = red;\
       n->green = green;\
       n->blue = blue;\
+      n->hidden = 0;\
       n->id=entity_id_counter;\
       entity_id_counter++;\
 
@@ -145,100 +148,3 @@ GENERAL
     return n->id;
 }
 
-
-#ifdef not_yet_tested_and_too_old
-void list_remove(node *functions,int id) {
-   node *n = functions;
-   node *edellinen = functions;
-   if (n == NULL)
-      {
-      /*printf("list is empty\n");*/
-      return;
-      }
-
-   /*removing the first is special case   */
-   if (n->id==id)
-      {
-      functions=n->next;
-      return;
-      }
-
-   while (n != NULL)
-      {
-      if (n->id==id)
-         {
-         edellinen->next=n->next;
-         return;
-         }
-      edellinen=n;
-      n = n->next;
-      }
-}
-
-
-void list_removeB(node *functions, double (*f)(double)) {
-   node *n = functions;
-   node *edellinen = functions;
-   if (n == NULL)
-      {
-      /*printf("list is empty\n");*/
-      return;
-      }
-
-   /*removing the first is special case   */
-   if (n->function==f)
-      {
-      functions=n->next;
-      return;
-      }
-
-   while (n != NULL)
-      {
-   if (n->function==f)
-         {
-         edellinen->next=n->next;
-         return;
-         }
-      edellinen=n;
-      n = n->next;
-      }
-}
-#endif
-
-/* //testing
-double f(double x) {
-return x*2;
-}
-
-double g(double x) {
-return x*x;
-}
-
-
-double h(double x) {
-return x+2;
-}
-
-int main(void) {
-list_print();
-//list_add(f,-5,5);
-list_add(g,-5,5);
-list_print();
-list_add(h,-5,5);
-
-//    list_print(functions);
-   // list_remove(&functions);
-//    list_remove(&functions);
-list_print();
-
- //tamakin toimii list_removeB(g);
-list_remove(0);
-list_print();
-list_add(g,-5,5);
-list_print();
-
-//  list_remove(&functions);
-
-    return 0;
-}
-*/

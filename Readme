@@ -1,0 +1,104 @@
+-----------------------------------------------------
+aaplot 0.5
+by: Aapo Rantalainen
+GNU GPL 3.0 (or later)
+http://code.google.com/p/aaplot/
+------------------------------------------------------
+
+INFO
+====
+aaplot is function plotting library/toolkit.
+
+USAGE
+=====
+Make c-file, include aaplot.h, compile, run.
+
+1)
+c-file like this:
+#include "aaplot.h"
+
+double f(double x) {
+return 3*x*x + 4*x -5;
+}
+
+int main(){
+ addRFunction(0,&f,0.01,"My Function");
+  /* 0   = window number
+    &f   = pointer to predefined function
+    0.01 = stepping of x 
+   "My Function" = just some title
+  */
+ drawAll();
+ return 0;
+}
+
+2)
+compile like this:
+gcc -lXpm -lpng -lGL my_file.c aaplot.a
+
+3)
+run like this:
+./a.out
+
+
+
+GUI
+===
+With mouse
+
+Right mouse button
+
+    Opens the Menu. Menu entries can be clicked with left or right button. 
+
+Menu
+
+    * Toggle Move/Rotate -mode
+    * Change cursor to crosshair
+    * Prints manual (to console at this moment)
+    * Close all gl-windows. 
+
+Left mouse button + moving mouse
+
+    * If you are movingmode it will pan (eg. move) the whole view.
+    * If you are rotatingmode it rotates the view.
+
+          moving left <-> right
+
+              Y-axis stay in place and zx-plane rotates 
+
+          moving up <-> down
+
+              X-axis stay in place and zy-plane rotates 
+
+Middle mouse button
+
+    Marks one point to coordinate. (This works correct only if view is not rotated) 
+
+Mouse wheel
+
+    Zooming in and out. 
+
+With Keyboard
+
+1 and 2	        X-axis stay in place and zy-plane rotates
+3 and 4         Y-axis stay in place and zx-plane rotates
+5 and 6         Z-axis stay in place and xy-plane rotates
+z               Take screenshot
+UP/DOWN 	Scales y-axis
+LEFT/RIGHT 	Scales x-axis
+Shitt + UP/DOWN 	Scales z-axis
+ESC 	Close all windows
+
+
+
+
+
+HACKING
+=======
+Filenames beginning with aaplot* are one layer, writted just for this project.
+Filanames beginning with openglut* and og* are adopted from openglut-project. (with some modifications)
+
+So I suggest you start with aaplot-files. It is like gl with glut programming. If something is not working, 
+it might be because of my openglut-modifications.
+
+

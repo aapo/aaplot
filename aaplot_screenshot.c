@@ -8,6 +8,10 @@ Who thanks to Andreas Umbach
 #ifdef AAPLOT_SCREENSHOT
 #include <stdio.h>
 
+
+#include<time.h>
+
+
 static FILE *_fp;
 
 void user_write_data(png_structp png_ptr,
@@ -20,10 +24,43 @@ void user_flush_data(png_structp png_ptr) {
 }
 
 
+int shot_number=1;
+char time_string[100];
 
+/*
+Screenshot name example
+200806151809.png
+200806151809_00002.png
+200806151809_00003.png
+200806151809_00004.png
+200806151809_00005.png
+200806151809_00006.png
+
+First screenshot defines the beginning of the filename (date+time). Second and latest will get suffix.
+
+*/
 int PNGScreenShot(int width,int height) {
-/*date+time maybe?*/
-char *filename="aaplot_screenshot.png";
+
+char *filename;
+if (shot_number==1)
+   {
+   time_t timer;
+   timer=time(NULL);
+   strftime( time_string, 14, "%Y%m%d%H%M",localtime(&timer)); /*14=max lenght*/  
+   char final[18];
+   sprintf( final,"%s.png",time_string);
+   filename=final;
+   shot_number++;
+   }
+else
+   {
+   char final[24];
+   sprintf( final,"%s_%05d.png",time_string,shot_number); /* %05d = at least five digits, fill with zerous.*/
+   filename=final;
+   shot_number++;
+   }
+
+  
 /*printf("screenshot:%d,%d\n",width,height);*/
 
   int i;
@@ -33,9 +70,9 @@ char *filename="aaplot_screenshot.png";
   unsigned char *data;
   int colortype;
 
-   row_pointers= (png_byte **) malloc(height *sizeof( png_byte *));
+   row_pointers=  malloc(height *sizeof( png_byte *));
 
-   data= (unsigned char *) malloc(width * height * 3*sizeof( unsigned char ));
+   data= malloc(width * height * 3*sizeof( unsigned char ));
 
 
   glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);

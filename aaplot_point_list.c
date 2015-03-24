@@ -28,7 +28,7 @@ typedef struct ns4 {
 /*Add node to the first of the list.
 */
 void add_point(point **list, double x,double y,double z) {
-    point *n = (point *)malloc(sizeof(point));
+    point *n = malloc(sizeof(point));
     if (n == NULL)
       {
       printf("memory allocation failed\n");

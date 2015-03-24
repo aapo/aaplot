@@ -3,11 +3,6 @@
     \brief Window and menu linked-list tree structure
 */
 
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "openglut.h"
 #include "openglut_exp.h"
 #include "og_internal.h"
@@ -59,14 +54,13 @@ SOG_Window *ogCreateWindow(
 )
 {
     int fakeArgc = 0;
-    GLboolean gameMode = GL_FALSE;
+   
     SOG_Window *window;
 
     assert( OG_CW_LAST > winType );
 
     window = ( SOG_Window * )calloc( sizeof( SOG_Window ), 1 );
-    if( OG_CW_GAMEMODE == winType )
-        gameMode = GL_TRUE;
+   
 
     ogClearCallBacks( window );
 
@@ -99,7 +93,7 @@ SOG_Window *ogCreateWindow(
     window->State.KeyRepeating    = GL_FALSE;
 
     ogOpenWindow(
-        window, title, x, y, w, h, gameMode,
+        window, title, x, y, w, h, 
         ( GLboolean )(
             ( !window->IsClientMenu && parent ) ?
             GL_TRUE : GL_FALSE
@@ -150,8 +144,7 @@ SOG_Menu *ogCreateMenu( OGCBMenu menuCallback )
  */
 void ogAddToWindowDestroyList( SOG_Window* window )
 {
-    SOG_WindowList *new_list_entry =
-        ( SOG_WindowList* )malloc( sizeof( SOG_WindowList ) );
+    SOG_WindowList *new_list_entry =malloc( sizeof( SOG_WindowList ) );
     new_list_entry->window = window;
     ogListAppend( &ogStructure.WindowsToDestroy, &new_list_entry->node );
 

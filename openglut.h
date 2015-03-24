@@ -5,6 +5,7 @@
 #include "openglut_std.h"
 #include "openglut_ext.h"
 
+
 #include "og_cursor.c"
 #include "og_callbacks.c"
 #include "og_init.c"
@@ -15,5 +16,6 @@
 #include "og_state.c"
 #include "og_font.c"
 #include "og_window.c"
+
 
 #endif

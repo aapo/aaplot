@@ -387,6 +387,8 @@ OGAPI void    OGAPIENTRY glutHideOverlay( void );
 /*
  * Menu stuff, see og_menu.c
  */
+
+OGAPI void    OGAPIENTRY glutChangeMenuEntryAttributes(int menu_id, const char *newlabel, int newvalue );
 OGAPI int     OGAPIENTRY glutCreateMenu( void (* callback)( int menu ) );
 OGAPI void    OGAPIENTRY glutDestroyMenu( int menu );
 OGAPI int     OGAPIENTRY glutGetMenu( void );
@@ -473,7 +475,7 @@ OGAPI int     OGAPIENTRY glutLayerGet( GLenum query );
 /*
  * Font stuff, see og_font.c
  */
-OGAPI void  OGAPIENTRY glutBitmapCharacter( void* font, int character );
+OGAPI void  OGAPIENTRY glutBitmapCharacter( int character );
 OGAPI int   OGAPIENTRY glutBitmapWidth( int character );
 OGAPI void  OGAPIENTRY glutStrokeCharacter( void* font, int character );
 OGAPI float OGAPIENTRY glutStrokeWidth( void* font, int character );

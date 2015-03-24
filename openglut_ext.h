@@ -78,7 +78,7 @@ OGAPI void    OGAPIENTRY glutBitmapString(
      const char *string
 );
 OGAPI void    OGAPIENTRY glutStrokeString(
-    void* font, const unsigned char *string
+    void* font, const char *string
 );
 
 /*

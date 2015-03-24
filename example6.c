@@ -2,7 +2,7 @@
 one R->R function 
 and how to get user clicked points*/
 
-#include "aaplot.c"
+#include "aaplot.h"
 
 double my_func(double x) {
 return 2*x*x + 4*x - 2;
@@ -17,6 +17,7 @@ drawAll(); /*main programs pauses till all windows are closed*/
 
 int n,i;
 double *points = getClickedPointsFromWindow(0,&n);
+
 
 printf("Selected points:\n");
 for (i=0;i<2*n;i=i+2)
