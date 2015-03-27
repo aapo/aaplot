@@ -87,8 +87,10 @@ point *loadFile(char *file_name)
         fprintf(stderr,"Bad matrix file (c)\n");
 
     if (n==3)
+      {
       if(fscanf(fp," %lf",&third) != 1)
         fprintf(stderr,"Bad matrix file (d)\n");
+      }
     else
       third=default_2dtable_thirdvalue;
     add_point(&pl,first,second,third);
