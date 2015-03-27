@@ -41,7 +41,7 @@ AAGLUT_FILES = src/aaglut/aaglut_cursor.c \
 
 		
 #example_gsl is not part of, because it needs -lgsl
-all: example1 example1P example2 example2P example3 example3P example4 example4P example5 example5B example6 example7 example8 example_butterflies example_many_curves example_rings
+all: example1 example1P example2 example2P example3 example3P example4 example4P example5 example5B example6 example7 example8 example9 example_butterflies example_many_curves example_rings
 
 
 lib: aaplot.a
@@ -99,6 +99,10 @@ example8: aaplot.a example8.c
 	$(CC) $(CFLAGS) example8.c aaplot.a -o example8 $(LDFLAGS)
 	strip example8
 
+example9: aaplot.a example9.c
+	$(CC) $(CFLAGS) example9.c aaplot.a -o example9 $(LDFLAGS)
+	strip example9
+
 example_butterflies: aaplot.a example_butterflies.c
 	$(CC) $(CFLAGS) example_butterflies.c aaplot.a -o example_butterflies $(LDFLAGS)
 	strip example_butterflies
@@ -131,6 +135,7 @@ clean:
 	rm -f example6
 	rm -f example7
 	rm -f example8
+	rm -f example9
 	rm -f example_butterflies
 	rm -f example_many_curves
 	rm -f example_rings
